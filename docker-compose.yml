@@ -1,0 +1,43 @@
+version: '2.2'
+services:
+
+  db:
+    image: kartoza/postgis:9.6-2.4
+    restart: unless-stopped
+    container_name: db4${COMPOSE_PROJECT_NAME}
+    stdin_open: true
+    # tty: true
+    labels:
+        org.gis3w.component: db
+        org.gis3w.instance.name: g3wsuite
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+      - dbbackups:/pg_backups
+    env_file:
+      - ./scripts/env/production/db.env
+
+  django:
+    restart: unless-stopped
+    image: g3w-suite/g3w-suite:latest
+    container_name: django4${COMPOSE_PROJECT_NAME}
+    stdin_open: true
+    # tty: true
+    labels:
+        org.gis3w.component: django
+        org.gis3w.instance.name: g3wsuite
+    depends_on:
+      - db
+    command: python g3w-admin/manage.py runserver 0.0.0.0:8000
+    ports:
+      - 8000:8000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    env_file:
+      - ./scripts/env/production/django.env
+
+
+volumes:
+  dbdata:
+    name: ${COMPOSE_PROJECT_NAME}-dbdata
+  dbbackups:
+    name: ${COMPOSE_PROJECT_NAME}-dbbackups
