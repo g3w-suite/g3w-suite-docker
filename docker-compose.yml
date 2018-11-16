@@ -18,7 +18,7 @@ services:
 
   django:
     restart: unless-stopped
-    image: g3w-suite/g3w-suite:latest
+    image: g3wsuite/g3w-suite:latest
     container_name: django4${COMPOSE_PROJECT_NAME}
     stdin_open: true
     # tty: true
@@ -32,8 +32,35 @@ services:
       - 8000:8000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - /home/walter/tmp/geodata:/djangoassets/geodata
+      - djangoassets:/djangoassets
     env_file:
       - ./scripts/env/production/django.env
+
+  qgisserver:
+    restart: unless-stopped
+    image: jancelin/qgis-server:2.18LTR
+    #hostname: qgis-server
+    container_name: qgisserver4${COMPOSE_PROJECT_NAME}
+    volumes_from:
+      - django
+
+  nginx:
+    image: g3wsuite/nginx
+    restart: unless-stopped
+    container_name: nginx4${COMPOSE_PROJECT_NAME}
+    stdin_open: true
+    # tty: true
+    labels:
+        org.gis3w.component: nginx
+        org.gis3w.instance.name: g3wsuite
+
+    volumes_from:
+      - django
+    depends_on:
+      - django
+    ports:
+      - 80:80
 
 
 volumes:
@@ -41,3 +68,7 @@ volumes:
     name: ${COMPOSE_PROJECT_NAME}-dbdata
   dbbackups:
     name: ${COMPOSE_PROJECT_NAME}-dbbackups
+  djangoassets:
+    name: ${COMPOSE_PROJECT_NAME}-djangoassets
+  qgisproject:
+    name: ${COMPOSE_PROJECT_NAME}-qgisproject

@@ -2,13 +2,25 @@ FROM python:2.7.15
 MAINTAINER Walter Lorenzetti<lorenzetti@gis3w.it>
 
 RUN mkdir -p /usr/src/g3w-suite
+RUN mkdir -p /djangoassets/media
+RUN mkdir -p /djangoassets/static
+RUN mkdir -p /djangoassets/geodata
+
+RUN apt-get update && apt-get install -y apt-transport-https
+
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
 WORKDIR /usr/src/g3w-suite
 
+
+
 RUN apt-get update && apt-get install -y \
-		gcc \
-        python-dev libgdal-dev \
+		gcc\
+        python-dev libgdal-dev\
         postgresql-client\
+        yarn\
+        nodejs\
 	--no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip
@@ -16,6 +28,10 @@ RUN pip install --upgrade pip
 
 # install shallow clone of geonode master branch
 RUN git clone git://github.com/g3w-suite/g3w-admin.git --branch master /usr/src/g3w-suite
+
+RUN alias node=nodejs
+RUN yarn --ignore-engines --ignore-scripts --prod
+RUN nodejs -e "try { require('fs').symlinkSync(require('path').resolve('node_modules/@bower_components'), 'g3w-admin/core/static/bower_components', 'junction') } catch (e) { }"
 
 #RUN cp g3w-admin/base/settings/local_settings_example.py g3w-admin/base/settings/local_settings.py
 RUN cd /usr/src/g3w-suite/; pip install -r requirements.txt

@@ -30,12 +30,14 @@ SENTRY = strtobool(os.environ.get('G3WSUITE_SENTRY', 'False'))
 
 SITE_PREFIX_URL = os.environ.get('BASEURL', None)
 
-#STATIC_URL = '{}/static/'.format('/' + SITE_PREFIX_URL if SITE_PREFIX_URL else '')
-STATIC_ROOT = '/home/g3wsuite/static/'
-#MEDIA_ROOT = '/home/g3wsuite/media/'
-#MEDIA_URL = '{}/media/'.format('/' + SITE_PREFIX_URL if SITE_PREFIX_URL else '')
+STATIC_URL = os.environ.get('G3WSUITE_STATIC_URL', '/static/')
+STATIC_ROOT = os.environ.get('G3WSUITE_STATIC_ROOT', '/djangoassets/static/')
+MEDIA_ROOT = os.environ.get('G3WSUITE_MEDIA_ROOT', '/djangoassets/media/')
+MEDIA_URL = os.environ.get('G3WSUITE_MEDIA_URL', '/media/')
 
-DATASOURCE_PATH = '/home/g3wsuite/data/'
+DATASOURCE_PATH = os.environ.get('G3WSUITE_DATASOURCE_PATH', '/djangoassets/geodata/')
+
+QDJANGO_SERVER_URL = os.environ.get('G3WSUITE_QDJANGO_SERVER_URL', 'http://localhost/cgi-bin/qgis_mapserv.fcgi')
 
 '''
 if 'caching' in G3WADMIN_LOCAL_MORE_APPS:

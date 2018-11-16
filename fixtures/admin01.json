@@ -1,0 +1,18 @@
+[{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$36000$lIpCvfShAmVd$mRzxrX/YPtmG9kflwVwfJkejoJFCmiYC5hA2f7V61zQ=",
+    "last_login": "2018-11-02T11:19:35.144Z",
+    "is_superuser": true,
+    "username": "admin01",
+    "first_name": "",
+    "last_name": "",
+    "email": "info@gis3w.it",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2017-06-30T13:08:46.606Z",
+    "groups": [],
+    "user_permissions": []
+  }
+}]

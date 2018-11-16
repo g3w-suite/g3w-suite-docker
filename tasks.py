@@ -10,6 +10,13 @@ from invoke import run, task
 
 BOOTSTRAP_IMAGE_CHEIP = 'codenvy/che-ip:nightly'
 
+FIXTURES = [
+    'BaseLayer.json',
+    'G3WGeneralDataSuite.json',
+    'G3WMapControls.json',
+    'G3WSpatialRefSys.json'
+]
+
 
 @task
 def waitfordbs(ctx):
@@ -28,3 +35,29 @@ def migrations(ctx):
 def _localsettings():
     settings = os.getenv('DJANGO_SETTINGS_MODULE', 'base.settings')
     return settings
+
+@task
+def fixtures(ctx):
+    print "**************************fixtures********************************"
+
+
+    for fixture in FIXTURES:
+        ctx.run("g3w-admin/manage.py loaddata {1} --settings={0}".format(
+            _localsettings(), fixture
+        ), pty=True)
+    
+    ctx.run("g3w-admin/manage.py loaddata {1} --settings={0}".format(
+        _localsettings(), '/usr/src/g3w-suite/fixtures/admin01.json'
+    ), pty=True)
+
+    ctx.run("g3w-admin/manage.py sitetree_resync_apps --settings={0}".format(
+        _localsettings()
+    ), pty=True)
+
+@task
+def collectstatic(ctx):
+    print "**************************collectstatic********************************"
+
+    ctx.run("g3w-admin/manage.py collectstatic --settings={0}".format(
+        _localsettings()
+    ), pty=True)
