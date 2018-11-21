@@ -14,7 +14,6 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources
 WORKDIR /usr/src/g3w-suite
 
 
-
 RUN apt-get update && apt-get install -y \
 		gcc\
         python-dev libgdal-dev\
@@ -49,6 +48,4 @@ EXPOSE 8000
 
 ENTRYPOINT ["/usr/src/g3w-suite/entrypoint.sh"]
 
-#CMD ["uwsgi", "--ini", "/usr/src/g3w-suite/uwsgi.ini"]
-CMD ["python", "g3w-admin/manage.py", "runserver", "0.0.0.0:8000"]
-#CMD ["python", "-m", "SimpleHTTPServer", "8000"]
+CMD ["uwsgi", "--ini", "uwsgi.ini"]
