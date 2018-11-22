@@ -36,6 +36,13 @@ def _localsettings():
     settings = os.getenv('DJANGO_SETTINGS_MODULE', 'base.settings')
     return settings
 
+def _dbsettings():
+    return {
+        'name': os.getenv('G3WSUITE_DATABASE_NAME'),
+        'user': os.getenv('G3WSUITE_DATABASE_USER'),
+        'password': os.getenv('G3WSUITE_DATABASE_PASSWORD'),
+    }
+
 @task
 def fixtures(ctx):
     print "**************************fixtures********************************"
@@ -69,3 +76,34 @@ def collectstatic(ctx):
     ctx.run("g3w-admin/manage.py collectstatic --noinput --settings={0}".format(
         _localsettings()
     ), pty=True)
+
+@task
+def movegeodata(ctx):
+    print "**************************movegeodata********************************"
+
+
+
+    ctx.run("mv geodata/* /djangoassets/geodata/", pty=True)
+
+@task
+def restoredump(ctx):
+    print "**************************restoredump********************************"
+
+    settings = _dbsettings()
+    db_connetcion = "PGPASSWORD={0} psql -h db -U {1}  -d {2}".format(
+        settings['password'],
+        settings['user'],
+        settings['name']
+    )
+
+    # create database geodata dump for postgis project
+    ctx.run("{} -c \"CREATE DATABASE geodata template=template_postgis\"".format(db_connetcion), pty=True)
+
+
+    # restore dump data
+    ctx.run("PGPASSWORD={0} pg_restore -h db -U {1} -d geodata -O -x {2}".format(
+        settings['password'],
+        settings['user'],
+        '/djangoassets/geodata/geodata.backup'
+    ), pty=True)
+

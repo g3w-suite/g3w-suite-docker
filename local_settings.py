@@ -49,6 +49,8 @@ if 'caching' in G3WADMIN_LOCAL_MORE_APPS:
     TILESTACHE_CACHE_NAME = os.environ.get('G3WSUITE_TILESTACHE_CACHE_NAME', 'default')
 
 
+SPATIALITE_LIBRARY_PATH = 'mod_spatialite'
+
 # for sessions
 SESSION_COOKIE_NAME = 'g3wsuite_sessionid{}{}'.format('_' + SITE_PREFIX_URL if SITE_PREFIX_URL else '',
 												  random.randint(1, 123456))

@@ -10,6 +10,8 @@ services:
     labels:
         org.gis3w.component: db
         org.gis3w.instance.name: g3wsuite
+    ports:
+      - 25432:5432
     volumes:
       - dbdata:/var/lib/postgresql/data
       - dbbackups:/pg_backups
@@ -18,7 +20,7 @@ services:
 
   django:
     restart: unless-stopped
-    image: g3wsuite/g3w-suite:caching
+    image: g3wsuite/g3w-suite
     container_name: django4${COMPOSE_PROJECT_NAME}
     stdin_open: true
     # tty: true
@@ -28,8 +30,8 @@ services:
     depends_on:
       - db
     command: python g3w-admin/manage.py runserver 0.0.0.0:8000
-    ports:
-      - 8000:8000
+    #ports:
+      #- 8000:8000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       #- /home/walter/tmp/geodata:/djangoassets/geodata

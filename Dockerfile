@@ -51,8 +51,8 @@ RUN pip install -r g3w-admin/caching/requirements.txt
 # copy demo data
 RUN mkdir -p /djangoassets/media/projects
 
-COPY geodata/demo_data.sqlite /djangoassets/geodata/
-COPY projects/demo_world-map-spatialite.qgs /djangoassets/media/projects/
+
+COPY projects/* /djangoassets/media/projects/
 
 EXPOSE 8000
 
