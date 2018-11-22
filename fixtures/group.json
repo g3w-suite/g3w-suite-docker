@@ -1,0 +1,44 @@
+[{
+  "model": "core.group",
+  "pk": 1,
+  "fields": {
+    "created": "2018-11-21T17:09:57.843Z",
+    "modified": "2018-11-21T17:09:58.179Z",
+    "order": 0,
+    "name": "Demo",
+    "title": "Demo",
+    "description": "<p>Smal G3W-SUITE demostration<br></p>",
+    "slug": "demo",
+    "is_active": false,
+    "lang": "it",
+    "header_logo_img": "logo_img/g3wsuite_logo_h40.png",
+    "header_logo_link": "http://g3wsuite.gis3w.it",
+    "srid": 3857,
+    "background_color": "#ffffff",
+    "header_terms_of_use_text": "",
+    "header_terms_of_use_link": "",
+    "baselayers": [
+      4,
+      5
+    ],
+    "mapcontrols": [
+      8,
+      1,
+      2,
+      3,
+      6,
+      7,
+      5,
+      4,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "macrogroups": []
+  }
+}]

@@ -18,7 +18,7 @@ services:
 
   django:
     restart: unless-stopped
-    image: g3wsuite/g3w-suite:latest
+    image: g3wsuite/g3w-suite:caching
     container_name: django4${COMPOSE_PROJECT_NAME}
     stdin_open: true
     # tty: true
@@ -32,7 +32,7 @@ services:
       - 8000:8000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /home/walter/tmp/geodata:/djangoassets/geodata
+      #- /home/walter/tmp/geodata:/djangoassets/geodata
       - djangoassets:/djangoassets
     env_file:
       - ./scripts/env/production/django.env

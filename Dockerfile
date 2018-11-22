@@ -44,6 +44,16 @@ RUN chmod +x /usr/bin/wait-for-databases
 RUN mv local_settings.py g3w-admin/base/settings/
 RUN chmod +x /usr/src/g3w-suite/tasks.py && chmod +x /usr/src/g3w-suite/entrypoint.sh
 
+# add caching module
+RUN git submodule add -f https://github.com/g3w-suite/g3w-admin-caching.git g3w-admin/caching
+RUN pip install -r g3w-admin/caching/requirements.txt
+
+# copy demo data
+RUN mkdir -p /djangoassets/media/projects
+
+COPY geodata/demo_data.sqlite /djangoassets/geodata/
+COPY projects/demo_world-map-spatialite.qgs /djangoassets/media/projects/
+
 EXPOSE 8000
 
 ENTRYPOINT ["/usr/src/g3w-suite/entrypoint.sh"]

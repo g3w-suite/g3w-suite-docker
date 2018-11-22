@@ -50,6 +50,14 @@ def fixtures(ctx):
         _localsettings(), '/usr/src/g3w-suite/fixtures/admin01.json'
     ), pty=True)
 
+    ctx.run("g3w-admin/manage.py loaddata {1} --settings={0}".format(
+        _localsettings(), '/usr/src/g3w-suite/fixtures/group.json'
+    ), pty=True)
+
+    ctx.run("g3w-admin/manage.py loaddata {1} --settings={0}".format(
+        _localsettings(), '/usr/src/g3w-suite/fixtures/qdjango.json'
+    ), pty=True)
+
     ctx.run("g3w-admin/manage.py sitetree_resync_apps --settings={0}".format(
         _localsettings()
     ), pty=True)
@@ -58,6 +66,6 @@ def fixtures(ctx):
 def collectstatic(ctx):
     print "**************************collectstatic********************************"
 
-    ctx.run("g3w-admin/manage.py collectstatic --settings={0}".format(
+    ctx.run("g3w-admin/manage.py collectstatic --noinput --settings={0}".format(
         _localsettings()
     ), pty=True)

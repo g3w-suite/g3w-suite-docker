@@ -9,7 +9,9 @@ G3WADMIN_LOCAL_MORE_APPS = os.environ.get('G3WSUITE_MORE_APPS', None)
 if G3WADMIN_LOCAL_MORE_APPS:
     G3WADMIN_LOCAL_MORE_APPS = G3WADMIN_LOCAL_MORE_APPS.split(',')
 else:
-    G3WADMIN_LOCAL_MORE_APPS = []
+    G3WADMIN_LOCAL_MORE_APPS = [
+        'caching',
+    ]
 
 DATABASES = {
     'default': {
@@ -39,12 +41,13 @@ DATASOURCE_PATH = os.environ.get('G3WSUITE_DATASOURCE_PATH', '/djangoassets/geod
 
 QDJANGO_SERVER_URL = os.environ.get('G3WSUITE_QDJANGO_SERVER_URL', 'http://localhost/cgi-bin/qgis_mapserv.fcgi')
 
-'''
+
 if 'caching' in G3WADMIN_LOCAL_MORE_APPS:
     TILESTACHE_CACHE_TYPE = os.environ.get('G3WSUITE_TILESTACHE_CACHE_TYPE', 'Disk')
     TILESTACHE_CACHE_DISK_PATH = os.environ.get('G3WSUITE_TILESTACHE_CACHE_DISK_PATH', '/tmp/tilestache_cache/')
-    TILESTACHE_LAYERS_HOST = os.environ.get('G3WSUITE_TILESTACHE_LAYERS_HOSTH', 'http://localhost')
-'''
+    #TILESTACHE_LAYERS_HOST = os.environ.get('G3WSUITE_TILESTACHE_LAYERS_HOSTH', 'http://localhost')
+    TILESTACHE_CACHE_NAME = os.environ.get('G3WSUITE_TILESTACHE_CACHE_NAME', 'default')
+
 
 # for sessions
 SESSION_COOKIE_NAME = 'g3wsuite_sessionid{}{}'.format('_' + SITE_PREFIX_URL if SITE_PREFIX_URL else '',
