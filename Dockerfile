@@ -50,9 +50,9 @@ RUN pip install -r g3w-admin/caching/requirements.txt
 
 # copy demo data
 RUN mkdir -p /djangoassets/media/projects
-
-
-COPY projects/* /djangoassets/media/projects/
+COPY projects /djangoassets/media/projects/
+RUN mkdir -p /djangoassets/media/logo_img
+COPY fixtures/media/logo_img /djangoassets/media/logo_img/
 
 EXPOSE 8000
 

@@ -1,17 +1,18 @@
-[{
+[
+{
   "model": "core.group",
   "pk": 1,
   "fields": {
     "created": "2018-11-21T17:09:57.843Z",
-    "modified": "2018-11-21T17:09:58.179Z",
+    "modified": "2018-11-23T14:37:52.391Z",
     "order": 0,
     "name": "Demo",
     "title": "Demo",
-    "description": "<p>Smal G3W-SUITE demostration<br></p>",
+    "description": "<p>Small G3W-SUITE demostration<br></p>",
     "slug": "demo",
     "is_active": false,
     "lang": "it",
-    "header_logo_img": "logo_img/g3wsuite_logo_h40.png",
+    "header_logo_img": "logo_img/group_logo_1.png",
     "header_logo_link": "http://g3wsuite.gis3w.it",
     "srid": 3857,
     "background_color": "#ffffff",
@@ -41,4 +42,46 @@
     ],
     "macrogroups": []
   }
-}]
+},
+{
+  "model": "core.group",
+  "pk": 2,
+  "fields": {
+    "created": "2018-11-23T14:34:51.073Z",
+    "modified": "2018-11-23T14:35:22.028Z",
+    "order": 1,
+    "name": "Demo LatLon",
+    "title": "Demo LatLon",
+    "description": "",
+    "slug": "demo-latlon",
+    "is_active": false,
+    "lang": "it",
+    "header_logo_img": "logo_img/group_logo.png",
+    "header_logo_link": null,
+    "srid": 4326,
+    "background_color": "#75b8c2",
+    "header_terms_of_use_text": "",
+    "header_terms_of_use_link": "",
+    "baselayers": [],
+    "mapcontrols": [
+      8,
+      1,
+      2,
+      3,
+      6,
+      7,
+      5,
+      4,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "macrogroups": []
+  }
+}
+]
