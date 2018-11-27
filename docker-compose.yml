@@ -48,7 +48,7 @@ services:
       - django
 
   nginx:
-    image: g3wsuite/nginx
+    image: g3wsuite/nginx:uwsgi
     restart: unless-stopped
     container_name: nginx4${COMPOSE_PROJECT_NAME}
     stdin_open: true
