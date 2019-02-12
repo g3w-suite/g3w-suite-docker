@@ -20,4 +20,13 @@ or if you want build g3wsuite/g3w-suite image:
 docker-compose up --build
 ```
 
+On your browser:
+
+```
+http://localhost
+```
+
+user: admin01
+
+password: g3wsuitedemo
 
