@@ -11,16 +11,17 @@ RUN apt-get update && apt-get install -y apt-transport-https
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
-WORKDIR /usr/src/g3w-suite
-
-
 RUN apt-get update && apt-get install -y \
 		gcc\
         python-dev libgdal-dev\
         postgresql-client\
-        yarn\
-        nodejs\
 	--no-install-recommends && rm -rf /var/lib/apt/lists/*
+
+RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
+RUN wget https://nightly.yarnpkg.com/debian/pool/main/y/yarn/yarn_1.9.0-20180719.1538_all.deb
+RUN apt install -y ./yarn_1.9.0-20180719.1538_all.deb
+
+WORKDIR /usr/src/g3w-suite
 
 # Upgrade pip
 RUN pip install --upgrade pip
