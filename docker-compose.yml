@@ -34,7 +34,7 @@ services:
       #- 8000:8000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      #- /home/walter/tmp/geodata:/djangoassets/geodata
+      - /home/walter/tmp/geodata:/djangoassets/geodata
       - djangoassets:/djangoassets
     env_file:
       - ./scripts/env/production/django.env
