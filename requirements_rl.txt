@@ -1,0 +1,5 @@
+# Include base docker requirements from g3w-suite clone
+-r requirements_docker.txt
+
+# Additional requirements for Birch
+gunicorn

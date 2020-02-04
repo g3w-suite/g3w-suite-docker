@@ -1,0 +1,5 @@
+.env
+*_local.*
+
+projects
+.idea

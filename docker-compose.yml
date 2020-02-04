@@ -1,76 +1,112 @@
-version: '2.2'
+version: '3'
 services:
 
-  db:
-    image: kartoza/postgis:9.6-2.4
-    restart: unless-stopped
-    container_name: db4${COMPOSE_PROJECT_NAME}
-    stdin_open: true
-    # tty: true
-    labels:
-        org.gis3w.component: db
-        org.gis3w.instance.name: g3wsuite
-    ports:
-      - 25432:5432
-    volumes:
-      - dbdata:/var/lib/postgresql/data
-      - dbbackups:/pg_backups
-    env_file:
-      - ./scripts/env/production/db.env
-
-  django:
-    restart: unless-stopped
-    image: g3wsuite/g3w-suite
-    container_name: django4${COMPOSE_PROJECT_NAME}
-    stdin_open: true
-    # tty: true
-    labels:
-        org.gis3w.component: django
-        org.gis3w.instance.name: g3wsuite
-    depends_on:
-      - db
-    command: python g3w-admin/manage.py runserver 0.0.0.0:8000
-    #ports:
-      #- 8000:8000
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /home/walter/tmp/geodata:/djangoassets/geodata
-      - djangoassets:/djangoassets
-    env_file:
-      - ./scripts/env/production/django.env
-
   qgisserver:
-    restart: unless-stopped
-    image: jancelin/qgis-server:2.18LTR
-    #hostname: qgis-server
-    container_name: qgisserver4${COMPOSE_PROJECT_NAME}
-    volumes_from:
-      - django
+    image: g3wsuite/qgis3-server:ltr-ubuntu
+    ports:
+    - "8010:80"
+    environment:
+      QGIS_DEBUG: 0
+      QGIS_LOG_FILE: "" #/tmp/qgis.log
+      QGIS_SERVER_LOG_STDERR: 1
+      QGIS_SERVER_LOG_FILE: "" # /tmp/qgis_server.log
+      QGIS_SERVER_LOG_LEVEL: 3 # 2 is critical 3 is no logs
+      QGIS_PROJECT_FILE: ""
+      QGIS_SERVER_MAX_THREADS: 8
+      PGSERVICEFILE: /shared-volume/pg_service.conf"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    restart: on-failure
+    volumes:
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
+    networks:
+      internal:
+
+  postgis:
+    image: g3wsuite/postgis:11.0-2.5
+    ports:
+    - "5439:5432"
+    environment:
+      - POSTGRES_DBNAME=${G3WSUITE_POSTGRES_DBNAME},data_testing,data_production
+      - POSTGRES_USER=${G3WSUITE_POSTGRES_USER_LOCAL}
+      - POSTGRES_PASS=${G3WSUITE_POSTGRES_PASS}
+      - ALLOW_IP_RANGE=0.0.0.0/0
+    restart: on-failure
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    volumes:
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/var/lib/postgresql
+    networks:
+      internal:
+        aliases:
+          # Legacy: to be removed
+          - postgis.birchinfrastructure.com
+          - ${WEBGIS_PUBLIC_HOSTNAME}
+
+  g3w-suite:
+    image: g3wsuite/g3w-suite-dev:latest
+    environment:
+      - G3WSUITE_TILECACHE_PATH
+      - G3WSUITE_QDJANGO_SERVER_URL
+      - G3WSUITE_POSTGRES_DBNAME
+      - G3WSUITE_POSTGRES_USER
+      - G3WSUITE_POSTGRES_USER_LOCAL
+      - G3WSUITE_POSTGRES_PASS
+      - G3WSUITE_POSTGRES_HOST
+      - G3WSUITE_POSTGRES_PORT
+      - TILESTACHE_CACHE_BUFFER_SIZE
+      - PYTHONUNBUFFERED="1"
+    expose:
+    - "8000"
+    command: >
+      bash -c "/code/ci_scripts/build_suite.sh && /code/ci_scripts/setup_suite.sh && cd /code/g3w-admin && gunicorn base.wsgi:application --error-logfile - --log-level=debug --timeout 120 --workers=8 -b 0.0.0.0:8000"
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+    depends_on:
+      - postgis
+    volumes:
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
+      - ./config/g3w-suite/overrides/templates:/code/templates:ro
+      - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py:ro
+
+    networks:
+      internal:
 
   nginx:
-    image: g3wsuite/nginx:uwsgi
-    restart: unless-stopped
-    container_name: nginx4${COMPOSE_PROJECT_NAME}
-    stdin_open: true
-    # tty: true
-    labels:
-        org.gis3w.component: nginx
-        org.gis3w.instance.name: g3wsuite
-
-    volumes_from:
-      - django
-    depends_on:
-      - django
+    image: nginx:latest
     ports:
-      - 80:80
-
+      - "8080:8000"
+      - "443:443"
+    expose:
+      - "8080"
+    volumes:
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known:/var/www/.well-known
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt:ro
+      - ./config/g3w-suite/overrides/static:/shared-volume/static/overrides:ro
+      - ./config/nginx:/etc/nginx/conf.d:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    restart: always
+    networks:
+      internal:
 
 volumes:
-  dbdata:
-    name: ${COMPOSE_PROJECT_NAME}-dbdata
-  dbbackups:
-    name: ${COMPOSE_PROJECT_NAME}-dbbackups
-  djangoassets:
-    name: ${COMPOSE_PROJECT_NAME}-djangoassets
-  qgisproject:
-    name: ${COMPOSE_PROJECT_NAME}-qgisproject
+    shared-volume:
+
+networks:
+    internal:
