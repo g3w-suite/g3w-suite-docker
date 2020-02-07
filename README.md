@@ -29,6 +29,9 @@ TILESTACHE_CACHE_BUFFER_SIZE=256
 
 # URL of the QGIS Server
 G3WSUITE_QDJANGO_SERVER_URL=http://qgisserver/ows/
+
+# Set G3W-SUITE debug state
+G3wSUITE_DEBUG = 1 (0 default)
 ```
 
 ## Build

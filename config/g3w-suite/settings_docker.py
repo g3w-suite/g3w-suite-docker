@@ -29,7 +29,7 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = '/shared-volume/static/'
 STATIC_URL = '/static/'
 
-DEBUG = False
+DEBUG = False if os.getenv('G3WSUITE_DEBUG', 0) == 0 else True
 
 QDJANGO_SERVER_URL = os.getenv('G3WSUITE_QDJANGO_SERVER_URL')
 
