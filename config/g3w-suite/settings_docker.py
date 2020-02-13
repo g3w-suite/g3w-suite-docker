@@ -8,7 +8,8 @@ G3WADMIN_PROJECT_APPS = []
 
 G3WADMIN_LOCAL_MORE_APPS = [
     'caching',
-    'editing'
+    'editing',
+    'filemanager'
 ]
 
 DATABASES = {
@@ -41,6 +42,11 @@ TILESTACHE_CACHE_NAME = 'default'
 TILESTACHE_CACHE_TYPE = 'Disk' # or 'Memcache'
 TILESTACHE_CACHE_DISK_PATH = os.getenv('G3WSUITE_TILECACHE_PATH')
 TILESTACHE_CACHE_BUFFER_SIZE = os.getenv('TILESTACHE_CACHE_BUFFER_SIZE')  # Pixels
+
+# FILEMANAGER SETTINGS
+# =======================================
+FILEMANAGER_ROOT_PATH = os.getenv('G3WSUITE_FILEMANAGER_ROOT_PATH', '/shared-volume/project_data')
+FILENAMANAGER_MAX_N_FILES = os.getenv('G3WSUITE_FILENAMANAGER_MAX_N_FILES', 10)
 
 ALLOWED_HOSTS = "*"
 
