@@ -24,7 +24,6 @@ DATABASES = {
 }
 
 
-
 MEDIA_ROOT = '/shared-volume/media/'
 MEDIA_URL = '/media/'
 STATIC_ROOT = '/shared-volume/static/'
@@ -50,7 +49,7 @@ FILENAMANAGER_MAX_N_FILES = os.getenv('G3WSUITE_FILENAMANAGER_MAX_N_FILES', 10)
 
 # EDITING SETTINGS
 # ======================================
-USER_MEDIA_ROOT = FILEMANAGER_ROOT_PATH + 'media_user/'
+USER_MEDIA_ROOT = FILEMANAGER_ROOT_PATH + '/media_user/'
 
 ALLOWED_HOSTS = "*"
 

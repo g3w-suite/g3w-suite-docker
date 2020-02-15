@@ -86,7 +86,7 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - "8080:8000"
+      - "8080:8080"
       - "443:443"
     expose:
       - "8080"
