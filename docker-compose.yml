@@ -65,7 +65,7 @@ services:
     expose:
     - "8000"
     command: >
-      bash -c "/code/ci_scripts/build_suite.sh && /code/ci_scripts/setup_suite.sh && cd /code/g3w-admin && gunicorn base.wsgi:application --error-logfile - --log-level=debug --timeout 120 --workers=8 -b 0.0.0.0:8000"
+      bash -c "/code/ci_scripts/build_suite.sh && /code/ci_scripts/setup_suite.sh && cd /code/g3w-admin && gunicorn base.wsgi:application --limit-request-fields 0 --error-logfile - --log-level=debug --timeout 120 --workers=8 -b 0.0.0.0:8000"
     restart: always
     logging:
       driver: "json-file"
