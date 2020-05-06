@@ -7,9 +7,9 @@ import os
 G3WADMIN_PROJECT_APPS = []
 
 G3WADMIN_LOCAL_MORE_APPS = [
-    'caching',
+    #'caching',
     'editing',
-    'filemanager'
+    #'filemanager'
 ]
 
 DATABASES = {
@@ -31,25 +31,23 @@ STATIC_URL = '/static/'
 
 DEBUG = False if os.getenv('G3WSUITE_DEBUG', 0) == 0 else True
 
-QDJANGO_SERVER_URL = os.getenv('G3WSUITE_QDJANGO_SERVER_URL')
-
 DATASOURCE_PATH = '/shared-volume/project_data/'
 
 # CACHING SETTINGS
 # =======================================
-TILESTACHE_CACHE_NAME = 'default'
-TILESTACHE_CACHE_TYPE = 'Disk' # or 'Memcache'
-TILESTACHE_CACHE_DISK_PATH = os.getenv('G3WSUITE_TILECACHE_PATH')
-TILESTACHE_CACHE_BUFFER_SIZE = os.getenv('TILESTACHE_CACHE_BUFFER_SIZE')  # Pixels
+# TILESTACHE_CACHE_NAME = 'default'
+# TILESTACHE_CACHE_TYPE = 'Disk' # or 'Memcache'
+# TILESTACHE_CACHE_DISK_PATH = os.getenv('G3WSUITE_TILECACHE_PATH')
+# TILESTACHE_CACHE_BUFFER_SIZE = os.getenv('TILESTACHE_CACHE_BUFFER_SIZE')  # Pixels
 
 # FILEMANAGER SETTINGS
 # =======================================
-FILEMANAGER_ROOT_PATH = os.getenv('G3WSUITE_FILEMANAGER_ROOT_PATH', '/shared-volume/project_data')
-FILENAMANAGER_MAX_N_FILES = os.getenv('G3WSUITE_FILENAMANAGER_MAX_N_FILES', 10)
+# FILEMANAGER_ROOT_PATH = os.getenv('G3WSUITE_FILEMANAGER_ROOT_PATH', '/shared-volume/project_data')
+# FILENAMANAGER_MAX_N_FILES = os.getenv('G3WSUITE_FILENAMANAGER_MAX_N_FILES', 10)
 
 # EDITING SETTINGS
 # ======================================
-USER_MEDIA_ROOT = FILEMANAGER_ROOT_PATH + '/media_user/'
+#USER_MEDIA_ROOT = FILEMANAGER_ROOT_PATH + '/media_user/'
 
 ALLOWED_HOSTS = "*"
 
