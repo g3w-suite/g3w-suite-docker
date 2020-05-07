@@ -13,6 +13,9 @@ will contain the database credentials (change `<your password>`) and other setti
 ```bash
 # External hostname, for docker internal network aliases
 WEBGIS_PUBLIC_HOSTNAME=demo.g3wsuite.it/
+
+# This volume is persistent and mounted by all
+# containers as /shared-volume
 WEBGIS_DOCKER_SHARED_VOLUME=/tmp/shared-volume-g3w-suite
 
 
@@ -32,6 +35,10 @@ G3WSUITE_QDJANGO_SERVER_URL=http://qgisserver/ows/
 
 # Set G3W-SUITE debug state
 G3WSUITE_DEBUG = 1 (0 default)
+
+# Gunicorn workers (default to 8)
+G3WSUITE_GUNICORN_NUM_WORKERS=8
+
 ```
 
 ## Build
@@ -44,9 +51,11 @@ The main suite image can be built with:
 docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite-dev:latest --no-cache .
 ```
 
-The container image is build from `https://github.com/g3w-suite/g3w-admin.git --branch dev`
+The image is build from `https://github.com/g3w-suite/g3w-admin.git --branch dev` and from a dependencies base image `Dockerfile.g3wsuite-deps.dockerfile`, the dependencies image can be built with:
 
-The Docker hub name for this image is `g3wsuite/g3w-suite-dev:latest`
+```bash
+docker build -f Dockerfile.g3wsuite-deps.dockerfile -t g3wsuite/g3w-suite-deps:latest --no-cache .
+```
 
 ### Postgis
 
@@ -66,14 +75,13 @@ The Docker hub name for this image is `g3wsuite/qgis3-server:ltr-ubuntu`
 
 ### HTTPS additional setup
 
-
 - check the domain name in the `.env` file and in `config/nginx/django_ssl.conf`
 - run `mkdir -p /shared-volume/ssl/certs/`
 - run `sudo openssl dhparam -out /shared-volume/ssl/certs/dhparam-2048.pem 2048`
 - run: `docker pull certbot/certbot`
 - launch `./run_certbot.sh`
 - make sure the certs are renewed by adding a cron job with `crontab -e` and add the following line:
-    `0  3 * * * /home/g3w-suite/rl.g3wsuite.it/run_certbot.sh`
+  `0 3 * * * /home/g3w-suite/rl.g3wsuite.it/run_certbot.sh`
 - if you disabled HTTPS, you can move `config/nginx/django_ssl.conf` back to its original location now, and restart the Docker compose to finally enable HTTPS
 
 ## Run
@@ -84,25 +92,23 @@ docker-compose up -d
 
 ## Ports
 
-+ web application: 8080
+- web application: 8080
 
 ## Volumes
 
 Data, projects, uploads and the database are stored in a shared mounted volume `shared-volume`, the volume should be on a persistent storage device and a backup
 policy must be enforced.
 
-
 ## First time setup
 
-+ log into the application web administation panel using default credentials (*admin/admin*)
-+ change the password for the admin user and for any other example user that may be present
+- log into the application web administation panel using default credentials (_admin/admin_)
+- change the password for the admin user and for any other example user that may be present
 
 ## Caching
 
 Tile cache can be configured and cleared per-layer through the webgis admin panel and lasts forever until it is disabled or cleared.
 
 > Tip: enable cache on linestring and polygon layers.
-
 
 ## Style customization
 
@@ -111,7 +117,6 @@ Templates can now be overridden by placing the overrides in the `config/g3w-suit
 The logo is also overridden (through `config/g3w-suite/settings_docker.py` which is mounted as a volume), changes to the settings file require the Docker service to be restarted.
 
 A custom CSS is added to the pages, the file is located in `config/g3w-suite/overrides/static/style.css` and can be modified directly, changes are effective immediately.
-
 
 ## Performances optimization
 
