@@ -1,10 +1,9 @@
-version: '3'
+version: "3"
 services:
-
   postgis:
     image: g3wsuite/postgis:11.0-2.5
     ports:
-    - "5439:5432"
+      - "5439:5432"
     environment:
       - POSTGRES_DBNAME=${G3WSUITE_POSTGRES_DBNAME},data_testing,data_production
       - POSTGRES_USER=${G3WSUITE_POSTGRES_USER_LOCAL}
@@ -21,8 +20,6 @@ services:
     networks:
       internal:
         aliases:
-          # Legacy: to be removed
-          - postgis.birchinfrastructure.com
           - ${WEBGIS_PUBLIC_HOSTNAME}
 
   g3w-suite:
@@ -37,12 +34,9 @@ services:
       - G3WSUITE_POSTGRES_HOST
       - G3WSUITE_POSTGRES_PORT
       - TILESTACHE_CACHE_BUFFER_SIZE
-      - PYTHONUNBUFFERED="1"
-      - QT_QPA_PLATFORM="offscreen"
     expose:
-    - "8000"
-    command: >
-      bash -c "/code/ci_scripts/build_suite.sh && /code/ci_scripts/setup_suite.sh && cd /code/g3w-admin && gunicorn base.wsgi:application --limit-request-fields 0 --error-logfile - --log-level=debug --timeout 120 --workers=8 -b 0.0.0.0:8000"
+      - "8000"
+    command: /cmd.sh
     restart: always
     logging:
       driver: "json-file"
@@ -53,6 +47,7 @@ services:
     depends_on:
       - postgis
     volumes:
+      - ./cmd.sh:/cmd.sh:ro
       - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
       - ./config/g3w-suite/overrides/templates:/code/templates:ro
       - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py:ro
@@ -83,7 +78,7 @@ services:
       internal:
 
 volumes:
-    shared-volume:
+  shared-volume:
 
 networks:
-    internal:
+  internal:
