@@ -67,12 +67,6 @@ docker build -f Dockerfile.postgis -t g3wsuite/postgis:11.0-2.5 .
 
 The Docker hub name for this image is `g3wsuite/postgis:11.0-2.5`
 
-### QGIS Server
-
-QGIS Server image is built from https://github.com/elpaso/qgis-server-docker/tree/production
-
-The Docker hub name for this image is `g3wsuite/qgis3-server:ltr-ubuntu`
-
 ### HTTPS additional setup
 
 - check the domain name in the `.env` file and in `config/nginx/django_ssl.conf`
@@ -163,3 +157,13 @@ Type "help" for help.
 
 postgres=#
 ```
+
+## Portainer
+Portainer(https://www.portainer.io) is a software for build and manage Docker environments ina esay and graphical way.
+
+For Portainer use `docker-compose-portainer.yml` file and in plus of env vars before, set the follow mandatory env vars:
+
+* G3WSUITE_DOCKER_INSTALL_DIR: host directory where this code is.
+* PG_PUBLIC_PORT: host port to map Docker PostgreSql default port (5432).
+* WEBGIS_HTTP_PORT: host port to map Docker Nginx port (8080).
+* WEBGIS_HTTPS_PORT: host port to map Docker Nginx port (443).

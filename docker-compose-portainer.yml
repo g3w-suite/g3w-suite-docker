@@ -1,0 +1,87 @@
+# docker-conpose file for Portainer(https://www.portainer.io)
+# A the moment Portainer work only with version "2"
+
+version: "2"
+services:
+  postgis:
+    image: g3wsuite/postgis:11.0-2.5
+    ports:
+      - "${PG_PUBLIC_PORT}:5432"
+    environment:
+      - POSTGRES_DBNAME=${G3WSUITE_POSTGRES_DBNAME},data_testing,data_production
+      - POSTGRES_USER=${G3WSUITE_POSTGRES_USER_LOCAL}
+      - POSTGRES_PASS=${G3WSUITE_POSTGRES_PASS}
+      - ALLOW_IP_RANGE=0.0.0.0/0
+    restart: on-failure
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    volumes:
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/var/lib/postgresql
+    networks:
+      internal:
+        aliases:
+          - ${WEBGIS_PUBLIC_HOSTNAME}
+
+  g3w-suite:
+    image: g3wsuite/g3w-suite-dev:latest
+    environment:
+      - G3WSUITE_TILECACHE_PATH
+      - G3WSUITE_QDJANGO_SERVER_URL
+      - G3WSUITE_POSTGRES_DBNAME
+      - G3WSUITE_POSTGRES_USER
+      - G3WSUITE_POSTGRES_USER_LOCAL
+      - G3WSUITE_POSTGRES_PASS
+      - G3WSUITE_POSTGRES_HOST
+      - G3WSUITE_POSTGRES_PORT
+      - TILESTACHE_CACHE_BUFFER_SIZE
+    expose:
+      - "8000"
+    command: /cmd.sh
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+    depends_on:
+      - postgis
+    volumes:
+      - ${G3WSUITE_DOCKER_INSTALL_DIR}/cmd.sh:/cmd.sh:ro
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
+      - ${G3WSUITE_DOCKER_INSTALL_DIR}/config/g3w-suite/overrides/templates:/code/templates:ro
+      - ${G3WSUITE_DOCKER_INSTALL_DIR}/config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py:ro
+
+    networks:
+      internal:
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "${WEBGIS_HTTP_PORT}:8080"
+      - "${WEBGIS_HTTPS_PORT}:443"
+    expose:
+      - "8080"
+    volumes:
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known:/var/www/.well-known
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt:ro
+      - ${G3WSUITE_DOCKER_INSTALL_DIR}/config/g3w-suite/overrides/static:/shared-volume/static/overrides:ro
+      - ${G3WSUITE_DOCKER_INSTALL_DIR}/config/nginx:/etc/nginx/conf.d:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    restart: always
+    networks:
+      internal:
+
+volumes:
+  shared-volume:
+
+networks:
+  internal:
