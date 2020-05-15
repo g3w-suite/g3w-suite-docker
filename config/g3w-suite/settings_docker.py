@@ -7,7 +7,7 @@ import os
 G3WADMIN_PROJECT_APPS = []
 
 G3WADMIN_LOCAL_MORE_APPS = [
-    #'caching',
+    'caching',
     'editing',
     #'filemanager'
 ]
@@ -33,12 +33,13 @@ DEBUG = False if os.getenv('G3WSUITE_DEBUG', 0) == 0 else True
 
 DATASOURCE_PATH = '/shared-volume/project_data/'
 
-# CACHING SETTINGS
-# =======================================
-# TILESTACHE_CACHE_NAME = 'default'
-# TILESTACHE_CACHE_TYPE = 'Disk' # or 'Memcache'
-# TILESTACHE_CACHE_DISK_PATH = os.getenv('G3WSUITE_TILECACHE_PATH')
-# TILESTACHE_CACHE_BUFFER_SIZE = os.getenv('TILESTACHE_CACHE_BUFFER_SIZE')  # Pixels
+#CACHING SETTINGS
+#=======================================
+TILESTACHE_CACHE_NAME = 'default'
+TILESTACHE_CACHE_TYPE = 'Disk' # or 'Memcache'
+TILESTACHE_CACHE_DISK_PATH = os.getenv('G3WSUITE_TILECACHE_PATH')
+TILESTACHE_CACHE_BUFFER_SIZE = os.getenv('TILESTACHE_CACHE_BUFFER_SIZE')
+TILESTACHE_CACHE_TOKEN = os.getenv('TILESTACHE_CACHE_TOKEN')
 
 # FILEMANAGER SETTINGS
 # =======================================
@@ -47,9 +48,12 @@ DATASOURCE_PATH = '/shared-volume/project_data/'
 
 # EDITING SETTINGS
 # ======================================
-#USER_MEDIA_ROOT = FILEMANAGER_ROOT_PATH + '/media_user/'
+#tamani .. non vengo in ufficio vedo dopo pranzo se no lunedì
+# USER_MEDIA_ROOT = FILEMANAGER_ROOT_PATH + '/media_user/'
 
 ALLOWED_HOSTS = "*"
+
+QDJANGO_SERVER_URL = 'http://localhost:8000'
 
 LOGGING = {
     'version': 1,
