@@ -9,7 +9,7 @@ G3WADMIN_PROJECT_APPS = []
 G3WADMIN_LOCAL_MORE_APPS = [
     'caching',
     'editing',
-    #'filemanager'
+    'filemanager'
 ]
 
 DATABASES = {
@@ -43,16 +43,16 @@ TILESTACHE_CACHE_TOKEN = os.getenv('TILESTACHE_CACHE_TOKEN')
 
 # FILEMANAGER SETTINGS
 # =======================================
-# FILEMANAGER_ROOT_PATH = os.getenv('G3WSUITE_FILEMANAGER_ROOT_PATH', '/shared-volume/project_data')
-# FILENAMANAGER_MAX_N_FILES = os.getenv('G3WSUITE_FILENAMANAGER_MAX_N_FILES', 10)
+FILEMANAGER_ROOT_PATH = os.getenv('G3WSUITE_FILEMANAGER_ROOT_PATH', '/shared-volume/project_data')
+FILENAMANAGER_MAX_N_FILES = os.getenv('G3WSUITE_FILENAMANAGER_MAX_N_FILES', 10)
 
 # EDITING SETTINGS
 # ======================================
-#tamani .. non vengo in ufficio vedo dopo pranzo se no lunedì
-# USER_MEDIA_ROOT = FILEMANAGER_ROOT_PATH + '/media_user/'
+USER_MEDIA_ROOT = FILEMANAGER_ROOT_PATH + '/' + os.getenv('G3WSUITE_USER_MEDIA_ROOT', 'user_media') + '/'
 
 ALLOWED_HOSTS = "*"
 
+# Is required by caching module
 QDJANGO_SERVER_URL = 'http://localhost:8000'
 
 LOGGING = {

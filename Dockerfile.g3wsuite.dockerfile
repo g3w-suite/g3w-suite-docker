@@ -16,7 +16,6 @@ RUN pip3 install -r requirements_rl.txt
 RUN pip3 install -r /code/g3w-admin/caching/requirements.txt
 
 # Filemanager
-#RUN cd /code/g3w-admin/ && git submodule add -b dev -f https://github.com/g3w-suite/g3w-admin-filemanager.git filemanager
-#RUN pip3 install -r /code/g3w-admin/filemanager/requirements.txt
+RUN pip3 install -r /code/g3w-admin/filemanager/requirements.txt
 
 CMD echo "Base image for g3w-suite-dev" && tail -f /dev/null
