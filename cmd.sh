@@ -5,7 +5,7 @@
 # Start XVfb
 Xvfb :99 -screen 0 640x480x24 -nolisten tcp &
 export DISPLAY=:99
-ecport QGIS_SERVER_PARALLEL_RENDERING=1
+export QGIS_SERVER_PARALLEL_RENDERING=1
 # Build the suite
 /code/ci_scripts/build_suite.sh
 # Setup once
