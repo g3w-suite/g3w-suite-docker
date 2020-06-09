@@ -1,6 +1,6 @@
 FROM ubuntu:bionic
-# This image is available as g3wsuite/g3w-suite-deps:latest
-LABEL maintainer="Gis3w" Description="This image is used to prepare build requirements for g3w-suite CI testing" Vendor="Gis3w" Version="1.2"
+# This image is available as g3wsuite/g3w-suite-deps:latest-ltr
+LABEL maintainer="Gis3w" Description="This image is used to prepare build requirements for g3w-suite docker images" Vendor="Gis3w" Version="1.2"
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN chown root:root /tmp && chmod ugo+rwXt /tmp
