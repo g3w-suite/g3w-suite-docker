@@ -16,6 +16,11 @@ if [ "${WEBGIS_DOCKER_SHARED_VOLUME}" = "" ]; then
     exit 1
 fi
 
+mkdir -p "${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt/"
+
+curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf > "${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt/options-ssl-nginx.conf"
+curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem > "${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt/ssl-dhparams.pem"
+
 docker run -it --rm --name certbot \
   -v ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt \
   -v ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known:/var/www/.well-known \

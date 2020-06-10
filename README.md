@@ -71,11 +71,10 @@ The Docker hub name for this image is `g3wsuite/postgis:11.0-2.5`
 
 - check the domain name in the `.env` file and in `config/nginx/django_ssl.conf`
 - run `mkdir -p /shared-volume/ssl/certs/`
-- run `sudo openssl dhparam -out /shared-volume/ssl/certs/dhparam-2048.pem 2048`
 - run: `docker pull certbot/certbot`
 - launch `./run_certbot.sh`
 - make sure the certs are renewed by adding a cron job with `crontab -e` and add the following line:
-  `0 3 * * * /home/g3w-suite/rl.g3wsuite.it/run_certbot.sh`
+  `0 3 * * * /home/g3w-suite/g3w-suite-docker/run_certbot.sh`
 - if you disabled HTTPS, you can move `config/nginx/django_ssl.conf` back to its original location now, and restart the Docker compose to finally enable HTTPS
 
 ## Run
