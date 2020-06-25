@@ -3,6 +3,7 @@
 # volume-mounted (ro) in the docker compose as /cmd.sh
 
 # Start XVfb
+rm /tmp/.X99-lock
 Xvfb :99 -screen 0 640x480x24 -nolisten tcp &
 export DISPLAY=:99
 export QGIS_SERVER_PARALLEL_RENDERING=1
