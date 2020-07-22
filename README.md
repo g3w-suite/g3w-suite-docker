@@ -62,7 +62,7 @@ docker build -f Dockerfile.g3wsuite-deps.dockerfile -t g3wsuite/g3w-suite-deps:l
 Postgis image can be built with:
 
 ```bash
-docker build -f Dockerfile.postgis -t g3wsuite/postgis:11.0-2.5 .
+docker build -f Dockerfile.postgis.dockerfile -t g3wsuite/postgis:11.0-2.5 .
 ```
 
 The Docker hub name for this image is `g3wsuite/postgis:11.0-2.5`
