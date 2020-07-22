@@ -4,9 +4,9 @@ LABEL maintainer="Gis3W" Description="This image is used to install python requi
 # Based on main CI Docker from  g3w-suite, checkout code + caching,
 # custom settings file
 RUN apt install git -y && \
-    git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --branch v3.0.x /code && \
+    git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --branch v.3.0.x /code && \
     cd /code && \
-    git checkout dev
+    git checkout v.3.0.x
 
 # Override settings
 COPY requirements_rl.txt .
