@@ -27,7 +27,7 @@ RUN apt-get update && apt install -y \
     xvfb
 
 # PyQGIS 3.10
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key F7E06F06199EF2F && \
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key F7E06F06199EF2F2 && \
     echo "deb [arch=amd64] https://qgis.org/ubuntu-ltr bionic main" >> /etc/apt/sources.list && \
     apt update && apt install -y python3-qgis qgis-server
 
