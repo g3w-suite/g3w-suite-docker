@@ -66,7 +66,7 @@ services:
       - "8080"
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/certbot:/var/www/certbot
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known:/var/www/.well-known
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt:ro
       - ./config/g3w-suite/overrides/static:/shared-volume/static/overrides:ro
       - ./config/nginx:/etc/nginx/conf.d:ro

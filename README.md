@@ -29,6 +29,7 @@ G3WSUITE_POSTGRES_PORT=5432
 # Caching
 G3WSUITE_TILECACHE_PATH=/shared-volume/tile_cache/
 TILESTACHE_CACHE_BUFFER_SIZE=256
+TILESTACHE_CACHE_TOKEN=374h5g96831hsgetvmkdel
 
 # URL of the QGIS Server
 G3WSUITE_QDJANGO_SERVER_URL=http://qgisserver/ows/
@@ -69,13 +70,16 @@ The Docker hub name for this image is `g3wsuite/postgis:11.0-2.5`
 
 ### HTTPS additional setup
 
+- move `config/_nginx/django_ssl.conf` to `config/nginx/django_ssl.conf`
 - check the domain name in the `.env` file and in `config/nginx/django_ssl.conf`
-- run `mkdir -p /shared-volume/ssl/certs/`
 - run: `docker pull certbot/certbot`
 - launch `./run_certbot.sh`
+- activate 301 redirect into `config/nginx/django.conf`
+- restart compose
 - make sure the certs are renewed by adding a cron job with `crontab -e` and add the following line:
-  `0 3 * * * /home/g3w-suite/g3w-suite-docker/run_certbot.sh`
+  `0 3 * * * /<path_to_your_docker_files>/run_certbot.sh`
 - if you disabled HTTPS, you can move `config/nginx/django_ssl.conf` back to its original location now, and restart the Docker compose to finally enable HTTPS
+
 
 ## Run
 
