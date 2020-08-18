@@ -55,7 +55,7 @@ docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite-dev:latest 
 The image is build from `https://github.com/g3w-suite/g3w-admin.git --branch dev` and from a dependencies base image `Dockerfile.g3wsuite-deps.dockerfile`, the dependencies image can be built with:
 
 ```bash
-docker build -f Dockerfile.g3wsuite-deps.dockerfile -t g3wsuite/g3w-suite-deps:latest --no-cache .
+docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps:latest --no-cache .
 ```
 
 ### Postgis
