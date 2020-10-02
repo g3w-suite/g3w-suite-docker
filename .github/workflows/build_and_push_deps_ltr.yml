@@ -2,7 +2,7 @@ name: CI to Docker hub for dependencies image.
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ dev, v3.0.x ]
 
 jobs:
 
@@ -31,7 +31,7 @@ jobs:
           context: ./
           file: ./Dockerfile.g3wsuite-deps.ltr.dockerfile
           push: true
-          tags: g3wsuite/g3w-suite-deps-ltr:3.10.x
+          tags: g3wsuite/g3w-suite-deps-ltr:${GITHUB_REF##*/}
 
       -
         name: Image digest
