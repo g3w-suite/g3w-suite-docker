@@ -49,13 +49,13 @@ G3WSUITE_GUNICORN_NUM_WORKERS=8
 The main suite image can be built with:
 
 ```bash
-docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite-dev:latest --no-cache .
+docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:3.0.x --no-cache .
 ```
 
 The image is build from `https://github.com/g3w-suite/g3w-admin.git --branch v.3.0.x` and from a dependencies base image `Dockerfile.g3wsuite-deps.dockerfile`, the dependencies image can be built with:
 
 ```bash
-docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps:latest --no-cache .
+docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps-ltr:3.0.x --no-cache .
 ```
 
 ### Postgis
