@@ -2,7 +2,11 @@ name: CI to Docker hub for dependencies image.
 
 on:
   push:
-    branches: [ dev, v3.0.x ]
+    branches:
+      - dev
+      - v3.0.x
+  schedule:
+    - cron: "0 4 * * *"
 
 jobs:
 
