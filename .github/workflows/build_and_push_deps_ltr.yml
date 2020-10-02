@@ -13,6 +13,10 @@ jobs:
         name: Checkout
         uses: actions/checkout@v2
       -
+        name: Extract branch name
+        shell: bash
+        run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')"
+      -
         name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
@@ -31,7 +35,7 @@ jobs:
           context: ./
           file: ./Dockerfile.g3wsuite-deps.ltr.dockerfile
           push: true
-          tags: g3wsuite/g3w-suite-deps-ltr:${{ github.ref }}
+          tags: g3wsuite/g3w-suite-deps-ltr:${{ env.BRANCH_NAME }}
 
       -
         name: Image digest
