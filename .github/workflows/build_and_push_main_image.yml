@@ -1,11 +1,11 @@
-name: CI to Docker hub for dependencies image.
+name: CI to Docker hub for main G3W-SUITE image.
 
 on:
   push:
     branches:
       - dev
-  schedule:
-    - cron: "0 4 * * *"
+    schedule:
+      - cron: "0 4 * * *"
 
 jobs:
 
@@ -36,9 +36,9 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./
-          file: ./Dockerfile.g3wsuite-deps.ltr.dockerfile
+          file: ./Dockerfile.g3wsuite.dockerfile
           push: true
-          tags: g3wsuite/g3w-suite-deps-ltr:${{ env.BRANCH_NAME }}
+          tags: g3wsuite/g3w-suite:${{ env.BRANCH_NAME }}
 
       -
         name: Image digest
