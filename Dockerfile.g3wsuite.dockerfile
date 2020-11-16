@@ -1,12 +1,12 @@
-FROM g3wsuite/g3w-suite-deps-ltr:dev
+FROM g3wsuite/g3w-suite-deps-ltr:v3.1.x
 
 LABEL maintainer="Gis3W" Description="This image is used to install python requirements and code for g3w-suite deployment" Vendor="Gis3W" Version="1.0"
 # Based on main CI Docker from  g3w-suite, checkout code + caching,
 # custom settings file
 RUN apt install git -y && \
-    git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --branch dev /code && \
+    git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --branch v.3.1.x /code && \
     cd /code && \
-    git checkout dev
+    git checkout v.3.1.x
 
 # Override settings
 COPY requirements_rl.txt .
