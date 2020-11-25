@@ -171,7 +171,7 @@ postgres=#
 ```
 
 ## Portainer
-Portainer(https://www.portainer.io) is a software for build and manage Docker environments ina esay and graphical way.
+Portainer(https://www.portainer.io) is a software for build and manage Docker environments in an easy and graphical way.
 
 For Portainer use `docker-compose-portainer.yml` file and in plus of env vars before, set the follow mandatory env vars:
 
