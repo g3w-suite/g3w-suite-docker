@@ -60,7 +60,7 @@ services:
       internal:
 
   nginx:
-    image: nginx:latest
+    image: nginx:1.19.5
     ports:
       - "${WEBGIS_HTTP_PORT}:8080"
       - "${WEBGIS_HTTPS_PORT}:443"
