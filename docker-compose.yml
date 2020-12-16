@@ -58,7 +58,7 @@ services:
       internal:
 
   nginx:
-    image: nginx:latest
+    image: nginx:1.19.5
     ports:
       - "8080:8080"
       - "443:443"
