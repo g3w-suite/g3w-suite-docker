@@ -16,7 +16,12 @@ services:
         max-size: "200k"
         max-file: "10"
     volumes:
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/var/lib/postgresql
+      - g3wsuite-pg-data:/var/lib/postgresql
+    healthcheck:
+      interval: 60s
+      timeout: 30s
+      retries: 3
+      test: "pg_isready"
     networks:
       internal:
         aliases:
@@ -37,7 +42,6 @@ services:
       - TILESTACHE_CACHE_TOKEN
     expose:
       - "8000"
-    command: /cmd.sh
     restart: always
     logging:
       driver: "json-file"
@@ -48,7 +52,6 @@ services:
     depends_on:
       - postgis
     volumes:
-      - ./cmd.sh:/cmd.sh:ro
       - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
       - ./config/g3w-suite/overrides/templates:/code/templates:ro
@@ -81,6 +84,7 @@ services:
 
 volumes:
   shared-volume:
+  g3wsuite-pg-data:
 
 networks:
   internal:

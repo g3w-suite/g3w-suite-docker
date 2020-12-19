@@ -9,8 +9,10 @@ G3WADMIN_PROJECT_APPS = []
 G3WADMIN_LOCAL_MORE_APPS = [
     'caching',
     'editing',
-    'filemanager'
+    'filemanager',
+    'frontend'
 ]
+
 
 DATABASES = {
     'default': {
@@ -133,6 +135,8 @@ LOGGING = {
 }
 
 SESSION_COOKIE_NAME = 'gi3w-suite-dev-iehtgdb264t5gr'
+FRONTEND = True
+FRONTEND_APP = 'frontend'
 
 
 
