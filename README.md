@@ -116,6 +116,14 @@ This locking system can remain active if users do not exit the editing state cor
 0 */1 * * * docker exec -e DISPLAY=:99 g3w-suite-docker_g3w-suite_1 python3 /code/g3w-admin/manage.py check_features_locked
 ```
 
+## Front-end App
+
+Set the environment variable 
+```
+FRONTEND_APP=True
+```
+This will set the front end app as the default app
+
 ## Style customization
 
 Templates can now be overridden by placing the overrides in the `config/g3w-suite/overrides/templates`, a Docker service restart is required to make the changes effective.
