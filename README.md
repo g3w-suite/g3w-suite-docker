@@ -96,6 +96,10 @@ docker-compose up -d
 Data, projects, uploads and the database are stored in a shared mounted volume `shared-volume`, the volume should be on a persistent storage device and a backup
 policy must be enforced.
 
+Currently, the volume is mounted in `/tmp/shared-volume-g3wsuite-dev`. In production
+environments it is encouraged to change this to a permanent location. 
+This can be done by modifying the `.env` file.
+
 ## First time setup
 
 - log into the application web administation panel using default credentials (_admin/admin_)
@@ -115,6 +119,14 @@ This locking system can remain active if users do not exit the editing state cor
 ```
 0 */1 * * * docker exec -e DISPLAY=:99 g3w-suite-docker_g3w-suite_1 python3 /code/g3w-admin/manage.py check_features_locked
 ```
+
+## Front-end App
+
+Set the environment variable 
+```
+FRONTEND_APP=True
+```
+This will set the front end app as the default app
 
 ## Style customization
 

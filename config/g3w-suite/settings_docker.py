@@ -1,7 +1,6 @@
 # Override settings for G3W-SUITE docker
 # Destination: /code/g3w-admin/base/settings/local_settings.py
 # Read connection parameters from environment
-
 import os
 
 G3WADMIN_PROJECT_APPS = []
@@ -9,20 +8,21 @@ G3WADMIN_PROJECT_APPS = []
 G3WADMIN_LOCAL_MORE_APPS = [
     'caching',
     'editing',
-    'filemanager'
+    'filemanager',
+    'frontend'
 ]
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': os.getenv('G3WSUITE_POSTGRES_DBNAME'),
-        'USER': os.getenv('G3WSUITE_POSTGRES_USER_LOCAL') if os.getenv('G3WSUITE_POSTGRES_USER_LOCAL') else "%s@%s" % (os.getenv('G3WSUITE_POSTGRES_USER'), os.getenv('G3WSUITE_POSTGRES_HOST')),
+        'USER': os.getenv('G3WSUITE_POSTGRES_USER_LOCAL') if os.getenv('G3WSUITE_POSTGRES_USER_LOCAL') else "%s@%s" % (
+        os.getenv('G3WSUITE_POSTGRES_USER'), os.getenv('G3WSUITE_POSTGRES_HOST')),
         'PASSWORD': os.getenv('G3WSUITE_POSTGRES_PASS'),
         'HOST': os.getenv('G3WSUITE_POSTGRES_HOST'),
         'PORT': os.getenv('G3WSUITE_POSTGRES_PORT'),
     }
 }
-
 
 MEDIA_ROOT = '/shared-volume/media/'
 MEDIA_URL = '/media/'
@@ -33,10 +33,10 @@ DEBUG = False if os.getenv('G3WSUITE_DEBUG', 0) == 0 else True
 
 DATASOURCE_PATH = '/shared-volume/project_data/'
 
-#CACHING SETTINGS
-#=======================================
+# CACHING SETTINGS
+# =======================================
 TILESTACHE_CACHE_NAME = 'default'
-TILESTACHE_CACHE_TYPE = 'Disk' # or 'Memcache'
+TILESTACHE_CACHE_TYPE = 'Disk'  # or 'Memcache'
 TILESTACHE_CACHE_DISK_PATH = os.getenv('G3WSUITE_TILECACHE_PATH')
 TILESTACHE_CACHE_BUFFER_SIZE = os.getenv('TILESTACHE_CACHE_BUFFER_SIZE')
 TILESTACHE_CACHE_TOKEN = os.getenv('TILESTACHE_CACHE_TOKEN')
@@ -133,6 +133,4 @@ LOGGING = {
 }
 
 SESSION_COOKIE_NAME = 'gi3w-suite-dev-iehtgdb264t5gr'
-
-
 
