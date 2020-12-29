@@ -96,6 +96,10 @@ docker-compose up -d
 Data, projects, uploads and the database are stored in a shared mounted volume `shared-volume`, the volume should be on a persistent storage device and a backup
 policy must be enforced.
 
+Currently, the volume is mounted in `/tmp/shared-volume-g3wsuite-dev`. In production
+environments it is encouraged to change this to a permanent location. 
+This can be done by modifying the `.env` file.
+
 ## First time setup
 
 - log into the application web administation panel using default credentials (_admin/admin_)
