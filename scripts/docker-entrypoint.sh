@@ -41,5 +41,11 @@ if [[ ${FRONTEND_APP} =~ [Tt][Rr][Uu][Ee] ]]; then
   python3 manage.py collectstatic --noinput
 fi
 
-gunicorn base.wsgi:application --limit-request-fields 0 --error-logfile - \
-    --log-level=debug --timeout 120 --workers=${G3WSUITE_GUNICORN_NUM_WORKERS:-8} -b 0.0.0.0:8000
+gunicorn base.wsgi:application \
+    --limit-request-fields 0 \
+    --max-requests 100 \
+    --error-logfile - \
+    --log-level=debug \
+    --timeout 120 \
+    --workers=${G3WSUITE_GUNICORN_NUM_WORKERS:-8} \
+    -b 0.0.0.0:8000
