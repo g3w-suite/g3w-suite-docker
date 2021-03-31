@@ -21,3 +21,6 @@ pip3 install -r /code/g3w-admin/caching/requirements.txt
 # File manager
 pip3 install -r /code/g3w-admin/filemanager/requirements.txt
 
+# Qplotly
+pip3 install -r /code/g3w-admin/qplotly/requirements.txt
+
