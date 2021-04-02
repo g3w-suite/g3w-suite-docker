@@ -19,7 +19,7 @@ fi
 
 # Activate the front end app settings
 
-if [[ ${FRONTEND_APP} =~ [Tt][Rr][Uu][Ee] ]] ; then
+if [[ "${FRONTEND}" =~ [Tt][Rr][Uu][Ee] ]] ; then
   SETTINGS_LOCKFILE=/shared-volume/.settings.lockfile
   if [[ ! -f ${SETTINGS_LOCKFILE} ]]; then
     echo "FRONTEND = True"  >> /code/g3w-admin/base/settings/local_settings.py
@@ -33,19 +33,5 @@ fi
 # Setup once
 /code/ci_scripts/setup_suite.sh
 
-
-# Run migrations to activate the front end app based on env variable
-if [[ ${FRONTEND_APP} =~ [Tt][Rr][Uu][Ee] ]]; then
-  python3 manage.py makemigrations
-  python3 manage.py migrate
-  python3 manage.py collectstatic --noinput
-fi
-
-gunicorn base.wsgi:application \
-    --limit-request-fields 0 \
-    --max-requests 100 \
-    --error-logfile - \
-    --log-level=debug \
-    --timeout 120 \
-    --workers=${G3WSUITE_GUNICORN_NUM_WORKERS:-8} \
-    -b 0.0.0.0:8000
+gunicorn base.wsgi:application --limit-request-fields 0 --error-logfile - \
+    --log-level=debug --timeout 120 --workers=${G3WSUITE_GUNICORN_NUM_WORKERS:-8} -b 0.0.0.0:8000

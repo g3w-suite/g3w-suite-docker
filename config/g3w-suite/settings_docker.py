@@ -9,7 +9,7 @@ G3WADMIN_LOCAL_MORE_APPS = [
     'caching',
     'editing',
     'filemanager',
-    'frontend'
+    'openrouteservice',
 ]
 
 DATABASES = {
@@ -17,7 +17,7 @@ DATABASES = {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': os.getenv('G3WSUITE_POSTGRES_DBNAME'),
         'USER': os.getenv('G3WSUITE_POSTGRES_USER_LOCAL') if os.getenv('G3WSUITE_POSTGRES_USER_LOCAL') else "%s@%s" % (
-        os.getenv('G3WSUITE_POSTGRES_USER'), os.getenv('G3WSUITE_POSTGRES_HOST')),
+            os.getenv('G3WSUITE_POSTGRES_USER'), os.getenv('G3WSUITE_POSTGRES_HOST')),
         'PASSWORD': os.getenv('G3WSUITE_POSTGRES_PASS'),
         'HOST': os.getenv('G3WSUITE_POSTGRES_HOST'),
         'PORT': os.getenv('G3WSUITE_POSTGRES_PORT'),
@@ -43,12 +43,47 @@ TILESTACHE_CACHE_TOKEN = os.getenv('TILESTACHE_CACHE_TOKEN')
 
 # FILEMANAGER SETTINGS
 # =======================================
-FILEMANAGER_ROOT_PATH = os.getenv('G3WSUITE_FILEMANAGER_ROOT_PATH', '/shared-volume/project_data')
+FILEMANAGER_ROOT_PATH = os.getenv(
+    'G3WSUITE_FILEMANAGER_ROOT_PATH', '/shared-volume/project_data')
 FILENAMANAGER_MAX_N_FILES = os.getenv('G3WSUITE_FILENAMANAGER_MAX_N_FILES', 10)
 
 # EDITING SETTINGS
 # ======================================
-USER_MEDIA_ROOT = FILEMANAGER_ROOT_PATH + '/' + os.getenv('G3WSUITE_USER_MEDIA_ROOT', 'user_media') + '/'
+USER_MEDIA_ROOT = FILEMANAGER_ROOT_PATH + '/' + \
+    os.getenv('G3WSUITE_USER_MEDIA_ROOT', 'user_media') + '/'
+
+
+# OPENROUTESERVICE SETTINGS
+# ===============================
+# settings for 'openrouteservice' module is in 'G3WADMIN_LOCAL_MORE_APPS'
+# ORS API endpoint
+ORS_API_ENDPOINT = os.getenv('G3WSUITE_ORS_API_ENDPOINT')
+# Optional, can be blank if the key is not required by the endpoint
+ORS_API_KEY = os.getenv('G3WSUITE_ORS_API_KEY', '')
+# List of available ORS profiles
+ORS_PROFILES = {
+    "driving-car": {"name": "Car"},
+    "driving-hgv": {"name": "Heavy Goods Vehicle"}
+}
+# Max number of ranges (it depends on the server configuration)
+ORS_MAX_RANGES = int(os.getenv('ORS_MAX_RANGES', 6))
+# Max number of locations(it depends on the server configuration)
+ORS_MAX_LOCATIONS = int(os.getenv('ORS_MAX_LOCATIONS', 2))
+
+# HUEY Task scheduler
+# Requires redis
+# HUEY configuration
+HUEY = {
+    # Huey implementation to use.
+    'huey_class': 'huey.RedisExpireHuey',
+    'name': 'g3w-suite',
+    'url': 'redis://redis:6379/?db=0',
+    'immediate': False,  # If DEBUG=True, run synchronously.
+    'consumer': {
+        'workers': 1,
+        'worker_type': 'process',
+    },
+}
 
 ALLOWED_HOSTS = "*"
 
@@ -125,12 +160,11 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG',
         },
-        '': {
+        'openrouteservice': {
             'handlers': ['console'],
-            'level': 'WARNING',
+            'level': 'DEBUG',
         }
     }
 }
 
 SESSION_COOKIE_NAME = 'gi3w-suite-dev-iehtgdb264t5gr'
-

@@ -40,6 +40,11 @@ G3WSUITE_DEBUG = 1 (0 default)
 # Gunicorn workers (default to 8)
 G3WSUITE_GUNICORN_NUM_WORKERS=8
 
+# Openrouteservice (if enabled in custom settings)
+G3WSUITE_ORS_API_ENDPOINT='https://api.openrouteservice.org/v2'
+G3WSUITE_ORS_API_KEY='<your API key, if required (optional)>'
+
+
 ```
 
 ## Build
@@ -97,7 +102,7 @@ Data, projects, uploads and the database are stored in a shared mounted volume `
 policy must be enforced.
 
 Currently, the volume is mounted in `/tmp/shared-volume-g3wsuite-dev`. In production
-environments it is encouraged to change this to a permanent location. 
+environments it is encouraged to change this to a permanent location.
 This can be done by modifying the `.env` file.
 
 ## First time setup
@@ -113,7 +118,7 @@ Tile cache can be configured and cleared per-layer through the webgis admin pane
 
 ## Editing
 
-Editing module is active by default, to avoid simultaneous feature editing by two or more users, the editing module works with a feature lock system. 
+Editing module is active by default, to avoid simultaneous feature editing by two or more users, the editing module works with a feature lock system.
 This locking system can remain active if users do not exit the editing state correctly, to avoid this it is advisable to activate a cron job on host machine that checks the features that have been locked for more than 4 hours and frees them:
 
 ```
@@ -122,9 +127,9 @@ This locking system can remain active if users do not exit the editing state cor
 
 ## Front-end App
 
-Set the environment variable 
+Set the environment variable
 ```
-FRONTEND_APP=True
+FRONTEND=True
 ```
 This will set the front end app as the default app
 
