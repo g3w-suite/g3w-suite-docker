@@ -5,6 +5,11 @@ LABEL maintainer="Gis3W" Description="This image is used to install python requi
 # custom settings file
 RUN apt install git -y
 
+# git branch of g3w-admin to checkout.
+# Defaults to `dev` but can be set to another branch name to build
+# a particular suite version
+ARG G3W_SUITE_BRANCH
+
 # Override settings
 ADD requirements_rl.txt /requirements_rl.txt
 

@@ -9,7 +9,6 @@ G3WADMIN_LOCAL_MORE_APPS = [
     'caching',
     'editing',
     'filemanager',
-    'frontend',
     'openrouteservice',
 ]
 
@@ -71,11 +70,12 @@ ORS_MAX_RANGES = int(os.getenv('ORS_MAX_RANGES', 6))
 # Max number of locations(it depends on the server configuration)
 ORS_MAX_LOCATIONS = int(os.getenv('ORS_MAX_LOCATIONS', 2))
 
-# Task scheduler
+# HUEY Task scheduler
 # Requires redis
 # HUEY configuration
 HUEY = {
-    'huey_class': 'huey.RedisHuey',  # Huey implementation to use.
+    # Huey implementation to use.
+    'huey_class': 'huey.RedisExpireHuey',
     'name': 'g3w-suite',
     'url': 'redis://redis:6379/?db=0',
     'immediate': False,  # If DEBUG=True, run synchronously.
