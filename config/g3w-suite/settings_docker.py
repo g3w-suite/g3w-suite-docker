@@ -9,6 +9,7 @@ G3WADMIN_LOCAL_MORE_APPS = [
     'caching',
     'editing',
     'filemanager',
+    'qplotly',
     'openrouteservice',
 ]
 
