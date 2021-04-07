@@ -39,7 +39,7 @@ jobs:
         with:
           context: ./
           file: ./Dockerfile.g3wsuite.dockerfile
-          build-args: G3W_SUITE_BRANCH=v.3.2.x,
+          build-args: G3W_SUITE_BRANCH=v.3.2.x
           push: true
           tags: g3wsuite/g3w-suite:${{ env.BRANCH_NAME }}
 
