@@ -28,7 +28,7 @@ services:
           - ${WEBGIS_PUBLIC_HOSTNAME}
 
   g3w-suite:
-    image: g3wsuite/g3w-suite:dev
+    image: g3wsuite/g3w-suite:v3.2.x
     environment:
       - G3WSUITE_TILECACHE_PATH
       - G3WSUITE_QDJANGO_SERVER_URL
