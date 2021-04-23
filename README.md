@@ -54,7 +54,7 @@ G3WSUITE_ORS_API_KEY='<your API key, if required (optional)>'
 The main suite image can be built with:
 
 ```bash
-docker build -f --build-arg G3W_SUITE_BRANCH=v.3.2.x Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:v3.2.x --no-cache .
+docker build --build-arg G3W_SUITE_BRANCH=v.3.2.x -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:v3.2.x --no-cache .
 ```
 
 The image is build from `https://github.com/g3w-suite/g3w-admin.git --branch v3.2.x` and from a dependencies base image `Dockerfile.g3wsuite-deps.dockerfile`, the dependencies image can be built with:
