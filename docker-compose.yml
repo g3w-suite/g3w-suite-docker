@@ -43,6 +43,7 @@ services:
       - TILESTACHE_CACHE_BUFFER_SIZE
       - TILESTACHE_CACHE_TOKEN
       - FRONTEND
+      - QGIS_OPTIONS_PATH=/shared-volume/
     expose:
       - "8000"
     restart: always
@@ -59,6 +60,7 @@ services:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
       - ./config/g3w-suite/overrides/templates:/code/templates:ro
       - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
+      - ./config/qgis/QGIS3.ini:/shared-volume/QGIS/QGIS3.ini
 
     networks:
       internal:
@@ -87,6 +89,7 @@ services:
       - TILESTACHE_CACHE_BUFFER_SIZE
       - TILESTACHE_CACHE_TOKEN
       - FRONTEND
+      - QGIS_OPTIONS_PATH=/shared-volume/
     restart: always
     logging:
       driver: "json-file"
