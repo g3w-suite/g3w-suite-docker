@@ -34,6 +34,16 @@ DEBUG = False if os.getenv('G3WSUITE_DEBUG', 0) == 0 else True
 
 DATASOURCE_PATH = '/shared-volume/project_data/'
 
+# QGIS AUTH DB
+# ========================================
+# Set the directory where an existing QGIS auth DB can be found or where it will be created if it does not exist (must be writeable from the server).
+QGIS_AUTH_DB_DIR_PATH = os.getenv('G3WSUITE_QGIS_AUTH_DB_DIR_PATH', '/shared-volume')
+# Full path to a file where the QGIS auth DB master password is saved, if the file does not exists it will be created (directory must be writeable from the server)
+# and the QGIS_AUTH_PASSWORD will be saved into the file.
+QGIS_AUTH_PASSWORD_FILE = os.getenv('G3WSUITE_QGIS_AUTH_PASSWORD_FILE', '/shared-volume/qgs_dbauth.db')
+# Define QGIS auth DB master password that will be placed into the QGIS_AUTH_PASSWORD_FILE if it does not exist.
+QGIS_AUTH_PASSWORD = os.getenv('G3WSUITE_QGIS_AUTH_PASSWORD', 'wtsgTgds53fshUHH89UJY')
+
 # CACHING SETTINGS
 # =======================================
 TILESTACHE_CACHE_NAME = 'default'
