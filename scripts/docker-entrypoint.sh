@@ -33,5 +33,11 @@ fi
 # Setup once
 /code/ci_scripts/setup_suite.sh
 
-gunicorn base.wsgi:application --limit-request-fields 0 --error-logfile - \
-    --log-level=debug --timeout 120 --workers=${G3WSUITE_GUNICORN_NUM_WORKERS:-8} -b 0.0.0.0:8000
+gunicorn base.wsgi:application \
+    --limit-request-fields 0 \
+    --error-logfile - \
+    --log-level=debug \
+    --timeout 120 \
+    --workers=${G3WSUITE_GUNICORN_NUM_WORKERS:-8} \
+    --max-requests=${G3WSUITE_GUNICORN_MAX_REQUESTS:-200} \
+    -b 0.0.0.0:8000
