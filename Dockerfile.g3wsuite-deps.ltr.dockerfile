@@ -1,6 +1,6 @@
-FROM ubuntu:bionic
+FROM ubuntu:focal
 # This image is available as g3wsuite/g3w-suite-deps:latest-ltr
-LABEL maintainer="Gis3w" Description="This image is used to prepare build requirements for g3w-suite docker images" Vendor="Gis3w" Version="1.2"
+LABEL maintainer="Gis3w" Description="This image is used to prepare build requirements for g3w-suite docker images" Vendor="Gis3w" Version="dev"
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN chown root:root /tmp && chmod ugo+rwXt /tmp
@@ -10,7 +10,7 @@ RUN apt-get update && apt install -y \
     postgresql-server-dev-all \
     libgdal-dev \
     python3-dev \
-    libgdal20 \
+    libgdal26 \
     python3-gdal \
     python3-pip \
     curl \
@@ -21,9 +21,9 @@ RUN apt-get update && apt install -y \
     libsqlite3-mod-spatialite \
     dirmngr \
     xvfb
-# PyQGIS 3.10
+# PyQGIS 3.16
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key F7E06F06199EF2F2 && \
-    echo "deb [arch=amd64] https://qgis.org/ubuntu-ltr bionic main" >> /etc/apt/sources.list && \
+    echo "deb [arch=amd64] https://qgis.org/ubuntu-ltr focal main" >> /etc/apt/sources.list && \
     apt update && apt install -y python3-qgis qgis-server
 # Yarn
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
