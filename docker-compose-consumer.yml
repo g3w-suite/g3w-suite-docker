@@ -17,6 +17,11 @@ services:
         max-file: "10"
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}:/var/lib/postgresql
+    healthcheck:
+      interval: 60s
+      timeout: 30s
+      retries: 3
+      test: "pg_isready"
     networks:
       internal:
         aliases:
@@ -33,11 +38,15 @@ services:
       - G3WSUITE_POSTGRES_PASS
       - G3WSUITE_POSTGRES_HOST
       - G3WSUITE_POSTGRES_PORT
+      - G3WSUITE_ORS_API_ENDPOINT
+      - G3WSUITE_ORS_API_KEY
       - TILESTACHE_CACHE_BUFFER_SIZE
       - TILESTACHE_CACHE_TOKEN
+      - G3WSUITE_GUNICORN_NUM_WORKERS
+      - G3WSUITE_GUNICORN_MAX_REQUESTS
+      - FRONTEND
     expose:
       - "8000"
-    command: /cmd.sh
     restart: always
     logging:
       driver: "json-file"
@@ -48,12 +57,55 @@ services:
     depends_on:
       - postgis
     volumes:
-      - ./cmd.sh:/cmd.sh:ro
       - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
       - ./config/g3w-suite/overrides/templates:/code/templates:ro
-      - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py:ro
+      - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
 
+    networks:
+      internal:
+
+  redis:
+    image: redis:latest
+    expose:
+    - 6379
+    networks:
+      internal:
+
+  # Asynchronous tasks consumer (run_huey)
+  g3w-suite-consumer:
+    image: g3wsuite/g3w-suite:dev
+    environment:
+      - G3WSUITE_TILECACHE_PATH
+      - G3WSUITE_QDJANGO_SERVER_URL
+      - G3WSUITE_POSTGRES_DBNAME
+      - G3WSUITE_POSTGRES_USER
+      - G3WSUITE_POSTGRES_USER_LOCAL
+      - G3WSUITE_POSTGRES_PASS
+      - G3WSUITE_POSTGRES_HOST
+      - G3WSUITE_POSTGRES_PORT
+      - G3WSUITE_ORS_API_ENDPOINT
+      - G3WSUITE_ORS_API_KEY
+      - TILESTACHE_CACHE_BUFFER_SIZE
+      - TILESTACHE_CACHE_TOKEN
+      - G3WSUITE_GUNICORN_NUM_WORKERS
+      - G3WSUITE_GUNICORN_MAX_REQUESTS
+      - FRONTEND
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    entrypoint: /scripts/docker-consumer-entrypoint.sh
+    depends_on:
+      - g3w-suite
+      - redis
+    volumes:
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
+      - ./config/g3w-suite/overrides/templates:/code/templates:ro
+      - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
     networks:
       internal:
 
@@ -86,9 +138,9 @@ services:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/certbot:/var/www/certbot
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt
 
-
 volumes:
   shared-volume:
+  g3wsuite-pg-data:
 
 networks:
   internal:
