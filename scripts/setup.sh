@@ -14,6 +14,7 @@ python3 -m pip install pip==20.0.2
 
 # Override settings
 pip3 install -r requirements_rl.txt
+pip3 install -r requirements_huey.txt
 
 # Front end
 #TODO make this as generic so that we can install as many plugins as possible
