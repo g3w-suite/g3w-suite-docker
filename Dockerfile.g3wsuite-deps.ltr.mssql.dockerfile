@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:focal
 # This image is available as g3wsuite/g3w-suite-deps:ltr-mssql
 # This image contain MSSql odbc driver.
 LABEL maintainer="Gis3w" Description="This image is used to prepare build requirements for g3w-suite docker images" Vendor="Gis3w" Version="1.2"
@@ -11,7 +11,7 @@ RUN apt-get update && apt install -y \
     postgresql-server-dev-all \
     libgdal-dev \
     python3-dev \
-    libgdal20 \
+    libgdal26 \
     python3-gdal \
     python3-pip \
     curl \
@@ -33,7 +33,7 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key 46B5721DBBD2996A && 
 
 # MSSQL
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add
-RUN echo "deb https://packages.microsoft.com/ubuntu/18.04/prod bionic main" >> /etc/apt/sources.list
+RUN echo "deb https://packages.microsoft.com/ubuntu/20.04/prod bionic main" >> /etc/apt/sources.list
 # ACCEPT_EULA=Y END-USER LICENSE AGREEMENT FOR MICROSOFT SOFTWAR
 RUN apt update && ACCEPT_EULA=Y apt install -y msodbcsql17 mssql-tools
 
