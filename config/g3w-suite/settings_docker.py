@@ -10,7 +10,8 @@ G3WADMIN_LOCAL_MORE_APPS = [
     'editing',
     'filemanager',
     'qplotly',
-    'openrouteservice',
+    # Uncomment if you wont activate the following module
+    #'openrouteservice',
 ]
 
 DATABASES = {
