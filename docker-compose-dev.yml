@@ -59,7 +59,6 @@ services:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
       - ./config/g3w-suite/overrides/templates:/code/templates:ro
       - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
-
     networks:
       internal:
 
@@ -95,6 +94,13 @@ services:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
       - ./config/g3w-suite/overrides/templates:/code/templates:ro
       - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
+    networks:
+      internal:
+
+  redis:
+    image: redis:latest
+    expose:
+      - 6379
     networks:
       internal:
 

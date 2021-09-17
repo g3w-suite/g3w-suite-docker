@@ -75,7 +75,7 @@ ORS_API_KEY = os.getenv('G3WSUITE_ORS_API_KEY', '')
 # List of available ORS profiles
 ORS_PROFILES = {
     "driving-car": {"name": "Car"},
-    "driving-hgv": {"name": "Heavy Goods Vehicle"}
+    "foot-walking": {"name": "Walking"}
 }
 # Max number of ranges (it depends on the server configuration)
 ORS_MAX_RANGES = int(os.getenv('ORS_MAX_RANGES', 6))
@@ -175,7 +175,11 @@ LOGGING = {
         'openrouteservice': {
             'handlers': ['console'],
             'level': 'DEBUG',
-        }
+        },
+        '*': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
     }
 }
 
