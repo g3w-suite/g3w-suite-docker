@@ -12,6 +12,7 @@ G3WADMIN_LOCAL_MORE_APPS = [
     'qplotly',
     # Uncomment if you wont activate the following module
     #'openrouteservice',
+    'frontend'
 ]
 
 DATABASES = {
