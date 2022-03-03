@@ -5,7 +5,7 @@ web-gis application.
 
 This dockerization is based on project of Alessandro Pasotti (elpaso, https://github.com/elpaso).
 
-## Configuration
+## Configuration 
 
 Create a file `.env` (or copy `.env.example` and rename it in `.env`) and place it in the main directory, the file
 will contain the database credentials (change `<your password>`) and other settings:
