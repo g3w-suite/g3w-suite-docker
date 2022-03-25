@@ -1,4 +1,4 @@
-# docker-conpose file for Portainer(https://www.portainer.io)
+# docker-compose file for Portainer(https://www.portainer.io)
 # A the moment Portainer work only with version "2"
 
 version: "2"
@@ -29,15 +29,31 @@ services:
     image: g3wsuite/g3w-suite:dev
     environment:
       - G3WSUITE_TILECACHE_PATH
-      - G3WSUITE_QDJANGO_SERVER_URL
       - G3WSUITE_POSTGRES_DBNAME
       - G3WSUITE_POSTGRES_USER
       - G3WSUITE_POSTGRES_USER_LOCAL
       - G3WSUITE_POSTGRES_PASS
       - G3WSUITE_POSTGRES_HOST
       - G3WSUITE_POSTGRES_PORT
+      - G3WSUITE_ORS_API_ENDPOINT
+      - G3WSUITE_ORS_API_KEY
       - TILESTACHE_CACHE_BUFFER_SIZE
       - TILESTACHE_CACHE_TOKEN
+      - G3WSUITE_GUNICORN_NUM_WORKERS
+      - G3WSUITE_GUNICORN_MAX_REQUESTS
+      - FRONTEND
+      - PGSERVICEFILE
+      - QGIS_SERVER_PARALLEL_RENDERING
+      - QGIS_SERVER_LOG_FILE
+      - MAX_CACHE_LAYERS
+      - QGIS_SERVER_LOG_LEVEL
+      - QGIS_SERVER_MAX_THREADS
+      - QGIS_SERVER_CACHE_DIRECTORY
+      - QGIS_SERVER_IGNORE_BAD_LAYERS
+      - QGIS_SERVER_WMS_MAX_HEIGHT
+      - QGIS_SERVER_WMS_MAX_WIDTH
+      - QGIS_PLUGINPATH
+      - QGIS_SERVER_TRUST_LAYER_METADATA
     expose:
       - "8000"
     command: /cmd.sh

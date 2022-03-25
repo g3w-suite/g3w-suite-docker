@@ -31,7 +31,6 @@ services:
     image: g3wsuite/g3w-suite:dev
     environment:
       - G3WSUITE_TILECACHE_PATH
-      - G3WSUITE_QDJANGO_SERVER_URL
       - G3WSUITE_POSTGRES_DBNAME
       - G3WSUITE_POSTGRES_USER
       - G3WSUITE_POSTGRES_USER_LOCAL
@@ -45,6 +44,18 @@ services:
       - G3WSUITE_GUNICORN_NUM_WORKERS
       - G3WSUITE_GUNICORN_MAX_REQUESTS
       - FRONTEND
+      - PGSERVICEFILE
+      - QGIS_SERVER_PARALLEL_RENDERING
+      - QGIS_SERVER_LOG_FILE
+      - MAX_CACHE_LAYERS
+      - QGIS_SERVER_LOG_LEVEL
+      - QGIS_SERVER_MAX_THREADS
+      - QGIS_SERVER_CACHE_DIRECTORY
+      - QGIS_SERVER_IGNORE_BAD_LAYERS
+      - QGIS_SERVER_WMS_MAX_HEIGHT
+      - QGIS_SERVER_WMS_MAX_WIDTH
+      - QGIS_PLUGINPATH
+      - QGIS_SERVER_TRUST_LAYER_METADATA
     expose:
       - "8000"
     restart: always
@@ -61,12 +72,13 @@ services:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
       - ./config/g3w-suite/overrides/templates:/code/templates:ro
       - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
+      - ./secrets/.pg_service.conf:${PGSERVICEFILE}
 
     networks:
       internal:
 
   nginx:
-    image: nginx:1.19.5
+    image: nginx
     ports:
       - "8080:8080"
       - "443:443"

@@ -52,7 +52,7 @@ TILESTACHE_CACHE_NAME = 'default'
 TILESTACHE_CACHE_TYPE = 'Disk'  # or 'Memcache'
 TILESTACHE_CACHE_DISK_PATH = os.getenv('G3WSUITE_TILECACHE_PATH', '/shared-volume/tile_cache/')
 TILESTACHE_CACHE_BUFFER_SIZE = os.getenv('TILESTACHE_CACHE_BUFFER_SIZE', 256)
-TILESTACHE_CACHE_TOKEN = os.getenv('TILESTACHE_CACHE_TOKEN')
+TILESTACHE_CACHE_TOKEN = os.getenv('TILESTACHE_CACHE_TOKEN', '374h5g96831hsgetvmkdel')
 
 # FILEMANAGER SETTINGS
 # =======================================
@@ -70,9 +70,9 @@ USER_MEDIA_ROOT = FILEMANAGER_ROOT_PATH + '/' + \
 # ===============================
 # settings for 'openrouteservice' module is in 'G3WADMIN_LOCAL_MORE_APPS'
 # ORS API endpoint
-ORS_API_ENDPOINT = os.getenv('G3WSUITE_ORS_API_ENDPOINT')
+ORS_API_ENDPOINT = os.getenv('ORS_API_ENDPOINT')
 # Optional, can be blank if the key is not required by the endpoint
-ORS_API_KEY = os.getenv('G3WSUITE_ORS_API_KEY', '')
+ORS_API_KEY = os.getenv('ORS_API_KEY', '')
 # List of available ORS profiles
 ORS_PROFILES = {
     "driving-car": {"name": "Car"},

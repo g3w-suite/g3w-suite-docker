@@ -1,11 +1,17 @@
 # G3W-SUITE WebGIS
 
-This repository contains code and recipes for the G3W-SUITE
-web-gis application.
+This repository contains scripts and recipes for deploy of the G3W-SUITE web-gis application with Docker and Docker compose .
 
-This dockerization is based on project of Alessandro Pasotti (elpaso, https://github.com/elpaso).
 
-## Configuration 
+![Admin GUI](docs/img/admin.jpg)
+
+![Webgis GUI](docs/img/client.jpg)
+
+## Deploy
+
+Follow steps to deploy G3W-SUITE on a Ubuntu Server (20.04)
+
+### Configuration 
 
 Create a file `.env` (or copy `.env.example` and rename it in `.env`) and place it in the main directory, the file
 will contain the database credentials (change `<your password>`) and other settings:
@@ -40,30 +46,42 @@ G3WSUITE_DEBUG = 1 (0 default)
 # Gunicorn workers (default to 8)
 G3WSUITE_GUNICORN_NUM_WORKERS=8
 
-# Openrouteservice (if enabled in custom settings)
-G3WSUITE_ORS_API_ENDPOINT='https://api.openrouteservice.org/v2'
-G3WSUITE_ORS_API_KEY='<your API key, if required (optional)>'
-
 
 ```
 
-## Build
+### Run
 
-### G3W-SUITE
+```bash
+docker-compose up -d
+```
 
-The main suite image can be built with:
+If all went well, G3W-SUITE run on http://localhost:8080
+
+![Login Page](docs/img/login_page.png)
+
+### Builds
+
+Docker compose will download images from docker hub (https://hub.docker.com/u/g3wsuite), 
+but is also possible build main image of G3W-SUITE and other docker-compose images. 
+
+#### G3W-SUITE
+
+The main suite docker image can be built with:
 
 ```bash
 docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:dev --no-cache .
 ```
 
-The image is build from `https://github.com/g3w-suite/g3w-admin.git --branch dev` and from a dependencies base image `Dockerfile.g3wsuite-deps.dockerfile`, the dependencies image can be built with:
+The image is build from `https://github.com/g3w-suite/g3w-admin.git --branch dev` and from a dependencies base image `Dockerfile.g3wsuite-deps.ltr.dockerfile`, the dependencies image can be built with:
 
 ```bash
 docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps-ltr:dev --no-cache .
 ```
 
-### Postgis
+Usually is sufficient make build of main docker image g3wsuite/g3w-suite:dev, 
+the build of dependence image g3wsuite/g3w-suite-deps-ltr:dev is done to update last QGIS LTR version.
+
+#### Postgis
 
 Postgis image can be built with:
 
@@ -74,6 +92,8 @@ docker build -f Dockerfile.postgis.dockerfile -t g3wsuite/postgis:11.0-2.5 .
 The Docker hub name for this image is `g3wsuite/postgis:11.0-2.5`
 
 ### HTTPS additional setup
+
+To active https with LetsEncrypt just follow the following instructions:
 
 - move `config/_nginx/django_ssl.conf` to `config/nginx/django_ssl.conf`
 - check the domain name in the `.env` file and in `config/nginx/django_ssl.conf`
@@ -86,17 +106,7 @@ The Docker hub name for this image is `g3wsuite/postgis:11.0-2.5`
 - if you disabled HTTPS, you can move `config/nginx/django_ssl.conf` back to its original location now, and restart the Docker compose to finally enable HTTPS
 
 
-## Run
-
-```bash
-docker-compose up -d
-```
-
-## Ports
-
-- web application: 8080
-
-## Volumes
+### Volumes
 
 Data, projects, uploads and the database are stored in a shared mounted volume `shared-volume`, the volume should be on a persistent storage device and a backup
 policy must be enforced.
@@ -105,18 +115,18 @@ Currently, the volume is mounted in `/tmp/shared-volume-g3wsuite-dev`. In produc
 environments it is encouraged to change this to a permanent location.
 This can be done by modifying the `.env` file.
 
-## First time setup
+### First time setup
 
 - log into the application web administation panel using default credentials (_admin/admin_)
 - change the password for the admin user and for any other example user that may be present
 
-## Caching
+### Caching
 
 Tile cache can be configured and cleared per-layer through the webgis admin panel and lasts forever until it is disabled or cleared.
 
 > Tip: enable cache on linestring and polygon layers.
 
-## Editing
+### Editing
 
 Editing module is active by default, to avoid simultaneous feature editing by two or more users, the editing module works with a feature lock system.
 This locking system can remain active if users do not exit the editing state correctly, to avoid this it is advisable to activate a cron job on host machine that checks the features that have been locked for more than 4 hours and frees them:
@@ -196,3 +206,8 @@ For Portainer use `docker-compose-portainer.yml` file and in plus of env vars be
 * PG_PUBLIC_PORT: host port to map Docker PostgreSql default port (5432).
 * WEBGIS_HTTP_PORT: host port to map Docker Nginx port (8080).
 * WEBGIS_HTTPS_PORT: host port to map Docker Nginx port (443).
+
+### Contributors
+* Walter Lorenzetti - Gis3W ([@wlorenzetti](https://github.com/wlorenzetti))
+* Alessandro Pasotti - ItOpen ([@elpaso](https://github.com/elpaso))
+* Mazano - Kartoza ([@NyakudyaA](https://github.com/NyakudyaA))
