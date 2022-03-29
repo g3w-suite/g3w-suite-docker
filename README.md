@@ -31,22 +31,6 @@ G3WSUITE_POSTGRES_PASS=<your_password>
 G3WSUITE_POSTGRES_DBNAME=g3wsuite
 G3WSUITE_POSTGRES_HOST=postgis
 G3WSUITE_POSTGRES_PORT=5432
-
-# Caching
-G3WSUITE_TILECACHE_PATH=/shared-volume/tile_cache/
-TILESTACHE_CACHE_BUFFER_SIZE=256
-TILESTACHE_CACHE_TOKEN=374h5g96831hsgetvmkdel
-
-# URL of the QGIS Server
-G3WSUITE_QDJANGO_SERVER_URL=http://qgisserver/ows/
-
-# Set G3W-SUITE debug state
-G3WSUITE_DEBUG = 1 (0 default)
-
-# Gunicorn workers (default to 8)
-G3WSUITE_GUNICORN_NUM_WORKERS=8
-
-
 ```
 
 ### Run
@@ -59,7 +43,14 @@ If all went well, G3W-SUITE run on http://localhost:8080
 
 ![Login Page](docs/img/login_page.png)
 
-### Builds
+## G3W-SUITE with consumer image
+G3W-SUITE use `huey` for bach processing (https://github.com/coleifer/huey), so if you want to use it,
+use `docker-compose-consumer.yml` file on deploy:
+```bash
+docker-compose -f docker-compose-consumer.yml up -d
+```
+
+## Builds
 
 Docker compose will download images from docker hub (https://hub.docker.com/u/g3wsuite), 
 but is also possible build main image of G3W-SUITE and other docker-compose images. 
@@ -88,8 +79,14 @@ Postgis image can be built with:
 ```bash
 docker build -f Dockerfile.postgis.dockerfile -t g3wsuite/postgis:11.0-2.5 .
 ```
-
 The Docker hub name for this image is `g3wsuite/postgis:11.0-2.5`
+
+## Setups
+
+### PG_SERVICE
+
+To use of PostgreSql Service, put your service setups into `./scripts/pg_service.conf file`, 
+the conf file will be mounted into docker container at runtime to PGSERVICEFILE path position.
 
 ### HTTPS additional setup
 

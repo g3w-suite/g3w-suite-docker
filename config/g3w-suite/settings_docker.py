@@ -70,7 +70,7 @@ USER_MEDIA_ROOT = FILEMANAGER_ROOT_PATH + '/' + \
 # ===============================
 # settings for 'openrouteservice' module is in 'G3WADMIN_LOCAL_MORE_APPS'
 # ORS API endpoint
-ORS_API_ENDPOINT = os.getenv('ORS_API_ENDPOINT')
+ORS_API_ENDPOINT = os.getenv('ORS_API_ENDPOINT', 'https://api.openrouteservice.org/v2')
 # Optional, can be blank if the key is not required by the endpoint
 ORS_API_KEY = os.getenv('ORS_API_KEY', '')
 # List of available ORS profiles
@@ -181,3 +181,5 @@ LOGGING = {
 }
 
 SESSION_COOKIE_NAME = 'gi3w-suite-dev-iehtgdb264t5gr'
+FRONTEND = True
+FRONTEND_APP = 'frontend'
