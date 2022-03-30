@@ -28,7 +28,7 @@ services:
           - ${WEBGIS_PUBLIC_HOSTNAME}
 
   g3w-suite:
-    image: g3wsuite/g3w-suite:dev
+    image: g3wsuite/g3w-suite:v3.4.x
     environment:
       - G3WSUITE_TILECACHE_PATH
       - G3WSUITE_POSTGRES_DBNAME
@@ -77,7 +77,7 @@ services:
 
   # Asynchronous tasks consumer (run_huey)
   g3w-suite-consumer:
-    image: g3wsuite/g3w-suite:dev
+    image: g3wsuite/g3w-suite:v3.4.x
     environment:
       - G3WSUITE_TILECACHE_PATH
       - G3WSUITE_POSTGRES_DBNAME

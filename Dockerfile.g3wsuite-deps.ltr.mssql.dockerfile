@@ -26,7 +26,7 @@ RUN apt-get update && apt install -y \
     libqt5sql5-tds \
     xvfb
 
-# PyQGIS 3.10
+# PyQGIS 3.22
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key 46B5721DBBD2996A && \
     echo "deb [arch=amd64] https://qgis.org/ubuntu-ltr bionic main" >> /etc/apt/sources.list && \
     apt update && apt install -y python3-qgis qgis-server

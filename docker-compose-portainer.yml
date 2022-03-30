@@ -26,7 +26,7 @@ services:
           - ${WEBGIS_PUBLIC_HOSTNAME}
 
   g3w-suite:
-    image: g3wsuite/g3w-suite:dev
+    image: g3wsuite/g3w-suite:v3.4.x
     environment:
       - G3WSUITE_TILECACHE_PATH
       - G3WSUITE_POSTGRES_DBNAME
@@ -68,7 +68,7 @@ services:
       internal:
 
   nginx:
-    image: nginx:1.19.5
+    image: nginx
     ports:
       - "${WEBGIS_HTTP_PORT}:8080"
       - "${WEBGIS_HTTPS_PORT}:443"

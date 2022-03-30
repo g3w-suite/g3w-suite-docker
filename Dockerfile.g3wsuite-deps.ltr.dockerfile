@@ -21,7 +21,7 @@ RUN apt-get update && apt install -y \
     libsqlite3-mod-spatialite \
     dirmngr \
     xvfb
-# PyQGIS 3.16
+# PyQGIS 3.22
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key 46B5721DBBD2996A && \
     echo "deb [arch=amd64] https://qgis.org/ubuntu-ltr focal main" >> /etc/apt/sources.list && \
     apt update && apt install -y python3-qgis qgis-server
