@@ -10,6 +10,7 @@ G3WADMIN_LOCAL_MORE_APPS = [
     'editing',
     'filemanager',
     'qplotly',
+    'qtimeseries',
     # Uncomment if you wont activate the following module
     #'openrouteservice',
     'frontend'
