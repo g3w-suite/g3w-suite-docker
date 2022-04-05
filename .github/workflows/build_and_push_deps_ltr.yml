@@ -1,6 +1,9 @@
 name: CI to Docker hub for dependencies image.
 
 on:
+  push:
+    branches:
+      - v3.4.x
   schedule:
     - cron: "0 2 * * *"
 

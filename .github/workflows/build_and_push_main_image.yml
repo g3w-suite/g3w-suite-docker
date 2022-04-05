@@ -3,7 +3,7 @@ name: CI to Docker hub for main G3W-SUITE image.
 on:
   push:
     branches:
-      - dev
+      - v3.4.x
   schedule:
     - cron: "0 4 * * *"
 
