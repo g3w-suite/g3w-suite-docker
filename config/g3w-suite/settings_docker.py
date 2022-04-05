@@ -181,3 +181,5 @@ LOGGING = {
 }
 
 SESSION_COOKIE_NAME = 'gi3w-suite-dev-iehtgdb264t5gr'
+FRONTEND = True
+FRONTEND_APP = 'frontend'
