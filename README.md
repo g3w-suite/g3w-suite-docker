@@ -31,6 +31,11 @@ G3WSUITE_POSTGRES_PASS=<your_password>
 G3WSUITE_POSTGRES_DBNAME=g3wsuite
 G3WSUITE_POSTGRES_HOST=postgis
 G3WSUITE_POSTGRES_PORT=5432
+
+
+# QGIS Server env variables
+# ----------------------------------------------------
+PGSERVICEFILE=/pg_service/pg_service.conf
 ```
 
 ### Run
