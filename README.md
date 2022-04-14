@@ -65,7 +65,7 @@ but is also possible build main image of G3W-SUITE and other docker-compose imag
 The main suite docker image can be built with:
 
 ```bash
-docker build -f Dockerfile.g3wsuite.dockerfile --build-arg G3W_SUITE_BRANCH=v.3.4.x -t g3wsuite/g3w-suite:v.3.4.x --no-cache .
+docker build -f Dockerfile.g3wsuite.dockerfile --build-arg G3W_SUITE_BRANCH=v.3.4.x -t g3wsuite/g3w-suite:v3.4.x --no-cache .
 ```
 
 The image is build from `https://github.com/g3w-suite/g3w-admin.git --branch dev` and from a dependencies base image `Dockerfile.g3wsuite-deps.ltr.dockerfile`, the dependencies image can be built with:
