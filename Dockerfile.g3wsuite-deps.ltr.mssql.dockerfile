@@ -28,12 +28,12 @@ RUN apt-get update && apt install -y \
 
 # PyQGIS 3.22
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key 46B5721DBBD2996A && \
-    echo "deb [arch=amd64] https://qgis.org/ubuntu-ltr bionic main" >> /etc/apt/sources.list && \
+    echo "deb [arch=amd64] https://qgis.org/ubuntu-ltr focal main" >> /etc/apt/sources.list && \
     apt update && apt install -y python3-qgis qgis-server
 
 # MSSQL
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add
-RUN echo "deb https://packages.microsoft.com/ubuntu/20.04/prod bionic main" >> /etc/apt/sources.list
+RUN echo "deb https://packages.microsoft.com/ubuntu/20.04/prod focal main" >> /etc/apt/sources.list
 # ACCEPT_EULA=Y END-USER LICENSE AGREEMENT FOR MICROSOFT SOFTWAR
 RUN apt update && ACCEPT_EULA=Y apt install -y msodbcsql17 mssql-tools
 
