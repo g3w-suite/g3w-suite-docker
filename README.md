@@ -90,7 +90,7 @@ The Docker hub name for this image is `g3wsuite/postgis:11.0-2.5`
 
 ### PG_SERVICE
 
-To use of PostgreSql Service, put your service setups into `./scripts/pg_service.conf file`, 
+To use of PostgreSql Service, put your service setups into `./secrets/pg_service.conf file`,
 the conf file will be mounted into docker container at runtime to PGSERVICEFILE path position.
 
 ### HTTPS additional setup
