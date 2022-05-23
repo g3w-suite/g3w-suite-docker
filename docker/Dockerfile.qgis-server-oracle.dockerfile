@@ -12,14 +12,14 @@
 # QGIS server binary is /usr/bin/qgis_mapserv.fcgi
 
 
-ARG DOCKER_DEPS_TAG=release-3_10
+ARG DOCKER_DEPS_TAG=release-3_22
 
 FROM  qgis/qgis3-build-deps:${DOCKER_DEPS_TAG} AS BUILDER
 MAINTAINER Alessandro Pasotti <elpaso@itopen.it>
 
-ARG QGIS_TAG=final-3_10_12
+ARG QGIS_TAG=final-3_22_7
 
-LABEL Description="Docker container with QGIS Server and Oracle support" Vendor="Gis3W" Version="1.0"
+LABEL Description="Docker container with QGIS Server and Oracle support" Vendor="Gis3W" Version="3.4.x"
 
 ENV LANG=C.UTF-8
 
@@ -33,8 +33,8 @@ RUN cd /QGIS && mkdir build && cd build && \
   -DUSE_CCACHE=OFF \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DOCI_INCLUDE_DIR=/instantclient_19_3/sdk/include \
-  -DOCI_LIBRARY=/instantclient_19_3/libclntsh.so \
+  -DOCI_INCLUDE_DIR=/instantclient_19_9/sdk/include \
+  -DOCI_LIBRARY=/instantclient_19_9/libclntsh.so \
   -DWITH_DESKTOP=OFF \
   -DWITH_ANALYSIS=ON \
   -DWITH_SERVER=ON \

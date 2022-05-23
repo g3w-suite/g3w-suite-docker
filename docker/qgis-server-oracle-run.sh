@@ -1,7 +1,7 @@
 # Run the QGIS Server with Oracle FCGI container
 #
 # Arguments:
-#  QGIS_TAG: git tag from the QGIS repo, ex: final-3_10_12
+#  QGIS_TAG: git tag from the QGIS repo, ex: final-3_22_7
 #  QGIS_FCGI_PORT: expose port for the FCGI socket, ex: 9333
 #
 # See also -e in the docker run call below for the environment
@@ -10,7 +10,7 @@
 # To check if the server is listening on the socket:
 # cgi-fcgi -bind -connect 127.0.0.1:9333
 
-QGIS_TAG=${QGIS_TAG:-"final-3_10_12"}
+QGIS_TAG=${QGIS_TAG:-"final-3_22_7"}
 QGIS_FCGI_PORT=${QGIS_FCGI_PORT:-"9333"}
 
 docker run -d --init --rm --name qgis-server-oracle \
