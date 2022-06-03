@@ -12,7 +12,6 @@ G3WADMIN_LOCAL_MORE_APPS = [
     'qplotly',
     # Uncomment if you wont activate the following module
     #'openrouteservice',
-    'frontend'
 ]
 
 DATABASES = {
@@ -29,10 +28,10 @@ DATABASES = {
 
 MEDIA_ROOT = '/shared-volume/media/'
 MEDIA_URL = '/media/'
-STATIC_ROOT = '/shared-volume/static/'
-STATIC_URL = '/static/'
+#STATIC_ROOT = '/shared-volume/static/'
+#STATIC_URL = '/static/'
 
-DEBUG = False if os.getenv('G3WSUITE_DEBUG', 0) == 0 else True
+DEBUG = True if os.getenv('G3WSUITE_DEBUG', 'False') == 'True' else False
 
 DATASOURCE_PATH = '/shared-volume/project_data/'
 
