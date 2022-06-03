@@ -1,4 +1,4 @@
-# G3W-SUITE-DOCKER OFR DEVELOPMENT
+# G3W-SUITE-DOCKER FOR DEVELOPMENT
 Follow instructions are for development environment.
 
 1. Copy `.env.example` file into `.env` and edit it: 
