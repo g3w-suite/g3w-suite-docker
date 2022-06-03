@@ -27,6 +27,7 @@ services:
         aliases:
           - ${WEBGIS_PUBLIC_HOSTNAME}
 
+
   g3w-suite:
     image: g3wsuite/g3w-suite:dev
     environment:
@@ -40,83 +41,36 @@ services:
       - G3WSUITE_POSTGRES_PORT
       - G3WSUITE_ORS_API_ENDPOINT
       - G3WSUITE_ORS_API_KEY
+      - G3WSUITE_DEBUG
       - TILESTACHE_CACHE_BUFFER_SIZE
       - TILESTACHE_CACHE_TOKEN
+      - G3WSUITE_GUNICORN_NUM_WORKERS
+      - G3WSUITE_GUNICORN_MAX_REQUESTS
       - FRONTEND
+      - PGSERVICEFILE
+      - QGIS_SERVER_LOG_FILE
+      - QGIS_SERVER_LOG_LEVEL
     expose:
       - "8000"
-    restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-
-    depends_on:
-      - postgis
-    volumes:
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
-      - ./config/g3w-suite/overrides/templates:/code/templates:ro
-      - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
-
-    networks:
-      internal:
-
-  # Asynchronous tasks consumer (run_huey)
-  g3w-suite-consumer:
-    image: g3wsuite/g3w-suite:dev
-    environment:
-      - G3WSUITE_TILECACHE_PATH
-      - G3WSUITE_QDJANGO_SERVER_URL
-      - G3WSUITE_POSTGRES_DBNAME
-      - G3WSUITE_POSTGRES_USER
-      - G3WSUITE_POSTGRES_USER_LOCAL
-      - G3WSUITE_POSTGRES_PASS
-      - G3WSUITE_POSTGRES_HOST
-      - G3WSUITE_POSTGRES_PORT
-      - G3WSUITE_ORS_API_ENDPOINT
-      - G3WSUITE_ORS_API_KEY
-      - TILESTACHE_CACHE_BUFFER_SIZE
-      - TILESTACHE_CACHE_TOKEN
-      - FRONTEND
-    restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-    entrypoint: /scripts/docker-consumer-entrypoint.sh
-    depends_on:
-      - g3w-suite
-      - redis
-    volumes:
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
-      - ./config/g3w-suite/overrides/templates:/code/templates:ro
-      - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
-    networks:
-      internal:
-
-  nginx:
-    image: nginx:1.19.5
     ports:
-      - "8080:8080"
-      - "443:443"
-    expose:
-      - "8080"
-    volumes:
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known:/var/www/.well-known
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt:ro
-      - ./config/g3w-suite/overrides/static:/shared-volume/static/overrides:ro
-      - ./config/nginx:/etc/nginx/conf.d:ro
+      - "8000:8000"
+    restart: always
     logging:
       driver: "json-file"
       options:
         max-size: "200k"
         max-file: "10"
-    restart: always
+
+    volumes:
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
+      - ./config/g3w-suite/overrides/templates:/code/templates:ro
+      - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
+      - ./scripts:/scripts
+      - ${G3WSUITE_LOCAL_CODE_PATH}:/code
+
+    entrypoint: /scripts/docker-entrypoint-dev.sh
+
     networks:
       internal:
 

@@ -1,6 +1,7 @@
 #!/bin/bash
+# Entrypoint script for consumer images.
+# --------------------------------------
 
-# Starts huey consumer
 
 cd /code/g3w-admin
 

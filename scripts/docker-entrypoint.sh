@@ -1,5 +1,6 @@
 #!/bin/bash
-# Entrypoint script
+# Entrypoint script fro deploy production
+# ---------------------------------------
 
 # Start XVfb
 if [[  -f /tmp/.X99-lock ]]; then
