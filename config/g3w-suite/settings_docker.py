@@ -28,8 +28,8 @@ DATABASES = {
 
 MEDIA_ROOT = '/shared-volume/media/'
 MEDIA_URL = '/media/'
-#STATIC_ROOT = '/shared-volume/static/'
-#STATIC_URL = '/static/'
+STATIC_ROOT = '/shared-volume/static/'
+STATIC_URL = '/static/'
 
 DEBUG = True if os.getenv('G3WSUITE_DEBUG', 'False') == 'True' else False
 
