@@ -45,8 +45,9 @@ services:
       - G3WSUITE_GUNICORN_MAX_REQUESTS
       - FRONTEND
       - PGSERVICEFILE
-      - QGIS_SERVER_LOG_FILE
       - QGIS_SERVER_LOG_LEVEL
+      - QGIS_SERVER_LOG_PROFILE
+      - QGIS_SERVER_LOG_STDERR
     expose:
       - "8000"
     restart: always
