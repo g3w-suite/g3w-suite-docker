@@ -24,8 +24,6 @@ services:
       test: "pg_isready"
     networks:
       internal:
-        aliases:
-          - ${WEBGIS_PUBLIC_HOSTNAME}
 
   g3w-suite:
     image: g3wsuite/g3w-suite:v3.4.x
