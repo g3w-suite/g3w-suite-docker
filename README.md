@@ -2,10 +2,7 @@
 
 This repository contains scripts and recipes for deploy of the G3W-SUITE web-gis application with Docker and Docker compose .
 
-
-![Admin GUI](docs/img/admin.jpg)
-
-![Webgis GUI](docs/img/client.jpg)
+![Docker structure](docs/img/docker.png)
 
 ## Deploy
 
