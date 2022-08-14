@@ -22,8 +22,7 @@ RUN apt-get update && apt install -y \
     dirmngr \
     xvfb
 # PyQGIS 3.22
-RUN wget -qO - https://qgis.org/downloads/qgis-2022.gpg.key | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import &&  \
-    chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg && \
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key D155B8E6A419C5BE && \
     echo "deb [arch=amd64] https://qgis.org/ubuntu-ltr focal main" >> /etc/apt/sources.list && \
     apt update && apt install -y python3-qgis qgis-server
 # Yarn
