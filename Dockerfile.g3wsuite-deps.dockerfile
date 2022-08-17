@@ -21,9 +21,9 @@ RUN apt-get update && apt install -y \
     libsqlite3-mod-spatialite \
     dirmngr \
     xvfb
-# PyQGIS
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key 46B5721DBBD2996A && \
-    echo "deb [arch=amd64] https://qgis.org/ubuntu bionic main" >> /etc/apt/sources.list && \
+# PyQGIS 3.22
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key D155B8E6A419C5BE && \
+    echo "deb [arch=amd64] https://qgis.org/ubuntu focal main" >> /etc/apt/sources.list && \
     apt update && apt install -y python3-qgis qgis-server
 # Yarn
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
