@@ -9,7 +9,7 @@ services:
       - POSTGRES_USER=${G3WSUITE_POSTGRES_USER_LOCAL}
       - POSTGRES_PASS=${G3WSUITE_POSTGRES_PASS}
       - ALLOW_IP_RANGE=0.0.0.0/0
-    restart: on-failure
+    restart: "no"
     logging:
       driver: "json-file"
       options:
@@ -55,7 +55,7 @@ services:
       - "8000"
     ports:
       - "8000:8000"
-    restart: always
+    restart: "no"
     logging:
       driver: "json-file"
       options:
