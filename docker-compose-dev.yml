@@ -9,7 +9,7 @@ services:
       - POSTGRES_USER=${G3WSUITE_POSTGRES_USER_LOCAL}
       - POSTGRES_PASS=${G3WSUITE_POSTGRES_PASS}
       - ALLOW_IP_RANGE=0.0.0.0/0
-    restart: on-failure
+    restart: "no"
     logging:
       driver: "json-file"
       options:
@@ -42,7 +42,6 @@ services:
       - G3WSUITE_ORS_API_ENDPOINT
       - G3WSUITE_ORS_API_KEY
       - G3WSUITE_DEBUG
-      - G3WSUITE_GUNICORN_TIMEOUT
       - TILESTACHE_CACHE_BUFFER_SIZE
       - TILESTACHE_CACHE_TOKEN
       - G3WSUITE_GUNICORN_NUM_WORKERS
@@ -57,7 +56,7 @@ services:
       - "8000"
     ports:
       - "8000:8000"
-    restart: always
+    restart: "no"
     logging:
       driver: "json-file"
       options:

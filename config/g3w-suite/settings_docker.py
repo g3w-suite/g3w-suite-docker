@@ -2,6 +2,11 @@
 # Destination: /code/g3w-admin/base/settings/local_settings.py
 # Read connection parameters from environment
 import os
+from base.settings.base import TEMPLATES, BASE_DIR
+
+# Allows to load custom templates from your docker volume (eg. "./config/g3w-suite/overrides/templates:/code/templates:ro")
+# see: https://docs.djangoproject.com/en/2.2/howto/overriding-templates/
+TEMPLATES[0]['DIRS'].append(os.path.join(BASE_DIR, '../../templates'))
 
 G3WADMIN_PROJECT_APPS = []
 
