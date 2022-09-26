@@ -44,6 +44,7 @@ services:
       - G3WSUITE_GUNICORN_TIMEOUT
       - FRONTEND
       - PGSERVICEFILE
+      - QGIS_OPTIONS_PATH=/shared-volume/
       - QGIS_SERVER_LOG_FILE
       - QGIS_SERVER_LOG_LEVEL
     expose:
@@ -63,6 +64,7 @@ services:
       - ./config/g3w-suite/overrides/templates:/code/templates:ro
       - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
       - ./secrets/pg_service.conf:${PGSERVICEFILE}
+      - ./config/qgis/QGIS3.ini:/shared-volume/QGIS/QGIS3.ini
 
     networks:
       internal:
