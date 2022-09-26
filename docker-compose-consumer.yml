@@ -126,6 +126,8 @@ services:
       - "443:443"
     expose:
       - "8080"
+    environment:
+      - WEBGIS_PUBLIC_HOSTNAME
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known:/var/www/.well-known

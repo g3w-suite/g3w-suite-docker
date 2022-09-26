@@ -94,15 +94,14 @@ the conf file will be mounted into docker container at runtime to PGSERVICEFILE 
 
 To active https with LetsEncrypt just follow the following instructions:
 
-- move `config/_nginx/django_ssl.conf` to `config/nginx/django_ssl.conf`
-- check the domain name in the `.env` file and in `config/nginx/django_ssl.conf`
+- uncomment ssl section within `config/nginx/django.conf`
+- update `WEBGIS_PUBLIC_HOSTNAME` environment variable within the `.env` file
 - run: `docker pull certbot/certbot`
 - launch `./run_certbot.sh`
-- activate 301 redirect into `config/nginx/django.conf`
 - restart compose
 - make sure the certs are renewed by adding a cron job with `crontab -e` and add the following line:
   `0 3 * * * /<path_to_your_docker_files>/run_certbot.sh`
-- if you disabled HTTPS, you can move `config/nginx/django_ssl.conf` back to its original location now, and restart the Docker compose to finally enable HTTPS
+- if you disabled HTTPS, you can comment the ssl section within `config/nginx/django.conf` and restart the Docker compose to finally enable HTTPS
 
 
 ### Volumes
