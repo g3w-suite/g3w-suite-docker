@@ -12,12 +12,6 @@ export QGIS_SERVER_PARALLEL_RENDERING=1
 # Start
 cd /code/g3w-admin
 
-# When building in dev env you might want a clean build each time.
-if [[ -z "${DEV}" ]]; then
-  rm -rf /shared-volume/build_done
-fi
-
-
 # Activate the front end app settings
 
 if [[ "${FRONTEND}" =~ [Tt][Rr][Uu][Ee] ]] ; then
