@@ -46,10 +46,10 @@ If all went well, G3W-SUITE run on http://localhost:8080
 ![Login Page](docs/img/login_page.png)
 
 ## G3W-SUITE with consumer image
-G3W-SUITE use `huey` for bach processing (https://github.com/coleifer/huey), so if you want to use it,
-use `docker-compose-consumer.yml` file on deploy:
+G3W-SUITE use `huey` for batch processing (https://github.com/coleifer/huey), so if you want to use it,
+set `G3WSUITE_RUN_HUEY=True` enviroment variable and then deploy as usual:
 ```bash
-docker-compose -f docker-compose-consumer.yml up -d
+docker-compose -f docker-compose.yml up -d
 ```
 
 ## Builds

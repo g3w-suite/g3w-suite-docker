@@ -17,9 +17,12 @@ if [[ -z "${DEV}" ]]; then
   rm -rf /shared-volume/build_done
 fi
 
+# To get git properties loose on code overrides.
+if [[ -z "${G3WSUITE_LOCAL_CODE_PATH}" ]] ; then
+  git config --global --add safe.directory /code
+fi
 
 # Activate the front end app settings
-
 if [[ "${FRONTEND}" =~ [Tt][Rr][Uu][Ee] ]] ; then
   SETTINGS_LOCKFILE=/shared-volume/.settings.lockfile
   if [[ ! -f ${SETTINGS_LOCKFILE} ]]; then
@@ -29,16 +32,25 @@ if [[ "${FRONTEND}" =~ [Tt][Rr][Uu][Ee] ]] ; then
   fi
 fi
 
+# TODO: move this into a more appropriate location
+if [ ! -f /shared-volume/gunicorn.conf.py ]; then
+  cat > /shared-volume/gunicorn.conf.py << EOF
+import os
+
+limit_request_fields = 0
+error_logfile        = '-'
+log_level            = 'debug'
+timeout              = os.getenv('G3WSUITE_GUNICORN_TIMEOUT', 120)
+workers              = os.getenv('G3WSUITE_GUNICORN_NUM_WORKERS', 8)
+max_requests         = os.getenv('G3WSUITE_GUNICORN_MAX_REQUESTS', 200)
+bind                 = '0.0.0.0:8000'
+reload               = False if os.getenv('G3WSUITE_DEBUG', 'False') == 'False' else True
+EOF
+fi
+
 # Build the suite
 /code/ci_scripts/build_suite.sh
 # Setup once
 /code/ci_scripts/setup_suite.sh
 
-gunicorn base.wsgi:application \
-    --limit-request-fields 0 \
-    --error-logfile - \
-    --log-level=debug \
-    --timeout ${G3WSUITE_GUNICORN_TIMEOUT:-120} \
-    --workers=${G3WSUITE_GUNICORN_NUM_WORKERS:-8} \
-    --max-requests=${G3WSUITE_GUNICORN_MAX_REQUESTS:-200} \
-    -b 0.0.0.0:8000
+gunicorn base.wsgi:application -c /shared-volume/gunicorn.conf.py

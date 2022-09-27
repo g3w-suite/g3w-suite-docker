@@ -1,4 +1,39 @@
-version: "3"
+## HOW TO RUN: ##
+#
+# docker compose -f docker-compose.yml up -d
+#
+version: "3.4"
+
+x-g3w-suite-env: &g3w-suite-env
+  - FRONTEND
+  - G3WSUITE_GUNICORN_MAX_REQUESTS
+  - G3WSUITE_GUNICORN_NUM_WORKERS
+  - G3WSUITE_GUNICORN_TIMEOUT
+  - G3WSUITE_ORS_API_ENDPOINT
+  - G3WSUITE_ORS_API_KEY
+  - G3WSUITE_POSTGRES_DBNAME
+  - G3WSUITE_POSTGRES_USER
+  - G3WSUITE_POSTGRES_USER_LOCAL
+  - G3WSUITE_POSTGRES_PASS
+  - G3WSUITE_POSTGRES_HOST
+  - G3WSUITE_POSTGRES_PORT
+  - G3WSUITE_TILECACHE_PATH
+  - PGSERVICEFILE
+  - G3WSUITE_RUN_HUEY
+  - QGIS_OPTIONS_PATH=/shared-volume/
+  - QGIS_SERVER_LOG_FILE
+  - QGIS_SERVER_LOG_LEVEL
+  - TILESTACHE_CACHE_BUFFER_SIZE
+  - TILESTACHE_CACHE_TOKEN
+
+x-g3w-suite-vol: &g3w-suite-vol
+  - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
+  - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
+  - ./config/g3w-suite/overrides/templates:/code/templates:ro
+  - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
+  - ./secrets/pg_service.conf:${PGSERVICEFILE}
+  - ./config/qgis/QGIS3.ini:/shared-volume/QGIS/QGIS3.ini
+
 services:
   postgis:
     image: g3wsuite/postgis:11.0-2.5
@@ -24,29 +59,13 @@ services:
       test: "pg_isready"
     networks:
       internal:
+        aliases:
+          - ${WEBGIS_PUBLIC_HOSTNAME}
 
   g3w-suite:
     image: g3wsuite/g3w-suite:dev
     environment:
-      - G3WSUITE_TILECACHE_PATH
-      - G3WSUITE_POSTGRES_DBNAME
-      - G3WSUITE_POSTGRES_USER
-      - G3WSUITE_POSTGRES_USER_LOCAL
-      - G3WSUITE_POSTGRES_PASS
-      - G3WSUITE_POSTGRES_HOST
-      - G3WSUITE_POSTGRES_PORT
-      - G3WSUITE_ORS_API_ENDPOINT
-      - G3WSUITE_ORS_API_KEY
-      - TILESTACHE_CACHE_BUFFER_SIZE
-      - TILESTACHE_CACHE_TOKEN
-      - G3WSUITE_GUNICORN_NUM_WORKERS
-      - G3WSUITE_GUNICORN_MAX_REQUESTS
-      - G3WSUITE_GUNICORN_TIMEOUT
-      - FRONTEND
-      - PGSERVICEFILE
-      - QGIS_OPTIONS_PATH=/shared-volume/
-      - QGIS_SERVER_LOG_FILE
-      - QGIS_SERVER_LOG_LEVEL
+      *g3w-suite-env
     expose:
       - "8000"
     restart: always
@@ -59,13 +78,34 @@ services:
     depends_on:
       - postgis
     volumes:
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
-      - ./config/g3w-suite/overrides/templates:/code/templates:ro
-      - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
-      - ./secrets/pg_service.conf:${PGSERVICEFILE}
-      - ./config/qgis/QGIS3.ini:/shared-volume/QGIS/QGIS3.ini
+      *g3w-suite-vol
+    networks:
+      internal:
 
+  redis:
+    image: redis:latest
+    expose:
+    - 6379
+    networks:
+      internal:
+
+  # Asynchronous tasks consumer (run_huey)
+  g3w-suite-consumer:
+    image: g3wsuite/g3w-suite:dev
+    environment:
+      *g3w-suite-env
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    entrypoint: /scripts/docker-consumer-entrypoint.sh
+    depends_on:
+      - g3w-suite
+      - redis
+    volumes:
+      *g3w-suite-vol
     networks:
       internal:
 
