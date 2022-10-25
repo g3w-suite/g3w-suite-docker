@@ -89,7 +89,7 @@ do_snap(SnapName)   : create successive snapshot with name
 
 do_compare_all      : compare all the snapshots and try to find increasing memory between those
 
-    ab   http\://localhost:8080/do_compare_all
+    ab   http://localhost:8080/do_compare_all
 
 
 
