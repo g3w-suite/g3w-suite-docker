@@ -11,7 +11,7 @@ import sys
 do_collect_often = False
 do_aggressive_collection = False
 snapnumber = 1
-os.makedirs("/Snaphots", exist_ok=False)
+os.makedirs("/Snaphots", exist_ok=True)
 
 def post_request(worker, req, environ, resp):
     global do_collect_often
