@@ -10,11 +10,21 @@ it can make an aggressive garbage collection, so one can have a more realistic v
 
 How to set up:
 
+  if you are trying to debug memory problems, you might want to start by swapping off (as the time of writing docker stats does not seem to take swap into account):
+
+    sudo swapoff -a
+
+
+  you might want to set G3WSUITE_GUNICORN_NUM_WORKERS=1 into your .env file
+
+
+
+
  in your docker-compose.yml file under g3w-suite --> volumes  add
-    \- ./scripts:/scripts
+   \- ./scripts:/scripts
 
   if you want to save your traces for later (optional)
-    \- ./Snaphots:/Snaphots
+   \- ./Snaphots:/Snaphots
 
 
 
@@ -60,6 +70,15 @@ do_snap             : create successive snapshot    ---->  ab   http\://localhos
 do_snap(SnapName)   : create successive snapshot with name   ---->  ab   http\://localhost:8080/do_snap\(SnapName\)
 
 do_compare_all      : compare all the snapshots and try to find increasing memory between those   ---->  ab   http\://localhost:8080/do_compare_all
+
+
+
+Monitor the output on the terminal where you follow the logs
+
+
+to see the memory used by the process: do
+
+while [ true ];do ps u -p `ps -ax|grep gunico|grep -v grep|awk ' { print $1 }'|tail -n1` | awk '{sum=sum+$6}; END {print sum/1024}';done
 
 
 
