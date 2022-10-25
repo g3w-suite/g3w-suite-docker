@@ -21,10 +21,10 @@ How to set up:
 
 
  in your docker-compose.yml file under g3w-suite --> volumes  add
-   \- ./scripts:/scripts
+    \- ./scripts:/scripts
 
   if you want to save your traces for later (optional)
-   \- ./Snaphots:/Snaphots
+    \- ./Snaphots:/Snaphots
 
 
 
@@ -78,7 +78,7 @@ Monitor the output on the terminal where you follow the logs
 
 to see the memory used by the process: do
 
-while [ true ];do ps u -p `ps -ax|grep gunico|grep -v grep|awk ' { print $1 }'|tail -n1` | awk '{sum=sum+$6}; END {print sum/1024}';done
+    while [ true ];do ps u -p `ps -ax|grep gunico|grep -v grep|awk ' { print $1 }'|tail -n1` | awk '{sum=sum+$6}; END {print sum/1024}';done
 
 
 
