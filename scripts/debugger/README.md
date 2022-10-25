@@ -11,10 +11,10 @@ it can make an aggressive garbage collection, so one can have a more realistic v
 How to set up:
 
  in your docker-compose.yml file under g3w-suite --> volumes  add
-    - ./scripts:/scripts
+    \- ./scripts:/scripts
 
   if you want to save your traces for later (optional)
-    - ./Snaphots:/Snaphots
+    \- ./Snaphots:/Snaphots
 
 
 
@@ -43,23 +43,23 @@ in another terminal:
 use ab (apache benchmark) to send one of the following
 
 
-do_collect_often     : tries to collect the 3rd gen of garbage at a threshold of 10   e.g: ab http\://localhost:8080/do_collect_often
+do_collect_often     : tries to collect the 3rd gen of garbage at a threshold of 10   ---->  ab   http\://localhost:8080/do_collect_often
 
-do_not_collect_often : disables the above    e.g: ab http://localhost:8080/do_not_collect_often
+do_not_collect_often : disables the above    ---->  ab   http\://localhost:8080/do_not_collect_often
 
-do_agressive_gc      : tries to collect the 3rd gen of garbage after every request   e.g: ab http://localhost:8080/do_agressive_gc
+do_agressive_gc      : tries to collect the 3rd gen of garbage after every request   ---->  ab   http\://localhost:8080/do_agressive_gc
 
-do_no_agressive_gc   : disables the above   e.g: ab http://localhost:8080/do_no_agressive_gc
+do_no_agressive_gc   : disables the above   ---->  ab   http\://localhost:8080/do_no_agressive_gc
 
-do_collect           : does collect      e.g: ab http://localhost:8080/do_collect
+do_collect           : does collect      ---->  ab   http\://localhost:8080/do_collect
 
-do_first_snap       : remove the content of /Snapshots and create the first tracemalloc snaphot in /Snapshots    e.g: ab http://localhost:8080/do_first_snap
+do_first_snap       : remove the content of /Snapshots and create the first tracemalloc snaphot in /Snapshots    ---->  ab   http\://localhost:8080/do_first_snap
 
-do_snap             : create successive snapshot    e.g: ab http://localhost:8080/do_snap
+do_snap             : create successive snapshot    ---->  ab   http\://localhost:8080/do_snap
 
-do_snap(SnapName)   : create successive snapshot with name   e.g: ab http://localhost:8080/do_snap\(SnapName\)
+do_snap(SnapName)   : create successive snapshot with name   ---->  ab   http\://localhost:8080/do_snap\(SnapName\)
 
-do_compare_all      : compare all the snapshots and try to find increasing memory between those   e.g: ab http://localhost:8080/do_compare_all
+do_compare_all      : compare all the snapshots and try to find increasing memory between those   ---->  ab   http\://localhost:8080/do_compare_all
 
 
 
