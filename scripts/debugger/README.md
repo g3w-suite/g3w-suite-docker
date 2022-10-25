@@ -15,7 +15,10 @@ How to set up:
     sudo swapoff -a
 
 
-  you might want to set G3WSUITE_GUNICORN_NUM_WORKERS=1 into your .env file
+  then set into your .env file
+
+    G3WSUITE_GUNICORN_NUM_WORKERS=1
+    G3WSUITE_GUNICORN_MAX_REQUESTS=0
 
 
 
