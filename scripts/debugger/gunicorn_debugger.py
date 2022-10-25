@@ -9,13 +9,13 @@ import numpy
 import sys
 
 do_collect_often = False
-do_agressive_collection = False
+do_aggressive_collection = False
 snapnumber = 1
 os.makedirs("/Snaphots", exist_ok=False)
 
 def post_request(worker, req, environ, resp):
     global do_collect_often
-    global do_agressive_collection
+    global do_aggressive_collection
     global snapnumber
 
     if "do_collect_often" in str(environ):
@@ -24,11 +24,11 @@ def post_request(worker, req, environ, resp):
     if "do_not_collect_often" in str(environ):
         do_collect_often = False
 
-    if "do_agressive_gc" in str(environ):
-        do_agressive_collection = True
+    if "do_aggressive_gc" in str(environ):
+        do_aggressive_collection = True
 
-    if "do_no_agressive_gc" in str(environ):
-        do_agressive_collection = False
+    if "do_no_aggressive_gc" in str(environ):
+        do_aggressive_collection = False
 
 
     if do_collect_often:
@@ -39,7 +39,7 @@ def post_request(worker, req, environ, resp):
             gc.collect(2)
             worker.log.info("---------------------------gc collected---------------------------------")
 
-    if do_agressive_collection:
+    if do_aggressive_collection:
         gc.collect()
         gc.collect(2)
 
