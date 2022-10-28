@@ -3,14 +3,16 @@
 # Read connection parameters from environment
 import os
 from django.conf import settings
+from base import __version__ as version
 
 # Load custom templates and static files from your docker volume (eg. "./config/g3w-suite/overrides/")
 # --------------------------------------------
 # https://docs.djangoproject.com/en/2.2/howto/overriding-templates/
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 # https://docs.djangoproject.com/en/2.2/topics/settings/
-settings.TEMPLATES[0]['DIRS'].append(os.path.join(settings.BASE_DIR, '../../templates')) # /code/templates
-settings.STATICFILES_DIRS.append(os.path.join(settings.BASE_DIR, '../../static'))        # /code/static
+if( version >= (3, 5) ):
+    settings.TEMPLATES[0]['DIRS'].append(os.path.join(settings.BASE_DIR, '../../templates')) # /code/templates
+    settings.STATICFILES_DIRS.append(os.path.join(settings.BASE_DIR, '../../static'))        # /code/static
 
 G3WADMIN_PROJECT_APPS = []
 
