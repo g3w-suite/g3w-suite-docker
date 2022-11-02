@@ -1,7 +1,7 @@
-FROM ubuntu:focal
+FROM ubuntu:jammy
 # This image is available as g3wsuite/g3w-suite-deps:ltr-mssql
 # This image contain MSSql odbc driver.
-LABEL maintainer="Gis3w" Description="This image is used to prepare build requirements for g3w-suite docker images" Vendor="Gis3w" Version="1.2"
+LABEL maintainer="Gis3w" Description="This image is used to prepare build requirements for g3w-suite docker images" Vendor="Gis3w" Version="dev"
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN chown root:root /tmp && chmod ugo+rwXt /tmp
@@ -11,7 +11,7 @@ RUN apt-get update && apt install -y \
     postgresql-server-dev-all \
     libgdal-dev \
     python3-dev \
-    libgdal26 \
+    libgdal30 \
     python3-gdal \
     python3-pip \
     curl \
@@ -27,21 +27,22 @@ RUN apt-get update && apt install -y \
     xvfb
 
 # PyQGIS 3.22
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key D155B8E6A419C5BE && \
-    echo "deb [arch=amd64] https://qgis.org/ubuntu-ltr bionic main" >> /etc/apt/sources.list && \
+RUN wget -qO - https://qgis.org/downloads/qgis-2022.gpg.key | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import &&  \
+    chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg && \
+    echo "deb [arch=amd64] https://qgis.org/ubuntu-ltr jammy main" >> /etc/apt/sources.list && \
     apt update && apt install -y python3-qgis qgis-server
 
 # MSSQL
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add
-RUN echo "deb https://packages.microsoft.com/ubuntu/20.04/prod bionic main" >> /etc/apt/sources.list
-# ACCEPT_EULA=Y END-USER LICENSE AGREEMENT FOR MICROSOFT SOFTWAR
-RUN apt update && ACCEPT_EULA=Y apt install -y msodbcsql17 mssql-tools
+# ACCEPT_EULA=Y END-USER LICENSE AGREEMENT FOR MICROSOFT SOFTWARE
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add &&  \
+    echo "deb https://packages.microsoft.com/ubuntu/22.04/prod jammy main" >> /etc/apt/sources.list &&  \
+    apt update && ACCEPT_EULA=Y apt install -y msodbcsql18 mssql-tools
 
 # Yarn
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | \
-    tee /etc/apt/sources.list.d/yarn.list
-RUN apt-get update && apt install -y yarn
+    tee /etc/apt/sources.list.d/yarn.list &&  \
+    apt-get update && apt install -y yarn
 
 RUN mkdir /code
 WORKDIR /code
