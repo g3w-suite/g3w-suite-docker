@@ -33,7 +33,7 @@ RUN wget -qO - https://qgis.org/downloads/qgis-2022.gpg.key | gpg --no-default-k
     apt update && apt install -y python3-qgis qgis-server
 
 # MSSQL
-# ACCEPT_EULA=Y END-USER LICENSE AGREEMENT FOR MICROSOFT SOFTWAR
+# ACCEPT_EULA=Y END-USER LICENSE AGREEMENT FOR MICROSOFT SOFTWARE
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add &&  \
     echo "deb https://packages.microsoft.com/ubuntu/22.04/prod jammy main" >> /etc/apt/sources.list &&  \
     apt update && ACCEPT_EULA=Y apt install -y msodbcsql18 mssql-tools
