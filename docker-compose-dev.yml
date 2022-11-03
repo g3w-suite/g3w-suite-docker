@@ -28,6 +28,10 @@ services:
       - ${G3WSUITE_LOCAL_CODE_PATH}:/code
     entrypoint: /scripts/docker-entrypoint.sh
 
+  redis:
+    deploy:
+      replicas: 0  # disable redis service
+
   nginx:
     deploy:
       replicas: 0  # disable nginx service
