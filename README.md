@@ -99,7 +99,6 @@ To active https with LetsEncrypt just follow the following instructions:
 
 - uncomment ssl section within `config/nginx/django.conf`
 - update `WEBGIS_PUBLIC_HOSTNAME` environment variable within the `.env` file
-- run: `docker pull certbot/certbot`
 - launch `./run_certbot.sh`
 - restart compose
 - make sure the certs are renewed by adding a cron job with `crontab -e` and add the following line:
