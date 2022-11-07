@@ -1,14 +1,13 @@
 #!/bin/bash
-# Entrypoint script fro deploy production
+# Entrypoint script for deploy production
 # ---------------------------------------
 
 # Start XVfb
 if [[  -f /tmp/.X99-lock ]]; then
   rm /tmp/.X99-lock
 fi
-Xvfb :99 -screen 0 640x480x24 -nolisten tcp &
-export DISPLAY=:99
-export QGIS_SERVER_PARALLEL_RENDERING=1
+Xvfb ${DISPLAY:-:99} -screen 0 640x480x24 -nolisten tcp &
+
 # Start
 cd /code/g3w-admin
 
@@ -27,7 +26,7 @@ if [[ "${FRONTEND}" =~ [Tt][Rr][Uu][Ee] ]] ; then
   fi
 fi
 
-# TODO: move this into a more appropriate location
+# TODO: move this into a more appropriate location (eg. g3w-admin ?)
 if [ ! -f /shared-volume/gunicorn.conf.py ]; then
   cat > /shared-volume/gunicorn.conf.py << EOF
 import os

@@ -5,6 +5,7 @@
 version: "3.4"
 
 x-g3w-suite-env: &g3w-suite-env
+  - DISPLAY=:99
   - FRONTEND
   - G3WSUITE_GUNICORN_MAX_REQUESTS
   - G3WSUITE_GUNICORN_NUM_WORKERS
@@ -23,6 +24,7 @@ x-g3w-suite-env: &g3w-suite-env
   - QGIS_OPTIONS_PATH=/shared-volume/
   - QGIS_SERVER_LOG_FILE
   - QGIS_SERVER_LOG_LEVEL
+  - QGIS_SERVER_PARALLEL_RENDERING=1
   - TILESTACHE_CACHE_BUFFER_SIZE
   - TILESTACHE_CACHE_TOKEN
 
@@ -35,7 +37,7 @@ x-g3w-suite-vol: &g3w-suite-vol
   - ./secrets/pg_service.conf:${PGSERVICEFILE}
   - ./config/qgis/QGIS3.ini:/shared-volume/QGIS/QGIS3.ini
 
-x-g3w-suite-logging: &x-g3w-suite-logging
+x-g3w-suite-logging: &g3w-suite-logging
   driver: "json-file"
   options:
     max-size: "200k"
@@ -53,7 +55,7 @@ services:
       - ALLOW_IP_RANGE=0.0.0.0/0
     restart: on-failure
     logging:
-      *x-g3w-suite-logging
+      *g3w-suite-logging
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}:/var/lib/postgresql
     healthcheck:
@@ -74,7 +76,7 @@ services:
       - "8000"
     restart: always
     logging:
-      *x-g3w-suite-logging
+      *g3w-suite-logging
     depends_on:
       - postgis
     volumes:
@@ -96,7 +98,7 @@ services:
       *g3w-suite-env
     restart: always
     logging:
-      *x-g3w-suite-logging
+      *g3w-suite-logging
     entrypoint: /scripts/docker-consumer-entrypoint.sh
     depends_on:
       - g3w-suite
@@ -119,7 +121,7 @@ services:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt:ro
       - ./config/nginx:/etc/nginx/conf.d:ro
     logging:
-      *x-g3w-suite-logging
+      *g3w-suite-logging
     restart: always
     networks:
       internal:
