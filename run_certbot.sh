@@ -16,11 +16,11 @@ if [ "${WEBGIS_DOCKER_SHARED_VOLUME}" = "" ]; then
     exit 1
 fi
 
-certs_folder      = "${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt"
-acme_folder       = "${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known"
-default_ssl_conf  = "https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf"
-default_ssl_pem   = "https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem"
-domain            = "$WEBGIS_PUBLIC_HOSTNAME"
+certs_folder="${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt"
+acme_folder="${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known"
+default_ssl_conf="https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf"
+default_ssl_pem="https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem"
+domain="$WEBGIS_PUBLIC_HOSTNAME"
 
 # STEP 1
 echo "### Downloading recommended TLS parameters ..."
