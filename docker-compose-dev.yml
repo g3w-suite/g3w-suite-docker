@@ -1,82 +1,48 @@
-version: "3"
+## HOW TO RUN: ##
+#
+# docker compose -f docker-compose.yml -f docker-compose-dev.yml up -d
+#
+version: "3.4"
 services:
+
   postgis:
-    image: g3wsuite/postgis:11.0-2.5
-    ports:
-      - "5439:5432"
-    environment:
-      - POSTGRES_DBNAME=${G3WSUITE_POSTGRES_DBNAME},data_testing,data_production
-      - POSTGRES_USER=${G3WSUITE_POSTGRES_USER_LOCAL}
-      - POSTGRES_PASS=${G3WSUITE_POSTGRES_PASS}
-      - ALLOW_IP_RANGE=0.0.0.0/0
-    restart: "no"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
+    restart: "no" # disable autorestart
     volumes:
       - g3wsuite-pg-data:/var/lib/postgresql
-    healthcheck:
-      interval: 60s
-      timeout: 30s
-      retries: 3
-      test: "pg_isready"
     networks:
       internal:
         aliases:
           - ${WEBGIS_PUBLIC_HOSTNAME}
 
-
   g3w-suite:
-    image: g3wsuite/g3w-suite:dev
     environment:
-      - G3WSUITE_TILECACHE_PATH
+      - BITBUCKET_TOKEN
+      - G3WSUITE_DEBUG=${G3WSUITE_DEBUG:-True}
+      - G3WSUITE_GUNICORN_NUM_WORKERS=${G3WSUITE_GUNICORN_NUM_WORKERS:-1}
       - G3WSUITE_QDJANGO_SERVER_URL
-      - G3WSUITE_POSTGRES_DBNAME
-      - G3WSUITE_POSTGRES_USER
-      - G3WSUITE_POSTGRES_USER_LOCAL
-      - G3WSUITE_POSTGRES_PASS
-      - G3WSUITE_POSTGRES_HOST
-      - G3WSUITE_POSTGRES_PORT
-      - G3WSUITE_ORS_API_ENDPOINT
-      - G3WSUITE_ORS_API_KEY
-      - G3WSUITE_DEBUG
-      - TILESTACHE_CACHE_BUFFER_SIZE
-      - TILESTACHE_CACHE_TOKEN
-      - G3WSUITE_GUNICORN_NUM_WORKERS
-      - G3WSUITE_GUNICORN_MAX_REQUESTS
-      - G3WSUITE_GUNICORN_TIMEOUT
-      - FRONTEND
-      - PGSERVICEFILE
-      - QGIS_OPTIONS_PATH=/shared-volume/
-      - QGIS_SERVER_LOG_FILE
-      - QGIS_SERVER_LOG_LEVEL
-    expose:
-      - "8000"
     ports:
       - "8000:8000"
-    restart: "no"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-
+    restart: "no" # disable autorestart
     volumes:
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
-      - ./config/g3w-suite/overrides/static:/code/static:ro
-      - ./config/g3w-suite/overrides/templates:/code/templates:ro
-      - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
       - ./scripts:/scripts
       - ${G3WSUITE_LOCAL_CODE_PATH}:/code
-      - ./config/qgis/QGIS3.ini:/shared-volume/QGIS/QGIS3.ini
+    entrypoint: /scripts/docker-entrypoint.sh
 
-    entrypoint: /scripts/docker-entrypoint-dev.sh
+  redis:
+    deploy:
+      replicas: 0  # disable redis service
 
-    networks:
-      internal:
+  nginx:
+    deploy:
+      replicas: 0  # disable nginx service
+
+  certbot:
+    deploy:
+      replicas: 0  # disable certbot service
+
+  g3w-suite-consumer:
+    deploy:
+      replicas: 0  # disable huey service
 
 volumes:
   shared-volume:

@@ -49,10 +49,10 @@ If all went well, G3W-SUITE run on http://localhost:8080
 ![Login Page](docs/img/login_page.png)
 
 ## G3W-SUITE with consumer image
-G3W-SUITE use `huey` for bach processing (https://github.com/coleifer/huey), so if you want to use it,
-use `docker-compose-consumer.yml` file on deploy:
+G3W-SUITE use `huey` for batch processing (https://github.com/coleifer/huey), so if you want to use it,
+set `G3WSUITE_RUN_HUEY=True` enviroment variable and then deploy as usual:
 ```bash
-docker-compose -f docker-compose-consumer.yml up -d
+docker-compose -f docker-compose.yml up -d
 ```
 
 ## Builds
@@ -203,7 +203,7 @@ postgres=#
 
 Portainer (https://www.portainer.io) is a docker-based web application used to edit and manage Docker applications in a simple and intuitive way.
 
-Plese refer to the [Add new stack](https://docs.portainer.io/v/ce-2.9/user/docker/stacks/add) section to learn how to deploy the `docker-compose-consumer.yml` stack with Portainer (>= v2.1.1).
+Plese refer to the [Add new stack](https://docs.portainer.io/v/ce-2.9/user/docker/stacks/add) section to learn how to deploy the `docker-compose.yml` stack with Portainer (>= v2.1.1).
 
 ### Contributors
 * Walter Lorenzetti - Gis3W ([@wlorenzetti](https://github.com/wlorenzetti))
