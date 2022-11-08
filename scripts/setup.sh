@@ -9,9 +9,6 @@ fi
 
 cp /requirements_rl.txt .
 
-# Upgrade pip
-python3 -m pip install pip==20.0.2
-
 # Override settings
 pip3 install -r requirements_rl.txt
 pip3 install -r requirements_huey.txt
