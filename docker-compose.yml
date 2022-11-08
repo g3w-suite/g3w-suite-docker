@@ -96,13 +96,6 @@ services:
     networks:
       internal:
 
-  # Letsencrypt certs
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/certbot:/var/www/certbot
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt
-
 volumes:
   shared-volume:
   g3wsuite-pg-data:
