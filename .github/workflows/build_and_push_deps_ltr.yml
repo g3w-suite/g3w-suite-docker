@@ -7,7 +7,7 @@ name: Build dependencies
 on:
   push:
     branches:
-      - dev
+      - v3.5.x
   schedule:
     - cron: "0 2 * * *"
 

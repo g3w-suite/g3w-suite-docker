@@ -65,17 +65,17 @@ but is also possible build main image of G3W-SUITE and other docker-compose imag
 The main suite docker image can be built with:
 
 ```bash
-docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:dev --no-cache .
+docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:v3.5.x --no-cache .
 ```
 
-The image is build from `https://github.com/g3w-suite/g3w-admin.git --branch dev` and from a dependencies base image `Dockerfile.g3wsuite-deps.ltr.dockerfile`, the dependencies image can be built with:
+The image is build from `https://github.com/g3w-suite/g3w-admin.git --branch v3.5.x` and from a dependencies base image `Dockerfile.g3wsuite-deps.ltr.dockerfile`, the dependencies image can be built with:
 
 ```bash
-docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps-ltr:dev --no-cache .
+docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps-ltr:v3.5.x --no-cache .
 ```
 
-Usually is sufficient make build of main docker image g3wsuite/g3w-suite:dev, 
-the build of dependence image g3wsuite/g3w-suite-deps-ltr:dev is done to update last QGIS LTR version.
+Usually is sufficient make build of main docker image g3wsuite/g3w-suite:v3.5.x, 
+the build of dependence image g3wsuite/g3w-suite-deps-ltr:v3.5.x is done to update last QGIS LTR version.
 
 #### Postgis
 
@@ -113,7 +113,7 @@ To active https with LetsEncrypt just follow the following instructions:
 Data, projects, uploads and the database are stored in a shared mounted volume `shared-volume`, the volume should be on a persistent storage device and a backup
 policy must be enforced.
 
-Currently, the volume is mounted in `/tmp/shared-volume-g3wsuite-dev`. In production
+Currently, the volume is mounted in `/tmp/shared-volume-g3wsuite-v35`. In production
 environments it is encouraged to change this to a permanent location.
 This can be done by modifying the `.env` file.
 
