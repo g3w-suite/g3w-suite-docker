@@ -4,7 +4,7 @@
 # This image extends G3W-SUITE LTR (UBUNTU + QGIS LTR) for development purposes 
 ##
 
-FROM g3wsuite/g3w-suite-deps-ltr:dev
+FROM g3wsuite/g3w-suite-deps-ltr:v3.5.x
 
 LABEL maintainer="Gis3W" \
       Description="Image used to install python requirements and code for g3w-suite deployment" \

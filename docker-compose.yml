@@ -26,7 +26,7 @@ services:
       internal:
 
   g3w-suite:
-    image: g3wsuite/g3w-suite:dev
+    image: g3wsuite/g3w-suite:v3.5.x
     environment:
       - DISPLAY=:99
       - G3WSUITE_TILECACHE_PATH
