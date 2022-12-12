@@ -75,7 +75,7 @@ services:
     image: nginx
     ports:
       - "8080:8080"
-      - "443:443"
+      #- "443:443"
     expose:
       - "8080"
     volumes:
