@@ -23,7 +23,8 @@ G3WADMIN_LOCAL_MORE_APPS = [
     'qplotly',
     # Uncomment if you wont activate the following module
     #'openrouteservice',
-    'qtimeseries'
+    'qtimeseries',
+    'frontend'
 ]
 
 DATABASES = {
@@ -192,3 +193,5 @@ LOGGING = {
 }
 
 SESSION_COOKIE_NAME = 'gi3w-suite-dev-iehtgdb264t5gr'
+FRONTEND = True
+FRONTEND_APP = 'frontend'
