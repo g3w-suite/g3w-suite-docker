@@ -16,16 +16,25 @@ if [ "${WEBGIS_DOCKER_SHARED_VOLUME}" = "" ]; then
     exit 1
 fi
 
-mkdir -p "${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt/"
+certs_folder="${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt"
+acme_folder="${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known"
+default_ssl_conf="https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf"
+default_ssl_pem="https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem"
+domain="$WEBGIS_PUBLIC_HOSTNAME"
 
-curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf > "${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt/options-ssl-nginx.conf"
-curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem > "${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt/ssl-dhparams.pem"
+# STEP 1
+echo "### Downloading recommended TLS parameters ..."
+mkdir -p "$certs_folder"
+curl -s "$default_ssl_conf" > "${certs_folder}/options-ssl-nginx.conf"
+curl -s "$default_ssl_pem"  > "${certs_folder}/ssl-dhparams.pem"
 
-docker run -it --rm --name certbot \
-  -v ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt \
-  -v ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known:/var/www/.well-known \
+# STEP 2
+echo "### Requesting Let's Encrypt certificate for $domain ..."
+docker run -it --rm --name certbot --pull=missing \
+  -v ${certs_folder}:/etc/letsencrypt \
+  -v ${acme_folder}:/var/www/.well-known \
   certbot/certbot -t certonly \
   --agree-tos --renew-by-default \
   --no-eff-email \
   --webroot -w /var/www \
-  -d ${WEBGIS_PUBLIC_HOSTNAME}
+  -d ${domain}

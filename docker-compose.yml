@@ -78,12 +78,16 @@ services:
       - "443:443"
     expose:
       - "8080"
+    environment:
+      - WEBGIS_PUBLIC_HOSTNAME
+      - NGINX_CLIENT_MAX_BODY_SIZE=${NGINX_CLIENT_MAX_BODY_SIZE:-200M}
+      - NGINX_ENVSUBST_TEMPLATE_SUFFIX=.template
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known:/var/www/.well-known
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt:ro
       - ./config/g3w-suite/overrides/static:/shared-volume/static/overrides:ro
-      - ./config/nginx:/etc/nginx/conf.d:ro
+      - ./config/nginx:/etc/nginx/templates
     logging:
       driver: "json-file"
       options:
@@ -92,13 +96,6 @@ services:
     restart: always
     networks:
       internal:
-
-  # Letsencrypt certs
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/certbot:/var/www/certbot
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt
 
 volumes:
   shared-volume:

@@ -1,0 +1,76 @@
+client_max_body_size $NGINX_CLIENT_MAX_BODY_SIZE;
+client_body_timeout  600;
+
+upstream web {
+  ip_hash;
+  server g3w-suite:8000;
+}
+
+# portal
+server {
+
+  # Block *.php
+  location ~\.php$ {
+      return 404;
+  }
+
+  # Secure project's folder
+  location /static/projects/ {
+      return 403;
+  }
+
+  location /static/ {
+      root /shared-volume/;
+  }
+
+  location /media/ {
+      root /shared-volume/;
+  }
+
+  location /media_user/ {
+      root /shared-volume/project_data/;
+  }
+
+  # Certbot configuration
+  location /.well-known/acme-challenge/ {
+      root /var/www;
+  }
+
+  location / {
+      keepalive_timeout                  500;
+      proxy_connect_timeout              600;
+      proxy_send_timeout                 600;
+      send_timeout                       600;
+      fastcgi_read_timeout               300;
+      # proxy_read_timeout                 600;
+      proxy_read_timeout                 120;
+      proxy_set_header Host              $host;
+      proxy_set_header X-Forwarded-For   $remote_addr;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_pass http://web/;
+  }
+
+  server_name $WEBGIS_PUBLIC_HOSTNAME;
+
+  # Listen
+  listen 8080;
+
+  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  # Uncomment the following lines if you want activate https
+
+  # listen 443 default ssl;
+
+  # ssl_certificate /etc/letsencrypt/live/$WEBGIS_PUBLIC_HOSTNAME/fullchain.pem;
+  # ssl_certificate_key /etc/letsencrypt/live/$WEBGIS_PUBLIC_HOSTNAME/privkey.pem;
+
+  # include /etc/letsencrypt/options-ssl-nginx.conf;
+  # ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+  # resolver 8.8.8.8;
+
+  # if ($scheme = http) {
+  #     return 301 https://$server_name$request_uri;
+  # }
+  # -----------------------------------------------------
+
+}
