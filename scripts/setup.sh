@@ -1,5 +1,4 @@
-
-
+#!/usr/bin/env bash
 
 if [ -z "$(ls -A /code)" ]; then
    echo "Cloning g3w-admin branch ${G3W_SUITE_BRANCH:-dev} ..."
@@ -18,15 +17,13 @@ pip3 install -r requirements_huey.txt
 git submodule add -f https://github.com/g3w-suite/g3w-admin-frontend.git  g3w-admin/frontend
 
 
-# Caching
-pip3 install -r /code/g3w-admin/caching/requirements.txt
+# Install caching ; file manager, Qplotly Openrouteservice
+array=(caching filemanager qplotly openrouteservice)
+for i in "${array[@]}"; do
+  # Sanity check for the directory existence
+  if [[ -d /code/g3w-admin/${i} ]];then
+      pip3 install -r /code/g3w-admin/"${i}"/requirements.txt
+  fi
+done
 
-# File manager
-pip3 install -r /code/g3w-admin/filemanager/requirements.txt
-
-# Qplotly
-pip3 install -r /code/g3w-admin/qplotly/requirements.txt
-
-# Openrouteservice
-pip3 install -r /code/g3w-admin/openrouteservice/requirements.txt
 

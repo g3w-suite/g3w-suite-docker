@@ -1,7 +1,8 @@
 version: "3"
 services:
   postgis:
-    image: g3wsuite/postgis:11.0-2.5
+    image: kartoza/postgis:15-3.3
+    container_name: postgis-${COMPOSE_PROJECT_NAME}
     ports:
       - "5439:5432"
     environment:
@@ -9,6 +10,8 @@ services:
       - POSTGRES_USER=${G3WSUITE_POSTGRES_USER_LOCAL}
       - POSTGRES_PASS=${G3WSUITE_POSTGRES_PASS}
       - ALLOW_IP_RANGE=0.0.0.0/0
+      - RUN_AS_ROOT=true
+      - FORCE_SSL=False
     restart: on-failure
     logging:
       driver: "json-file"
@@ -21,12 +24,13 @@ services:
       interval: 60s
       timeout: 30s
       retries: 3
-      test: "pg_isready"
+      test: "PGPASSWORD=${G3WSUITE_POSTGRES_PASS} pg_isready -h 127.0.0.1 -U ${G3WSUITE_POSTGRES_USER_LOCAL} -d ${G3WSUITE_POSTGRES_DBNAME}"
     networks:
       internal:
 
   g3w-suite:
     image: g3wsuite/g3w-suite:dev
+    container_name: g3wsuite-${COMPOSE_PROJECT_NAME}
     environment:
       - DISPLAY=:99
       - G3WSUITE_TILECACHE_PATH
@@ -56,9 +60,9 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-
     depends_on:
-      - postgis
+      postgis:
+        condition: service_healthy
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
@@ -73,6 +77,7 @@ services:
 
   nginx:
     image: nginx
+    container_name: nginx-${COMPOSE_PROJECT_NAME}
     ports:
       - "8080:8080"
       - "443:443"
@@ -96,6 +101,7 @@ services:
   # Letsencrypt certs
   certbot:
     image: certbot/certbot
+    container_name: certbot-${COMPOSE_PROJECT_NAME}
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/certbot:/var/www/certbot
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt

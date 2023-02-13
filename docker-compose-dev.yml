@@ -1,7 +1,8 @@
 version: "3"
 services:
   postgis:
-    image: g3wsuite/postgis:11.0-2.5
+    image: kartoza/postgis:15-3.3
+    container_name: postgis-${COMPOSE_PROJECT_NAME}
     ports:
       - "5439:5432"
     environment:
@@ -21,7 +22,7 @@ services:
       interval: 60s
       timeout: 30s
       retries: 3
-      test: "pg_isready"
+      test: "PGPASSWORD=${G3WSUITE_POSTGRES_PASS} pg_isready -h 127.0.0.1 -U ${G3WSUITE_POSTGRES_USER_LOCAL} -d ${G3WSUITE_POSTGRES_DBNAME}"
     networks:
       internal:
         aliases:
@@ -30,6 +31,7 @@ services:
 
   g3w-suite:
     image: g3wsuite/g3w-suite:dev
+    container_name: g3wsuite-${COMPOSE_PROJECT_NAME}
     environment:
       - DISPLAY=:99
       - G3WSUITE_TILECACHE_PATH
