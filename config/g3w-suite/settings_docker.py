@@ -123,6 +123,8 @@ HUEY = {
     },
 }
 
+USE_X_FORWARDED_HOST = True
+
 ALLOWED_HOSTS = "*"
 
 # Is required by caching module
@@ -205,4 +207,4 @@ LOGGING = {
     }
 }
 
-SESSION_COOKIE_NAME = 'gi3w-suite-dev-iehtgdb264t5gr'
+SESSION_COOKIE_NAME = 'gis3w-suite-dev-iehtgdb264t5gr'
