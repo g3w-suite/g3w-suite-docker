@@ -78,6 +78,19 @@ USER_MEDIA_ROOT = FILEMANAGER_ROOT_PATH + '/' + \
     os.getenv('G3WSUITE_USER_MEDIA_ROOT', 'user_media') + '/'
 
 
+# CACHING
+# =======================================
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+
 # OPENROUTESERVICE SETTINGS
 # ===============================
 # settings for 'openrouteservice' module is in 'G3WADMIN_LOCAL_MORE_APPS'
@@ -109,6 +122,8 @@ HUEY = {
         'worker_type': 'process',
     },
 }
+
+USE_X_FORWARDED_HOST = True
 
 ALLOWED_HOSTS = "*"
 
@@ -192,4 +207,4 @@ LOGGING = {
     }
 }
 
-SESSION_COOKIE_NAME = 'gi3w-suite-dev-iehtgdb264t5gr'
+SESSION_COOKIE_NAME = 'gis3w-suite-dev-iehtgdb264t5gr'

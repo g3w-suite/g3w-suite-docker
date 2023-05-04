@@ -71,6 +71,13 @@ services:
     networks:
       internal:
 
+  redis:
+    image: redis:latest
+    expose:
+    - 6379
+    networks:
+      internal:
+
   nginx:
     image: nginx
     ports:
