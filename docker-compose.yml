@@ -91,6 +91,7 @@ services:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt:ro
       - ./config/g3w-suite/overrides/static:/shared-volume/static/overrides:ro
       - ./config/nginx:/etc/nginx/conf.d:ro
+      - ./config/nginx/html:/var/www/html:ro
     logging:
       driver: "json-file"
       options:
