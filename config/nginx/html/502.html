@@ -154,17 +154,21 @@
         <span lang="it">Il server non è pronto a gestire la richiesta in questo momento.</span>
     </p>
     <p class="main_error-message">
-        <span lang="en">We are sorry for the inconvenience.</span>
-        <span lang="it">Ci scusiamo per l'inconveniente.</span>
+        <span lang="en">The page will refresh when the site is back.</span>
+        <span lang="it">La pagina si ricaricherà quando il sito tornerà disponibile.</span>
     </p>
     <a class="main_error-link" href="javascript:location.reload();">
         <span lang="en">Refresh</span>
-        <span lang="it">Ricarica</span>
-        
+        <span lang="it">Ricarica</span>        
     </a>
   </main>
   <script>
     const changeLang = (languageCode) => { document.documentElement.setAttribute("lang", languageCode); };
     changeLang((/^it\b/.test(navigator.language)) ? 'it' : 'en');
+  </script>
+  <script>
+    setInterval(() => {
+        fetch(location.href, { method: 'HEAD' }).then(response => 200 === response.status && window.location.reload(true));
+    }, 8000);
   </script>
 </html>
