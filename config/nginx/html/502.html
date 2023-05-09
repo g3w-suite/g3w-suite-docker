@@ -1,36 +1,170 @@
 <html>
+<head>
+  <title>Bad Gateway</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1"> 
+  <style>
+    /* CSS reset */
+    html, body, div, span, applet, object, iframe,
+    h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+    a, abbr, acronym, address, big, cite, code,
+    del, dfn, em, img, ins, kbd, q, s, samp,
+    small, strike, strong, sub, sup, tt, var,
+    b, u, i, center,
+    dl, dt, dd, ol, ul, li,
+    fieldset, form, label, legend,
+    table, caption, tbody, tfoot, thead, tr, th, td,
+    article, aside, canvas, details, embed,
+    figure, figcaption, footer, header, hgroup,
+    menu, nav, output, ruby, section, summary,
+    time, mark, audio, video {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        font: inherit;
+        vertical-align: baseline;
+    }
 
-        <style>
+    article, aside, details, figcaption, figure,
+    footer, header, hgroup, menu, nav, section {
+        display: block;
+    }
 
-                body {
-                        font-family: 'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
-                        font-weight: 400;
-                        color: grey;
-                }
-                .box {
-                        width: 480px;
-                        margin: 7% auto;
-                        text-align: center;
-                }
-                .logo {
-                        font-size: 35px;
-                        text-align: center;
-                        margin-bottom: 25px;
-                        font-weight: 300;
-                }
-        </style>
-        <body style="background: #d2d6de;">
-                <div class="box">
-                        <div class="logo">
-                                <img src=" data:image/png;base64,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" alt="g3w-suite logo image">
+    body {
+        line-height: 1;
+    }
 
-                        </div>
-                        <div class="box-content">
-                                <h2>G3W-SUITE is starting, wait please!</h2>
-                                <p>If this page persists contact your system administrators.</p>
-                                <p><small>(502)</small></p>
+    ol, ul {
+        list-style: none;
+    }
 
-                        </div>
-                </div>
-        </body>
+    blockquote, q {
+        quotes: none;
+    }
+
+    blockquote:before, blockquote:after,
+    q:before, q:after {
+        content: '';
+        content: none;
+    }
+
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    /* Style */
+    html,
+    body {
+        font-family: sans-serif;
+        font-size: 16px;
+        line-height: 1.4;
+        text-rendering: optimizeLegibility;
+    }
+
+    body {
+        height: 100%;
+        background: #ffffff;
+        user-select: none;
+    }
+
+    main {
+        height: calc(100% - 50px);
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    main .main_error-code {
+        font-size: calc(4.86188vw + 65.76796px);
+        line-height: 1;
+        text-transform: uppercase;
+        color: #191919;
+    }
+
+    main .main_error-title {
+        font-size: calc(0.88398vw + 18.68508px);
+        text-transform: capitalize;
+        color: #191919;
+        margin-bottom: calc(0.44199vw + 18.34254px);
+    }
+
+    main .main_error-message {
+        font-size: calc(0.44199vw + 14.34254px);
+        color: #191919;
+    }
+
+    main .main_error-message:last-of-type {
+        margin-bottom: calc(0.44199vw + 18.34254px);
+    }
+
+    main .main_error-link {
+        display: inline-block;
+        font-size: calc(0.22099vw + 13.17127px);
+        font-weight: 700;
+        text-transform: capitalize;
+        text-decoration: none;
+        background: #191919;
+        color: #ffffff;
+        padding: 10px 25px;
+        border: 2px solid #191919;
+        border-radius: 0;
+        transition: background .3s ease, color .3s ease;
+    }
+
+    main .main_error-link:hover {
+        background: #ffffff;
+        color: #191919;
+    }
+
+
+    @media screen and (max-width: 374px) {
+        main .main_error-code                 { font-size: 84px }
+        main .main_error-title                { margin-bottom: 20px }
+        main .main_error-message              { font-size: 16px }
+        main .main_error-message:last-of-type { margin-bottom: 20px }
+        main .main_error-link                 { font-size: 14px }
+    }
+
+    @media screen and (min-width: 1281px) {
+        main .main_error-code                 { font-size: 128px }
+        main .main_error-title                { margin-bottom: 24px }
+        main .main_error-message              { font-size: 20px }
+        main .main_error-message:last-of-type { margin-bottom: 24px }
+        main .main_error-link                 { font-size: 16px }
+    }
+
+    /* Language selection */
+    html[lang="en"] [lang]:not([lang="en"]),
+    html[lang="it"] [lang]:not([lang="it"]) {
+        display:none
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h2 class="main_error-code">502</h2>
+    <h1 class="main_error-title">Bad Gateway</h1>
+    <p class="main_error-message">
+        <span lang="en">The server is not ready to handle the request right now.</span>
+        <span lang="it">Il server non è pronto a gestire la richiesta in questo momento.</span>
+    </p>
+    <p class="main_error-message">
+        <span lang="en">We are sorry for the inconvenience.</span>
+        <span lang="it">Ci scusiamo per l'inconveniente.</span>
+    </p>
+    <a class="main_error-link" href="javascript:location.reload();">
+        <span lang="en">Refresh</span>
+        <span lang="it">Ricarica</span>
+        
+    </a>
+  </main>
+  <script>
+    const changeLang = (languageCode) => { document.documentElement.setAttribute("lang", languageCode); };
+    changeLang((/^it\b/.test(navigator.language)) ? 'it' : 'en');
+  </script>
 </html>
