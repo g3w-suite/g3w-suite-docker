@@ -103,8 +103,6 @@ To active https with LetsEncrypt just follow the following instructions:
 - restart compose: `docker compose down && docker compose up -d`
 - make sure the certs are renewed by adding a cron job with `sudo crontab -e` and add the following line:
   `0 3 * * * /<path_to_your_docker_files>/run_certbot.sh`
-- if you disabled HTTPS, you can move `config/nginx/django_ssl.conf` back to its original location now, and restart the Docker compose to finally enable HTTPS
-
 
 ### Volumes
 
