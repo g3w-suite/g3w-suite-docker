@@ -1,0 +1,30 @@
+include /etc/nginx/conf.d/error_pages;
+
+# Block *.php
+location ~\.php$ {
+  return 404;
+}
+
+# Secure project's folder
+location /static/projects/ {
+  return 403;
+}
+
+location /static/ {
+  root /shared-volume/;
+}
+
+location /media/ {
+  root /shared-volume/;
+}
+
+location /media_user/ {
+  root /shared-volume/project_data/;
+}
+
+# Certbot configuration
+location /.well-known/acme-challenge/ {
+  root /var/www;
+}
+
+server_name $WEBGIS_PUBLIC_HOSTNAME;
