@@ -9,7 +9,7 @@ This repository contains scripts and recipes for deploy of the G3W-SUITE web-gis
 
 ## Deploy
 
-Follow steps to deploy G3W-SUITE on a Ubuntu Server (20.04)
+Follow steps to deploy G3W-SUITE on a Ubuntu Server (22.04)
 
 ### Configuration 
 
@@ -65,17 +65,17 @@ but is also possible build main image of G3W-SUITE and other docker-compose imag
 The main suite docker image can be built with:
 
 ```bash
-docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:dev --no-cache .
+docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:v3.6.x --no-cache .
 ```
 
-The image is build from `https://github.com/g3w-suite/g3w-admin.git --branch dev` and from a dependencies base image `Dockerfile.g3wsuite-deps.ltr.dockerfile`, the dependencies image can be built with:
+The image is build from `https://github.com/g3w-suite/g3w-admin.git --branch v3.6.x` and from a dependencies base image `Dockerfile.g3wsuite-deps.ltr.dockerfile`, the dependencies image can be built with:
 
 ```bash
-docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps-ltr:dev --no-cache .
+docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps-ltr:v3.6.x --no-cache .
 ```
 
-Usually is sufficient make build of main docker image g3wsuite/g3w-suite:dev, 
-the build of dependence image g3wsuite/g3w-suite-deps-ltr:dev is done to update last QGIS LTR version.
+Usually is sufficient make build of main docker image g3wsuite/g3w-suite:v3.6.x, 
+the build of dependence image g3wsuite/g3w-suite-deps-ltr:v3.6.x is done to update last QGIS LTR version.
 
 #### Postgis
 
