@@ -23,13 +23,13 @@ if [[ "${FRONTEND}" =~ [Tt][Rr][Uu][Ee] ]] ; then
   fi
 fi
 
+# Check Redis is started
+wait-for-it -h ${G3WSUITE_REDIS_HOST:-REDIS} -p ${G3WSUITE_REDIS_PORT:-6379} -t 30
+
 # Build the suite
 /code/ci_scripts/build_suite.sh
 # Setup once
 /code/ci_scripts/setup_suite.sh
-
-# Check Redis is started
-wait-for-it -h ${G3WSUITE_REDIS_HOST:-REDIS} -p ${G3WSUITE_REDIS_PORT:-6379} -t 30
 
 gunicorn base.wsgi:application \
     --limit-request-fields 0 \
