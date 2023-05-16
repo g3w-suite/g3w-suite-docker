@@ -28,6 +28,9 @@ fi
 # Setup once
 /code/ci_scripts/setup_suite.sh
 
+# Check Redis is started
+wait-for-it -h ${G3WSUITE_REDIS_HOST:-REDIS} -p ${G3WSUITE_REDIS_PORT:-6379} -t 30
+
 gunicorn base.wsgi:application \
     --limit-request-fields 0 \
     --error-logfile - \
