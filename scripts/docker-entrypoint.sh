@@ -24,7 +24,7 @@ if [[ "${FRONTEND}" =~ [Tt][Rr][Uu][Ee] ]] ; then
 fi
 
 # Check Redis is started
-wait-for-it -h ${G3WSUITE_REDIS_HOST:-REDIS} -p ${G3WSUITE_REDIS_PORT:-6379} -t 30
+wait-for-it -h ${G3WSUITE_REDIS_HOST:-redis} -p ${G3WSUITE_REDIS_PORT:-6379} -t 30
 
 # Build the suite
 /code/ci_scripts/build_suite.sh
