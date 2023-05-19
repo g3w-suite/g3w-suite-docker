@@ -97,10 +97,9 @@ the conf file will be mounted into docker container at runtime to PGSERVICEFILE 
 
 To active https with LetsEncrypt just follow the following instructions:
 
-- uncomment ssl section within `config/nginx/nginx.conf`
-- update `WEBGIS_PUBLIC_HOSTNAME` environment variable within the `.env` and `config/nginx/nginx.conf` files
+- toggle `WEBGIS_SSL` environment variable within your `.env` file
 - launch `sudo ./run_certbot.sh`
-- restart compose: `docker compose down && docker compose up -d`
+- restart compose: `docker compose up -d --force-recreate`
 - make sure the certs are renewed by adding a cron job with `sudo crontab -e` and add the following line:
   `0 3 * * * /<path_to_your_docker_files>/run_certbot.sh`
 
