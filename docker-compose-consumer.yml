@@ -28,7 +28,7 @@ services:
       internal:
 
   g3w-suite:
-    image: g3wsuite/g3w-suite:dev
+    image: g3wsuite/g3w-suite:dev-processing
     environment:
       - DISPLAY=:99
       - G3WSUITE_TILECACHE_PATH
@@ -83,8 +83,9 @@ services:
 
   # Asynchronous tasks consumer (run_huey)
   g3w-suite-consumer:
-    image: g3wsuite/g3w-suite:dev
+    image: g3wsuite/g3w-suite:dev-processing
     environment:
+      - TMPDIR=/shared-volume/tmp
       - DISPLAY=:99
       - G3WSUITE_TILECACHE_PATH
       - G3WSUITE_POSTGRES_DBNAME

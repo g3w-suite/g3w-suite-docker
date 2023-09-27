@@ -24,7 +24,9 @@ G3WADMIN_LOCAL_MORE_APPS = [
     # Uncomment if you wont activate the following module
     #'openrouteservice',
     'qtimeseries',
-    'frontend'
+    'frontend',
+    'qprocessing'
+
 ]
 
 DATABASES = {
@@ -208,3 +210,8 @@ LOGGING = {
 }
 
 SESSION_COOKIE_NAME = 'gis3w-suite-dev-iehtgdb264t5gr'
+
+# QPROCESSING SETTINGS
+# ----------------------------------------------
+QPROCESSING_OUTPUT_PATH = '/shared-volume/project_data/qprocessing/results/'
+QPROCESSING_INPUT_UPLOAD_PATH = QPROCESSING_OUTPUT_PATH

@@ -30,3 +30,14 @@ pip3 install -r /code/g3w-admin/qplotly/requirements.txt
 # Openrouteservice
 pip3 install -r /code/g3w-admin/openrouteservice/requirements.txt
 
+
+# Qprocessing
+cd /
+git clone https://github.com/g3w-suite/g3w-admin-processing.git && \
+pip3 install -r /g3w-admin-processing/requirements.txt && \
+mv /g3w-admin-processing/qprocessing /code/g3w-admin/qprocessing
+
+cd /code
+
+
+

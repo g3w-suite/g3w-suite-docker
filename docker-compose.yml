@@ -28,8 +28,9 @@ services:
       internal:
 
   g3w-suite:
-    image: g3wsuite/g3w-suite:dev
+    image: g3wsuite/g3w-suite:dev-processing
     environment:
+      - TMPDIR=/shared-volume/tmp
       - DISPLAY=:99
       - G3WSUITE_TILECACHE_PATH
       - G3WSUITE_POSTGRES_DBNAME
