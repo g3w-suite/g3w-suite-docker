@@ -15,7 +15,8 @@ LABEL maintainer="Gis3W" \
 # Based on main CI Docker from  g3w-suite, checkout code + caching,
 # custom settings file
 ##
-RUN apt update && apt install git -y
+RUN apt update &&  \
+    apt install git figlet  -y
 
 ##
 # G3W-ADMIN git branch to checkout.

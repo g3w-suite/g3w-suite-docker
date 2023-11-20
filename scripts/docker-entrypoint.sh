@@ -2,6 +2,9 @@
 # Entrypoint script fro deploy production
 # ---------------------------------------
 
+# Gis3W Sign
+figlet -t "G3W-SUITE Docker by Gis3w"
+
 # Start XVfb
 if [[  -f /tmp/.X99-lock ]]; then
   rm /tmp/.X99-lock
