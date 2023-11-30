@@ -207,4 +207,4 @@ LOGGING = {
     }
 }
 
-SESSION_COOKIE_NAME = 'gis3w-suite-dev-iehtgdb264t5gr'
+SESSION_COOKIE_NAME = 'gis3w-suite-v37-ds3983akoweikjdsfkjhdkjas'

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Entrypoint script fro deploy production
-# ---------------------------------------
+# =======================================
 
 # Gis3W Sign
 figlet -t "G3W-SUITE Docker by Gis3w"

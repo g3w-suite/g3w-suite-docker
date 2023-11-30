@@ -9,7 +9,7 @@ This repository contains scripts and recipes for deploy of the G3W-SUITE web-gis
 
 ## Deploy
 
-Follow steps to deploy G3W-SUITE on a Ubuntu Server (20.04)
+Follow steps to deploy G3W-SUITE on a Ubuntu Server (22.04)
 
 ### Configuration 
 
@@ -41,7 +41,7 @@ PGSERVICEFILE=/pg_service/pg_service.conf
 ### Run
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 If all went well, G3W-SUITE run on http://localhost:8080
@@ -52,7 +52,7 @@ If all went well, G3W-SUITE run on http://localhost:8080
 G3W-SUITE use `huey` for bach processing (https://github.com/coleifer/huey), so if you want to use it,
 use `docker-compose-consumer.yml` file on deploy:
 ```bash
-docker-compose -f docker-compose-consumer.yml up -d
+docker compose -f docker-compose-consumer.yml up -d
 ```
 
 ## Builds
@@ -65,26 +65,17 @@ but is also possible build main image of G3W-SUITE and other docker-compose imag
 The main suite docker image can be built with:
 
 ```bash
-docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:dev --no-cache .
+docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:v3.7.x --no-cache .
 ```
 
 The image is build from `https://github.com/g3w-suite/g3w-admin.git --branch dev` and from a dependencies base image `Dockerfile.g3wsuite-deps.ltr.dockerfile`, the dependencies image can be built with:
 
 ```bash
-docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps-ltr:dev --no-cache .
+docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps-ltr:v3.7.x --no-cache .
 ```
 
 Usually is sufficient make build of main docker image g3wsuite/g3w-suite:dev, 
 the build of dependence image g3wsuite/g3w-suite-deps-ltr:dev is done to update last QGIS LTR version.
-
-#### Postgis
-
-Postgis image can be built with:
-
-```bash
-docker build -f Dockerfile.postgis.dockerfile -t g3wsuite/postgis:11.0-2.5 .
-```
-The Docker hub name for this image is `g3wsuite/postgis:11.0-2.5`
 
 ## Setups
 
@@ -109,7 +100,7 @@ To active https with LetsEncrypt just follow the following instructions:
 Data, projects, uploads and the database are stored in a shared mounted volume `shared-volume`, the volume should be on a persistent storage device and a backup
 policy must be enforced.
 
-Currently, the volume is mounted in `/tmp/shared-volume-g3wsuite-dev`. In production
+Currently, the volume is mounted in `./shared-volume`. In production
 environments it is encouraged to change this to a permanent location.
 This can be done by modifying the `.env` file.
 
@@ -203,5 +194,10 @@ Plese refer to the [Add new stack](https://docs.portainer.io/v/ce-2.9/user/docke
 
 ### Contributors
 * Walter Lorenzetti - Gis3W ([@wlorenzetti](https://github.com/wlorenzetti))
+* Matteo Tosi - Gis3W ([@raruto](https://github.com/Raruto))
 * Alessandro Pasotti - ItOpen ([@elpaso](https://github.com/elpaso))
 * Mazano - Kartoza ([@NyakudyaA](https://github.com/NyakudyaA))
+* Luca Manganelli - Comune di Trento ([@lucamanga](https://github.com/lucamanga))
+* Tudor Barascu - QTIBIA ([@tudorbarascu](https://github.com/tudorbarascu))
+* Francisco Puga - iCarto ([@fpuga](https://github.com/fpuga))
+
