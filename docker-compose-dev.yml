@@ -1,7 +1,7 @@
 version: "3"
 services:
   postgis:
-    image: kartoza/postgis:15-3.3
+    image: g3wsuite/postgis:11.0-2.5
     ports:
       - "5439:5432"
     environment:
@@ -9,23 +9,23 @@ services:
       - POSTGRES_USER=${G3WSUITE_POSTGRES_USER_LOCAL}
       - POSTGRES_PASS=${G3WSUITE_POSTGRES_PASS}
       - ALLOW_IP_RANGE=0.0.0.0/0
-      - RUN_AS_ROOT=true
-      - FORCE_SSL=False
-    restart: on-failure
+    restart: "no"
     logging:
       driver: "json-file"
       options:
         max-size: "200k"
         max-file: "10"
     volumes:
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/var/lib/postgresql
+      - g3wsuite-pg-data:/var/lib/postgresql
     healthcheck:
       interval: 60s
       timeout: 30s
       retries: 3
-      test: "PGPASSWORD=${G3WSUITE_POSTGRES_PASS} pg_isready -h 127.0.0.1 -U ${G3WSUITE_POSTGRES_USER_LOCAL} -d ${G3WSUITE_POSTGRES_DBNAME}"
+      test: "pg_isready"
     networks:
       internal:
+        aliases:
+          - ${WEBGIS_PUBLIC_HOSTNAME}
 
 
   g3w-suite:
