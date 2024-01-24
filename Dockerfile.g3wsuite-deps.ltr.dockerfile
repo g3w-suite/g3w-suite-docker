@@ -25,26 +25,23 @@ RUN apt-get update && apt install -y \
     python3-gdal \
     python3-pip \
     curl \
-    wget \
-    vim \
     wait-for-it \
     gdal-bin \
     libsqlite3-mod-spatialite \
     dirmngr \
     xvfb
 
-# PyQGIS 3.22
-RUN wget -qO - https://qgis.org/downloads/qgis-2022.gpg.key | \
-    gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import && \
-    chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg && \
-    echo "deb [arch=amd64] https://qgis.org/ubuntu-ltr jammy main" >> /etc/apt/sources.list && \
-    apt update && apt install -y python3-qgis qgis-server
+# PyQGIS 3.28
+RUN curl -sS https://download.qgis.org/downloads/qgis-archive-keyring.gpg > /etc/apt/keyrings/qgis-archive-keyring.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/ubuntu-ltr jammy main" | \
+    tee /etc/apt/sources.list.d/qgis.list && \
+    apt-get update && apt-get install -y python3-qgis qgis-server
 
 # Yarn
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | \
     tee /etc/apt/sources.list.d/yarn.list && \
-    apt-get update && apt install -y yarn
+    apt-get update && apt install -y yarn && apt-get clean
 
 RUN mkdir /code
 
