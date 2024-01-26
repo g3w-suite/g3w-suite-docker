@@ -34,11 +34,27 @@ wait-for-it -h ${G3WSUITE_REDIS_HOST:-redis} -p ${G3WSUITE_REDIS_PORT:-6379} -t 
 # Setup once
 /code/ci_scripts/setup_suite.sh
 
-gunicorn base.wsgi:application \
-    --limit-request-fields 0 \
-    --error-logfile - \
-    --log-level=debug \
-    --timeout ${G3WSUITE_GUNICORN_TIMEOUT:-120} \
-    --workers=${G3WSUITE_GUNICORN_NUM_WORKERS:-8} \
-    --max-requests=${G3WSUITE_GUNICORN_MAX_REQUESTS:-200} \
-    -b 0.0.0.0:8000
+if [[ "${G3WSUITE_WEBSERVER:-gunicorn}" = gunicorn ]]; then
+
+  gunicorn base.wsgi:application \
+      --limit-request-fields 0 \
+      --error-logfile - \
+      --log-level=debug \
+      --timeout ${G3WSUITE_GUNICORN_TIMEOUT:-120} \
+      --workers=${G3WSUITE_WEBSERVER_NUM_WORKERS:-8} \
+      --max-requests=${G3WSUITE_GUNICORN_MAX_REQUESTS:-200} \
+      -b 0.0.0.0:8000
+
+else
+
+  # !!EXPERIMENTAL!!
+  # A Rust HTTP server for Python applications.
+  # https://github.com/emmett-framework/granian
+  granian --interface wsgi \
+      --workers ${G3WSUITE_WEBSERVER_NUM_WORKERS:-8} \
+      --threading-mode runtime \
+      --host 0.0.0.0 \
+      --port 8000 \
+      base.wsgi:application
+
+fi
