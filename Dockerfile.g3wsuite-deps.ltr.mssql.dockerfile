@@ -33,6 +33,7 @@ RUN apt-get update && apt install -y \
     dirmngr \
     tdsodbc \
     libqt5sql5-tds \
+    libqt5sql5-odbc \
     xvfb
 
 # PyQGIS 3.22
