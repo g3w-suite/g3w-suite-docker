@@ -1,4 +1,4 @@
-include /etc/nginx/conf.d/error_pages;
+include /etc/nginx/conf.d/conf/error_pages;
 
 # Block *.php
 location ~\.php$ {
@@ -27,4 +27,4 @@ location /.well-known/acme-challenge/ {
   root /var/www;
 }
 
-server_name $WEBGIS_PUBLIC_HOSTNAME;
+server_name $NGINX_SERVER_NAME;
