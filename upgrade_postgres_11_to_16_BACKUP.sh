@@ -1,16 +1,14 @@
 #!/bin/bash
-source .env
 
-# Create a .pgpass in root home
-echo "${G3WSUITE_POSTGRES_HOST}:${G3WSUITE_POSTGRES_PORT}:*:${G3WSUITE_POSTGRES_USER_LOCAL}:${G3WSUITE_POSTGRES_PASS}" > .pgpass
-docker compose cp .pgpass postgis:/root/
-docker compose exec postgis chmod 600 /root/.pgpass
-rm .pgpass
+source update_postgres_11_to_16_BASE.sh
 
 # Create a script fro backup
-echo "pg_dump --file /var/lib/postgresql/11/g3wsuite.sql --host ${G3WSUITE_POSTGRES_HOST}  --port ${G3WSUITE_POSTGRES_PORT} --username ${G3WSUITE_POSTGRES_USER_LOCAL} --verbose --format=p --create --clean --inserts -d g3wsuite" > pg_backup.sh
-echo "pg_dump --file /var/lib/postgresql/11/data_production.sql --host ${G3WSUITE_POSTGRES_HOST}  --port ${G3WSUITE_POSTGRES_PORT} --username ${G3WSUITE_POSTGRES_USER_LOCAL} --verbose --format=p --create --clean --inserts -d data_production" >> pg_backup.sh
-echo "pg_dump --file /var/lib/postgresql/11/data_testing.sql --host ${G3WSUITE_POSTGRES_HOST}  --port ${G3WSUITE_POSTGRES_PORT} --username ${G3WSUITE_POSTGRES_USER_LOCAL} --verbose --format=p --create --clean --inserts -d data_testing" >> pg_backup.sh
+echo "#!/bin/bash" > pg_backup.sh
+for DB in "${DBS[@]}"; do
+
+  echo "pg_dump --file ${BACKUP_PATH}${DB}.bck ${CONNECTION_DB} --verbose --format=c --create --clean -d ${DB}" >> pg_backup.sh
+
+done
 
 docker compose cp pg_backup.sh postgis:/root/
 docker compose exec postgis chmod +x /root/pg_backup.sh

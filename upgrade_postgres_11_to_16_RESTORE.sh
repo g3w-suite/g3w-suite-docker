@@ -1,19 +1,22 @@
 #!/bin/bash
-source .env
+source update_postgres_11_to_16_BASE.sh
 
-# Create a .pgpass in root home
-echo "${G3WSUITE_POSTGRES_HOST}:${G3WSUITE_POSTGRES_PORT}:*:${G3WSUITE_POSTGRES_USER_LOCAL}:${G3WSUITE_POSTGRES_PASS}" > .pgpass
-docker compose cp .pgpass postgis:/root/
-docker compose exec postgis chmod 600 /root/.pgpass
-rm .pgpass
+# Create a script for databases restore
+echo "#!/bin/bash" > pg_restore.sh
+for DB in "${DBS[@]}"; do
 
-# Create a script fro backup
-echo "psql --host ${G3WSUITE_POSTGRES_HOST}  --port ${G3WSUITE_POSTGRES_PORT} --username ${G3WSUITE_POSTGRES_USER_LOCAL} -d g3wsuite -f /var/lib/postgresql/11/g3wsuite.sql" > pg_restore.sh
-echo "psql --host ${G3WSUITE_POSTGRES_HOST}  --port ${G3WSUITE_POSTGRES_PORT} --username ${G3WSUITE_POSTGRES_USER_LOCAL} -d g3wsuite -c \"select postgis_extensions_upgrade();\"" >> pg_restore.sh
-echo "psql --host ${G3WSUITE_POSTGRES_HOST}  --port ${G3WSUITE_POSTGRES_PORT} --username ${G3WSUITE_POSTGRES_USER_LOCAL} -d data_production -f /var/lib/postgresql/11/data_production.sql" >> pg_restore.sh
-echo "psql --host ${G3WSUITE_POSTGRES_HOST}  --port ${G3WSUITE_POSTGRES_PORT} --username ${G3WSUITE_POSTGRES_USER_LOCAL} -d data_production -c \"select postgis_extensions_upgrade();\"" >> pg_restore.sh
-echo "psql --host ${G3WSUITE_POSTGRES_HOST}  --port ${G3WSUITE_POSTGRES_PORT} --username ${G3WSUITE_POSTGRES_USER_LOCAL} -d data_testing -f /var/lib/postgresql/11/data_testing.sql" >> pg_restore.sh
-echo "psql --host ${G3WSUITE_POSTGRES_HOST}  --port ${G3WSUITE_POSTGRES_PORT} --username ${G3WSUITE_POSTGRES_USER_LOCAL} -d data_testing -c \"select postgis_extensions_upgrade();\"" >> pg_restore.sh
+  echo "psql $CONNECTION_DB -d ${DB} -c \"create database ${DB}_${SUFFIX_DB};\"" >> pg_restore.sh
+  echo "pg_restore $CONNECTION_DB -d ${DB}_${SUFFIX_DB} ${BACKUP_PATH}${DB}.bck" >> pg_restore.sh
+  echo "psql ${CONNECTION_DB} -d ${DB}_${SUFFIX_DB} -c \"${QUERY_UPGRADE_POSTGIS}\"" >> pg_restore.sh
+
+  # Close connection
+  echo "psql ${CONNECTION_DB} -d ${DB}_${SUFFIX_DB} -c \"${QUERY_CLOSE_CONNECTIONS}'db_name';\"" >> pg_restore.sh
+
+  # Drop old database adn rename the new with old
+  echo "psql ${CONNECTION_DB} -d ${DB}_${SUFFIX_DB} -c \"drop database ${DB};\"" >> pg_restore.sh
+  echo "psql ${CONNECTION_DB} -d ${DB}_${SUFFIX_DB} -c \"alter database ${DB}_${SUFFIX_DB} rename to ${DB};\"" >> pg_restore.sh
+
+done
 
 docker compose cp pg_restore.sh postgis:/root/
 docker compose exec postgis chmod +x /root/pg_restore.sh
