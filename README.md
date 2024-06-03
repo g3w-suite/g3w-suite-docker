@@ -7,6 +7,12 @@ This repository contains scripts and recipes for deploy of the G3W-SUITE web-gis
 
 ![Docker structure](docs/img/docker.png)
 
+> !! IMPORTANT !!
+> 
+> Since **v3.8** the main PostgreSQL/PostGIS version is changed from odl 11/2.5 to **16/3.4**. 
+> 
+> To upgrade from v3.7 version (or less) follow the hte instructions and the bottom of the page.
+
 ## Deploy
 
 Follow steps to deploy G3W-SUITE on a Ubuntu Server (20.04)
