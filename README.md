@@ -1,4 +1,9 @@
-# G3W-SUITE WebGIS
+# :warning: !! WARNING !! :warning: 
+Since **v3.8** the main PostgreSQL/PostGIS version is changed from odl 11/2.5 to **16/3.4**. 
+
+To upgrade from v3.7 version (or less) follow the hte instructions and the bottom of the page.
+
+# G3W-SUITE with docker and docker compose
 
 [![Build G3W-SUITE image](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push_main_image.yml/badge.svg)](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push_main_image.yml)
 [![Build dependencies](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push_deps_ltr.yml/badge.svg)](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push_deps_ltr.yml)
@@ -6,11 +11,6 @@
 This repository contains scripts and recipes for deploy of the G3W-SUITE web-gis application with Docker and Docker compose .
 
 ![Docker structure](docs/img/docker.png)
-
-# :warning: !! WARNING !! :warning: 
-Since **v3.8** the main PostgreSQL/PostGIS version is changed from odl 11/2.5 to **16/3.4**. 
-
-To upgrade from v3.7 version (or less) follow the hte instructions and the bottom of the page.
 
 
 ## Deploy
