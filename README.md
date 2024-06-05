@@ -1,7 +1,7 @@
 # :warning: !! WARNING !! :warning: 
-Since **v3.8** the main PostgreSQL/PostGIS version is changed from odl 11/2.5 to **16/3.4**. 
+Since **v3.8** the main PostgreSQL/PostGIS version is changed from odl **11/2.5** to **16/3.4**. 
 
-To upgrade from v3.7 version (or less) follow the hte instructions and the bottom of the page.
+To upgrade from v3.7 version (or less) follow the procedure [here](UPGRADE_PG_DB_FROM_11_TO_16.md).
 
 # G3W-SUITE with docker and docker compose
 
