@@ -78,6 +78,15 @@ services:
     networks:
       internal:
 
+
+  redis:
+    image: redis:latest
+    expose:
+    - 6379
+    networks:
+      internal:
+    restart: always
+    
 volumes:
   shared-volume:
   g3wsuite-pg-data:
