@@ -19,6 +19,8 @@ fi
 ##
 IFS=',' read -r -a DB_NAMES <<< "$POSTGRES_DBNAME" # DB_NAMES=("g3wsuite" "data_production" "data_testing")
 
+DB_CONNECTION="--host postgis --port 5432 --username ${POSTGRES_USER}"
+
 echo "#!/bin/bash" > pg_backup.sh
 echo "#!/bin/bash" > pg_restore.sh
 
@@ -27,18 +29,18 @@ for DB in "${DB_NAMES[@]}"; do
   cat >> pg_backup.sh << EOF
 
 ### ${DB} ###
-pg_dump -d ${DB} --file /var/lib/postgresql/11/${DB}.bck --verbose --format=c --create --clean
+pg_dump ${DB_CONNECTION} -d ${DB} --file /var/lib/postgresql/11/${DB}.bck --verbose --format=c --create --clean
 EOF
 
   cat >> pg_restore.sh << EOF
 
 ### ${DB} ###
-psql       -d template1 -c \"CREATE DATABASE ${DB}_1634;\"
-pg_restore -d ${DB}_1634 /var/lib/postgresql/11/${DB}.bck
-psql       -d ${DB}_1634 -c \"SELECT postgis_extensions_upgrade();\"
-psql       -d template1 -c \"SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname='${DB}';\"
-psql       -d template1 -c \"DROP DATABASE ${DB};\"
-psql       -d template1 -c \"ALTER DATABASE ${DB}_1634 RENAME TO ${DB};\"
+psql       ${DB_CONNECTION} -d template1 -c \"CREATE DATABASE ${DB}_1634;\"
+pg_restore ${DB_CONNECTION} -d ${DB}_1634 /var/lib/postgresql/11/${DB}.bck
+psql       ${DB_CONNECTION} -d ${DB}_1634 -c \"SELECT postgis_extensions_upgrade();\"
+psql       ${DB_CONNECTION} -d template1 -c \"SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname='${DB}';\"
+psql       ${DB_CONNECTION} -d template1 -c \"DROP DATABASE ${DB};\"
+psql       ${DB_CONNECTION} -d template1 -c \"ALTER DATABASE ${DB}_1634 RENAME TO ${DB};\"
 EOF
 done
 
