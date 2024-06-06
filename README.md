@@ -39,7 +39,7 @@ docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:v3.8.x --no
 # 2. Backup databases
 #############################################################################
 
-./upgrade_postgres_11_to_16_BACKUP.sh
+docker compose exec postgis bash /root/pg_backup.sh
 
 #############################################################################
 # 3. Run the new v3.8.x
@@ -57,11 +57,19 @@ docker compose up -d --force-recreate
 # 4. Restore databases
 #############################################################################
 
-./upgrade_postgres_11_to_16_RESTORE.sh
+docker compose exec postgis bash /root/pg_restore.sh
 
-# restart your consumer setup if you were using before:
+#############################################################################
+# 5. Restart g3wsuite
+#############################################################################
 
-# docker compose -f docker-compose-consumer.yml restart g3w-suite-consumer
+docker compose restart
+
+# and restart whatever setup you were using before:
+
+# docker compose -f docker-compose.yml          restart
+# docker compose -f docker-compose-dev.yml      restart
+# docker compose -f docker-compose-consumer.yml restart
 
 #############################################################################
 # OPTIONAL: safely delete old PG11 folder
