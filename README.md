@@ -1,14 +1,79 @@
-# :warning: !! WARNING !! :warning: 
-Since **v3.8** the main PostgreSQL/PostGIS version is changed from odl **11/2.5** to **16/3.4**. 
-
-To upgrade from v3.7 version (or less) follow the procedure [here](UPGRADE_PG_DB_FROM_11_TO_16.md).
-
-# G3W-SUITE with docker and docker compose
+# G3W-SUITE-DOCKER
 
 [![Build G3W-SUITE image](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push_main_image.yml/badge.svg)](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push_main_image.yml)
 [![Build dependencies](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push_deps_ltr.yml/badge.svg)](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push_deps_ltr.yml)
 
-This repository contains scripts and recipes for deploy of the G3W-SUITE web-gis application with Docker and Docker compose .
+Scripts and recipes for deploying a full blown G3W-SUITE web-gis application with Docker Compose.
+
+<details>
+
+<summary><h2> ⬆️ How to upgrade from v3.7 to v3.8 </h2></summary>
+
+Since **v3.8** PostgreSQL/PostGIS changed from **v11/2.5** to **v16/3.4**, to upgrade follow below steps:
+
+```sh
+#############################################################################
+# 0. Ensure that g3w-suite-docker v3.7.x is running
+#############################################################################
+
+docker compose up -d
+
+# or whatever setup you were using before:
+
+# docker compose -f docker-compose.yml          up -d
+# docker compose -f docker-compose-dev.yml      up -d
+# docker compose -f docker-compose-consumer.yml up -d
+
+#############################################################################
+# 1. Checkout v3.8.x branch
+#############################################################################
+
+git fetch
+git checkout v3.8.x
+
+# OPTIONAL: build the new image locally
+
+docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:v3.8.x --no-cache .
+
+#############################################################################
+# 2. Backup databases
+#############################################################################
+
+./upgrade_postgres_11_to_16_BACKUP.sh
+
+#############################################################################
+# 3. Run the new v3.8.x
+#############################################################################
+
+docker compose up -d --force-recreate
+
+# or whatever setup you were using before:
+
+# docker compose -f docker-compose.yml          up -d --force-recreate
+# docker compose -f docker-compose-dev.yml      up -d --force-recreate
+# docker compose -f docker-compose-consumer.yml up -d --force-recreate
+
+#############################################################################
+# 4. Restore databases
+#############################################################################
+
+./upgrade_postgres_11_to_16_RESTORE.sh
+
+# restart your consumer setup if you were using before:
+
+# docker compose -f docker-compose-consumer.yml restart g3w-suite-consumer
+
+#############################################################################
+# OPTIONAL: safely delete old PG11 folder
+#############################################################################
+
+source .env
+sudo rm -r ${WEBGIS_DOCKER_SHARED_VOLUME}/11
+```
+  
+</details>
+
+---
 
 ![Docker structure](docs/img/docker.png)
 
