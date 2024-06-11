@@ -31,7 +31,7 @@ RUN apt-get update && apt install -y \
     dirmngr \
     xvfb
 
-# PyQGIS 3.28
+# PyQGIS 3.34
 RUN curl -sS https://download.qgis.org/downloads/qgis-archive-keyring.gpg > /etc/apt/keyrings/qgis-archive-keyring.gpg && \
     echo "deb [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/ubuntu-ltr jammy main" | \
     tee /etc/apt/sources.list.d/qgis.list && \
