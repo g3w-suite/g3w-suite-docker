@@ -24,12 +24,12 @@ docker compose up -f docker-compose-dev.yml up -d
 git fetch
 git checkout v3.8.x
 
-make backup-dbs PG_VERSION=15 ENV=dev
+make backup-dbs PG_VERSION=11 ENV=dev
 
 ### RESTORE (v3.8.x) ###
 
 make reset-db
-make restore-dbs PG_VERSION=15 ENV=dev
+make restore-dbs PG_VERSION=11 ENV=dev
 
 docker compose up -f docker-compose-dev.yml restart
 
