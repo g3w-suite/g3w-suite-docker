@@ -12,71 +12,30 @@ Scripts and recipes for deploying a full blown G3W-SUITE web-gis application wit
 Since **v3.8** PostgreSQL/PostGIS changed from **v11/2.5** to **v16/3.4**, to upgrade follow below steps:
 
 ```sh
-#############################################################################
-# 0. Ensure that g3w-suite-docker v3.7.x is running
-#############################################################################
+# NB:
+# • (ENV = dev)      → docker-compose-dev.yml
+# • (ENV = prod)     → docker-compose.yml
+# • (ENV = consumer) → docker-compose-consumer.yml
 
-docker compose up -d
+### BACKUP (v3.7.x) ###
 
-# or whatever setup you were using before:
-
-# docker compose -f docker-compose.yml          up -d
-# docker compose -f docker-compose-dev.yml      up -d
-# docker compose -f docker-compose-consumer.yml up -d
-
-#############################################################################
-# 1. Checkout v3.8.x branch
-#############################################################################
+docker compose up -f docker-compose-dev.yml up -d
 
 git fetch
 git checkout v3.8.x
 
-# OPTIONAL: build the new image locally
+make backup-dbs PG_VERSION=15 ENV=dev
 
-docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:v3.8.x --no-cache .
+### RESTORE (v3.8.x) ###
 
-#############################################################################
-# 2. Backup databases
-#############################################################################
+make reset-db
+make restore-dbs PG_VERSION=15 ENV=dev
 
-docker compose exec postgis bash /root/pg_backup.sh
+docker compose up -f docker-compose-dev.yml restart
 
-#############################################################################
-# 3. Run the new v3.8.x
-#############################################################################
+### OPTIONAL (delete old DB) ###
 
-docker compose up -d --force-recreate
-
-# or whatever setup you were using before:
-
-# docker compose -f docker-compose.yml          up -d --force-recreate
-# docker compose -f docker-compose-dev.yml      up -d --force-recreate
-# docker compose -f docker-compose-consumer.yml up -d --force-recreate
-
-#############################################################################
-# 4. Restore databases
-#############################################################################
-
-docker compose exec postgis bash /root/pg_restore.sh
-
-#############################################################################
-# 5. Restart g3wsuite
-#############################################################################
-
-docker compose restart
-
-# and restart whatever setup you were using before:
-
-# docker compose -f docker-compose.yml          restart
-# docker compose -f docker-compose-dev.yml      restart
-# docker compose -f docker-compose-consumer.yml restart
-
-#############################################################################
-# OPTIONAL: safely delete old PG11 folder
-#############################################################################
-
-source .env
-sudo rm -r ${WEBGIS_DOCKER_SHARED_VOLUME}/11
+docker compose exec g3w-suite bash -c 'rm -r /shared-volume/11'
 ```
   
 </details>
