@@ -24,14 +24,12 @@ docker compose up -f docker-compose-dev.yml up -d
 git fetch
 git checkout v3.8.x
 
-make backup-dbs PG_VERSION=11 ENV=dev
+make backup-db PG_VERSION=11 ENV=dev
 
 ### RESTORE (v3.8.x) ###
 
 make reset-db
-make restore-dbs PG_VERSION=11 ENV=dev
-
-docker compose up -f docker-compose-dev.yml restart
+make restore-db PG_VERSION=11 ENV=dev
 
 ### OPTIONAL (delete old DB) ###
 
@@ -137,8 +135,7 @@ To active https with LetsEncrypt just follow the following instructions:
 
 - uncomment ssl section within `config/nginx/nginx.conf`
 - update `WEBGIS_PUBLIC_HOSTNAME` environment variable within the `.env` and `config/nginx/nginx.conf` files
-- launch `sudo ./run_certbot.sh`
-- restart compose: `docker compose down && docker compose up -d`
+- launch `sudo make renew-ssl`
 - make sure the certs are renewed by adding a cron job with `sudo crontab -e` and add the following line:
   `0 3 * * * /<path_to_your_docker_files>/run_certbot.sh`
 
