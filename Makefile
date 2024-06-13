@@ -3,6 +3,13 @@ ifeq ($(ENV),)
 endif
 
 ##
+# Ensure: "Docker Desktop > Resources > WSL Integration"
+##
+ifeq ($(OS),Windows_NT) 
+  $(error makefile.exe not supported, please try again within a WSL shell: https://docs.docker.com/desktop/wsl/#enabling-docker-support-in-wsl-2-distros)
+endif
+
+##
 # ENV = { dev | prod | consumer }
 ##
 ifeq ($(ENV), "prod")
