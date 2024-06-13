@@ -5,7 +5,7 @@ endif
 ##
 # Ensure: "Docker Desktop > Resources > WSL Integration"
 ##
-ifeq ($(OS),Windows_NT) 
+ifeq ($(OS), Windows_NT) 
   $(error make.exe not supported, please try again within a WSL shell: https://docs.docker.com/desktop/wsl/#enabling-docker-support-in-wsl-2-distros)
 endif
 
@@ -54,3 +54,15 @@ restore-db:
 renew-ssl:
 	./scripts/makefile/renew-ssl.sh
 	$(DOCKER_COMPOSE) up -d --force-recreate
+
+
+##
+# Rebuild docker image
+#
+# make docker-image v=v3.8.x
+##
+docker-image:
+	ifeq ($(v),)
+		$(error v is not set)
+	endif
+	docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:$(v) --no-cache .
