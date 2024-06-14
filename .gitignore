@@ -5,7 +5,7 @@ projects
 .idea
 code
 
-shared-volume
+shared-volume/**
 
 # DEMO DATA
 !shared-volume/backup/
