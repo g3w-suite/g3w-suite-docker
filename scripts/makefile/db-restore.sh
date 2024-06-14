@@ -47,6 +47,9 @@ rm .pgpass
 ##
 echo "#!/bin/bash" > pg_restore.sh
 
+# Waiting che creation of new cluster.
+echo "sleep 30 &"
+
 for DB in $DB_NAMES; do
   cat >> pg_restore.sh << EOF
 psql ${DB_LOGIN}       -d template1   -c "DROP DATABASE IF EXISTS ${DB}_1634;"
