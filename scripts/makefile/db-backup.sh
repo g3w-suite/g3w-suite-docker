@@ -45,9 +45,11 @@ rm .pgpass
 # Backup databases 
 ##
 echo "#!/bin/bash" > pg_backup.sh
+echo "mkdir -p /var/lib/postgresql/backup/${PG_VERSION}" >> pg_backup.sh
+
 for DB in $DB_NAMES; do
   cat >> pg_backup.sh << EOF
-pg_dump ${DB_LOGIN} -d ${DB} --file /var/lib/postgresql/${PG_VERSION}/${DB}.bck --verbose --format=c --create --clean
+pg_dump ${DB_LOGIN} -d ${DB} --file /var/lib/postgresql/backup/${PG_VERSION}/${DB}.bck --verbose --format=c --create --clean
 EOF
 done
 
@@ -56,4 +58,4 @@ rm pg_backup.sh
 
 bash -c "$DOCKER_COMPOSE exec postgis chmod +x /root/pg_backup.sh"
 bash -c "$DOCKER_COMPOSE exec postgis bash /root/pg_backup.sh"
-bash -c "$DOCKER_COMPOSE exec postgis rm pg_backup.sh"
+bash -c "$DOCKER_COMPOSE exec postgis rm /root/pg_backup.sh"
