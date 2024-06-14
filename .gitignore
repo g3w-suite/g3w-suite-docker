@@ -14,3 +14,5 @@ shared-volume/**
 !shared-volume/media/project_data/
 !shared-volume/media/project_data/spatialite/
 !shared-volume/media/project_data/spatialite/**
+!shared-volume/media/projects/
+!shared-volume/media/projects/3857_public-building-management-demo.qgs
