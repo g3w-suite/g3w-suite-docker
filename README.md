@@ -54,7 +54,16 @@ git clone https://github.com/g3w-suite/g3w-suite-docker/
 cd g3w-suite-docker
 ```
 
-Create a `.env` file starting from [`.env.example`](./.env.example) and tailor it to your needs and then start containers:
+Create a `.env` file starting from [`.env.example`](./.env.example) and tailor it to your needs:
+
+```diff
+# CHANGE ME: PostGIS DB password
+
+- G3WSUITE_POSTGRES_PASS='89#kL8y3D'
++ G3WSUITE_POSTGRES_PASS=<your__password>
+```
+
+Start containers:
 
 ```sh
 docker-compose up -d
