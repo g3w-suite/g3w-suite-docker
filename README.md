@@ -28,7 +28,6 @@ make db-backup PG_VERSION=11 ENV=dev
 
 ### RESTORE (v3.8.x) ###
 
-make db-reset ENV=dev
 make db-restore PG_VERSION=11 ENV=dev
 
 ### OPTIONAL (delete old DB) ###
