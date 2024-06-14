@@ -23,9 +23,9 @@ G3W_SUITE:= docker compose exec g3w-suite
 ##
 # Recreate g3w-suite containers
 #
-# make reset-db ENV=dev
+# make db-reset ENV=dev
 ##
-reset-db:
+db-reset:
 	$(G3W_SUITE) bash -c 'rm -f /shared-volume/build_done'
 	$(G3W_SUITE) bash -c 'rm -f /shared-volume/setup_done'
 	$(DOCKER_COMPOSE) up -d --force-recreate
@@ -33,17 +33,17 @@ reset-db:
 ##
 # Backup databases
 #
-# make backup-db ENV=dev PG_VERSION=16
+# make db-backup ENV=dev PG_VERSION=16
 ##
-backup-db:
+db-backup:
 	./scripts/makefile/db-backup.sh
 
 ##
 # Restore databases
 #
-# make restore-dbs ENV=dev PG_VERSION=16
+# make db-restore ENV=dev PG_VERSION=16
 ##
-restore-db:
+db-restore:
 	./scripts/makefile/db-restore.sh
 
 ##
