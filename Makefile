@@ -21,16 +21,6 @@ endif
 G3W_SUITE:= docker compose exec g3w-suite
 
 ##
-# Recreate g3w-suite containers
-#
-# make db-reset ENV=dev
-##
-db-reset:
-	#$(G3W_SUITE) bash -c 'rm -f /shared-volume/build_done'
-	#$(G3W_SUITE) bash -c 'rm -f /shared-volume/setup_done'
-	$(DOCKER_COMPOSE) up -d --force-recreate
-
-##
 # Backup databases
 #
 # make db-backup ENV=dev PG_VERSION=16
@@ -45,7 +35,7 @@ db-backup:
 ##
 db-restore:
     $(DOCKER_COMPOSE) up -d --force-recreate
-	./scripts/makefile/db-restore.sh
+    ./scripts/makefile/db-restore.sh
 
 ##
 # Run certbot
@@ -53,7 +43,7 @@ db-restore:
 # make renew-ssl ENV=dev
 ##
 renew-ssl:
-	./scripts/makefile/renew-ssl.sh
+    ./scripts/makefile/renew-ssl.sh
 	$(DOCKER_COMPOSE) up -d --force-recreate
 
 
