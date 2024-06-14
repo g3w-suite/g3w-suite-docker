@@ -48,7 +48,7 @@ rm .pgpass
 echo "#!/bin/bash" > pg_restore.sh
 
 # Waiting che creation of new cluster.
-echo "sleep 30 &"
+echo "sleep 30 &" > pg_restore.sh
 
 for DB in $DB_NAMES; do
   cat >> pg_restore.sh << EOF
