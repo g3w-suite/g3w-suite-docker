@@ -45,10 +45,6 @@ docker compose exec g3w-suite bash -c 'rm -r /shared-volume/11'
 
 ## Deploy
 
-Follow steps to deploy G3W-SUITE on a Ubuntu Server (20.04)
-
-### Configuration 
-
 Create a file `.env` (or copy `.env.example` and rename it in `.env`) and place it in the main directory, the file
 will contain the database credentials (change `<your password>`) and other settings:
 
@@ -56,10 +52,8 @@ will contain the database credentials (change `<your password>`) and other setti
 # External hostname, for docker internal network aliases
 WEBGIS_PUBLIC_HOSTNAME=demo.g3wsuite.it/
 
-# This volume is persistent and mounted by all
-# containers as /shared-volume
+# Persistent data (projects, database, uploads), mounted into g3w-suite container at: `/shared-volume`
 WEBGIS_DOCKER_SHARED_VOLUME=/tmp/shared-volume-g3w-suite
-
 
 # DB setup
 G3WSUITE_POSTGRES_USER_LOCAL=g3wsuite
@@ -70,88 +64,59 @@ G3WSUITE_POSTGRES_PORT=5432
 
 
 # QGIS Server env variables
+# To use PostgreSql Service, mounted into postgis container at: `./secrets/pg_service.conf`,
 # ----------------------------------------------------
 PGSERVICEFILE=/pg_service/pg_service.conf
 ```
 
-### Run
+Start docker containers:
 
-```bash
+```sh
 docker-compose up -d
 ```
 
-If all went well, G3W-SUITE run on http://localhost:8080
+or, if you intend to use [huey](https://github.com/coleifer/huey) (batch processing)
 
-![Login Page](docs/img/login_page.png)
-
-## G3W-SUITE with consumer image
-G3W-SUITE use `huey` for bach processing (https://github.com/coleifer/huey), so if you want to use it,
-use `docker-compose-consumer.yml` file on deploy:
-```bash
+```sh
 docker-compose -f docker-compose-consumer.yml up -d
 ```
 
-## Builds
+**NB:** at the very first start, have a lot of patience 😴 → the system must finalize the installation.
 
-Docker compose will download images from docker hub (https://hub.docker.com/u/g3wsuite), 
-but is also possible build main image of G3W-SUITE and other docker-compose images. 
+After some time the suite will be available at: http://localhost:8080 (user: `admin`, pass: `admin`)
 
-#### G3W-SUITE
+![Login Page](docs/img/login_page.png)
 
-The main suite docker image can be built with:
+
+## Docker image
+
+Docker compose will usually download images from: https://hub.docker.com/u/g3wsuite 
+
+A custom (local) docker image for the suite can be created with:
 
 ```bash
 docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:dev --no-cache .
+
+# OPTIONAL:
+# docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps-ltr:dev --no-cache .
 ```
 
-The image is build from `https://github.com/g3w-suite/g3w-admin.git --branch dev` and from a dependencies base image `Dockerfile.g3wsuite-deps.ltr.dockerfile`, the dependencies image can be built with:
+The image is build on latest Ubuntu and QGIS LTR, following this execution order:
 
-```bash
-docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps-ltr:dev --no-cache .
-```
+1. [Dockerfile.g3wsuite-deps.ltr.dockerfile](./Dockerfile.g3wsuite-deps.ltr.dockerfile) ← installs Ubuntu and QGIS LTR
+2. [Dockerfile.g3wsuite.dockerfile](./Dockerfile.g3wsuite.dockerfile)  ← run "setup.sh" and "docker-entrypoint.sh"
+3. [scripts/setup.sh](./scripts/setup.sh) ← install g3w-admin and some other python plugins
+4. [scripts/docker-entrypoint.sh](./scripts/docker-entrypoint.sh) ← start gunicorn
 
-Usually is sufficient make build of main docker image g3wsuite/g3w-suite:dev, 
-the build of dependence image g3wsuite/g3w-suite-deps-ltr:dev is done to update last QGIS LTR version.
+### HTTPS
 
-#### Postgis
-
-Postgis image can be built with:
-
-```bash
-docker build -f Dockerfile.postgis.dockerfile -t g3wsuite/postgis:11.0-2.5 .
-```
-The Docker hub name for this image is `g3wsuite/postgis:11.0-2.5`
-
-## Setups
-
-### PG_SERVICE
-
-To use of PostgreSql Service, put your service setups into `./secrets/pg_service.conf file`,
-the conf file will be mounted into docker container at runtime to PGSERVICEFILE path position.
-
-### HTTPS additional setup
-
-To active https with LetsEncrypt just follow the following instructions:
+To enable https with LetsEncrypt::
 
 - uncomment ssl section within `config/nginx/nginx.conf`
 - update `WEBGIS_PUBLIC_HOSTNAME` environment variable within the `.env` and `config/nginx/nginx.conf` files
 - launch `sudo make renew-ssl`
 - make sure the certs are renewed by adding a cron job with `sudo crontab -e` and add the following line:
   `0 3 * * * /<path_to_your_docker_files>/run_certbot.sh`
-
-### Volumes
-
-Data, projects, uploads and the database are stored in a shared mounted volume `shared-volume`, the volume should be on a persistent storage device and a backup
-policy must be enforced.
-
-Currently, the volume is mounted in `/tmp/shared-volume-g3wsuite-dev`. In production
-environments it is encouraged to change this to a permanent location.
-This can be done by modifying the `.env` file.
-
-### First time setup
-
-- log into the application web administration panel using default credentials (_admin/admin_)
-- change the password for the admin user and for any other example user that may be present
 
 ### Caching
 
