@@ -3,7 +3,7 @@
 [![Build G3W-SUITE image](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push_main_image.yml/badge.svg)](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push_main_image.yml)
 [![Build dependencies](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push_deps_ltr.yml/badge.svg)](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push_deps_ltr.yml)
 
-Run a full blown web-gis application with Docker Compose
+Run a self hosted web-gis application with Docker Compose
 
 <details>
 
@@ -173,7 +173,7 @@ The image is build on latest Ubuntu and QGIS LTR, following this execution order
 
 Portainer (https://www.portainer.io) is a docker-based web application used to edit and manage Docker applications in a simple and intuitive way.
 
-Plese refer to the [Add new stack]([https://docs.portainer.io/v/ce-2.9/user/docker/stacks/add](https://docs.portainer.io/user/docker/stacks/add)) section to learn how to deploy the `docker-compose-consumer.yml` stack with Portainer (>= v2.1.1).
+Plese refer to the [Add new stack](https://docs.portainer.io/user/docker/stacks/add) section to learn how to deploy the `docker-compose-consumer.yml` stack with Portainer (>= v2.1.1).
 
 
 ## ♻️ Database backup / restore 
