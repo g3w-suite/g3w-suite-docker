@@ -8,11 +8,6 @@ if [ -z $ENV ]; then
   exit 1
 fi
 
-if [ -z $PG_VERSION ]; then
-  echo "PG_VERSION is not set"
-  exit 1
-fi
-
 if [ "$ENV" = "prod" ]; then
   DOCKER_COMPOSE="docker compose -f docker-compose.yml"
 else
@@ -21,17 +16,10 @@ fi
 
 source .env
 
-PG_VERSION=${PG_VERSION:-16}
 DB_LOGIN="--host ${G3WSUITE_POSTGRES_HOST} --port ${G3WSUITE_POSTGRES_PORT} --username ${G3WSUITE_POSTGRES_USER_LOCAL}"
 DB_NAMES="${G3WSUITE_POSTGRES_DBNAME} data_production data_testing"
-
-##
-# Check PG_VERSION
-##
-if [ -z `${DOCKER_COMPOSE} exec postgis bash -c "test -d /var/lib/postgresql/${PG_VERSION} && echo '1'"` ]; then
-  echo "invalid PG_VERSION: $PG_VERSION"
-  exit 1
-fi
+PG_VERSION=`${DOCKER_COMPOSE} exec postgis bash -c pg_config --version | awk '{print $2}' | cut -d'.' -f1`
+ID=${ID:-$PG_VERSION}
 
 ##
 # Create a .pgpass in root home
@@ -45,11 +33,11 @@ rm .pgpass
 # Backup databases 
 ##
 echo "#!/bin/bash" > pg_backup.sh
-echo "mkdir -p /var/lib/postgresql/backup/${PG_VERSION}" >> pg_backup.sh
+echo "mkdir -p /var/lib/postgresql/backup/${ID}" >> pg_backup.sh
 
 for DB in $DB_NAMES; do
   cat >> pg_backup.sh << EOF
-pg_dump ${DB_LOGIN} -d ${DB} --file /var/lib/postgresql/backup/${PG_VERSION}/${DB}.bck --verbose --format=c --create --clean
+pg_dump ${DB_LOGIN} -d ${DB} --file /var/lib/postgresql/backup/${ID}/${DB}.bck --verbose --format=c --create --clean
 EOF
 done
 

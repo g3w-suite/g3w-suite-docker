@@ -6,3 +6,11 @@ projects
 code
 
 shared-volume
+
+# DEMO DATA
+!shared-volume/backup/
+!shared-volume/backup/demo/
+!shared-volume/media/
+!shared-volume/media/project_data/
+!shared-volume/media/project_data/spatialite/
+!shared-volume/media/project_data/spatialite/**

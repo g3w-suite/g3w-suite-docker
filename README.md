@@ -24,15 +24,16 @@ docker compose up -f docker-compose-dev.yml up -d
 git fetch
 git checkout v3.8.x
 
-make db-backup PG_VERSION=11 ENV=dev
+make db-backup ID=11 ENV=dev
 
 ### RESTORE (v3.8.x) ###
 
-make db-restore PG_VERSION=11 ENV=dev
+make db-restore ID=11 ENV=dev
 
 ### OPTIONAL (delete old DB) ###
 
 docker compose exec g3w-suite bash -c 'rm -r /shared-volume/11'
+docker compose exec g3w-suite bash -c 'rm -r /shared-volume/backup/11'
 ```
   
 </details>

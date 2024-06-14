@@ -12,7 +12,7 @@ endif
 ##
 # ENV = { dev | prod | consumer }
 ##
-ifeq ($(ENV), "prod")
+ifeq ($(ENV), prod)
 	DOCKER_COMPOSE:= docker compose -f docker-compose.yml
 else
 	DOCKER_COMPOSE:= docker compose -f docker-compose-$(ENV).yml
@@ -21,9 +21,27 @@ endif
 G3W_SUITE:= docker compose exec g3w-suite
 
 ##
+# Import demo data
+#
+# make demo ENV=dev
+##
+demo:
+	ID=demo	./scripts/makefile/db-restore.sh
+
+##
+# Recreate g3w-suite containers
+#
+# make db-reset ENV=dev
+##
+db-reset:
+	$(G3W_SUITE) bash -c 'rm -f /shared-volume/build_done'
+	$(G3W_SUITE) bash -c 'rm -f /shared-volume/setup_done'
+	$(DOCKER_COMPOSE) up -d --force-recreate
+
+##
 # Backup databases
 #
-# make db-backup ENV=dev PG_VERSION=16
+# make db-backup ID=name ENV=dev 
 ##
 db-backup:
 	./scripts/makefile/db-backup.sh
@@ -31,11 +49,11 @@ db-backup:
 ##
 # Restore databases
 #
-# make db-restore ENV=dev PG_VERSION=16
+# make db-restore ID=name ENV=dev 
 ##
 db-restore:
-    $(DOCKER_COMPOSE) up -d --force-recreate
-    ./scripts/makefile/db-restore.sh
+	$(DOCKER_COMPOSE) up -d --force-recreate
+	./scripts/makefile/db-restore.sh
 
 ##
 # Run certbot
@@ -43,7 +61,7 @@ db-restore:
 # make renew-ssl ENV=dev
 ##
 renew-ssl:
-    ./scripts/makefile/renew-ssl.sh
+	./scripts/makefile/renew-ssl.sh
 	$(DOCKER_COMPOSE) up -d --force-recreate
 
 

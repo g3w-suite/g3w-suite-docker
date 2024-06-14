@@ -8,8 +8,8 @@ if [ -z $ENV ]; then
   exit 1
 fi
 
-if [ -z $PG_VERSION ]; then
-  echo "PG_VERSION is not set"
+if [ -z $ID ]; then
+  echo "ID is not set"
   exit 1
 fi
 
@@ -21,15 +21,16 @@ fi
 
 source .env
 
-PG_VERSION=${PG_VERSION:-16}
+PG_VERSION=`${DOCKER_COMPOSE} exec postgis bash -c pg_config --version | awk '{print $2}' | cut -d'.' -f1`
 DB_LOGIN="--host ${G3WSUITE_POSTGRES_HOST} --port ${G3WSUITE_POSTGRES_PORT} --username ${G3WSUITE_POSTGRES_USER_LOCAL}"
 DB_NAMES="${G3WSUITE_POSTGRES_DBNAME} data_production data_testing"
+ID=${ID:-$PG_VERSION}
 
 ##
-# Check PG_VERSION
+# Check ID
 ##
-if [ -z `${DOCKER_COMPOSE} exec postgis bash -c "test -d /var/lib/postgresql/backup/${PG_VERSION} && echo '1'"` ]; then
-  echo "invalid PG_VERSION: $PG_VERSION"
+if [ -z `${DOCKER_COMPOSE} exec postgis bash -c "test -d /var/lib/postgresql/backup/${ID} && echo '1'"` ]; then
+  echo "invalid ID: $ID"
   exit 1
 fi
 
@@ -50,7 +51,7 @@ for DB in $DB_NAMES; do
   cat >> pg_restore.sh << EOF
 psql ${DB_LOGIN}       -d template1   -c "DROP DATABASE IF EXISTS ${DB}_1634;"
 psql ${DB_LOGIN}       -d template1   -c "create database ${DB}_1634;"
-pg_restore ${DB_LOGIN} -d ${DB}_1634 /var/lib/postgresql/backup/${PG_VERSION}/${DB}.bck
+pg_restore ${DB_LOGIN} -d ${DB}_1634 /var/lib/postgresql/backup/${ID}/${DB}.bck
 psql ${DB_LOGIN}       -d ${DB}_1634  -c "select postgis_extensions_upgrade();"
 psql ${DB_LOGIN}       -d template1   -c "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname='${DB}';"
 psql ${DB_LOGIN}       -d template1   -c "drop database ${DB};"
