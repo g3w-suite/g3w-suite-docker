@@ -24,12 +24,12 @@ docker compose up -f docker-compose-dev.yml up -d
 git fetch
 git checkout v3.8.x
 
-make backup-db PG_VERSION=11 ENV=dev
+make db-backup PG_VERSION=11 ENV=dev
 
 ### RESTORE (v3.8.x) ###
 
-make reset-db
-make restore-db PG_VERSION=11 ENV=dev
+make db-reset ENV=dev
+make db-restore PG_VERSION=11 ENV=dev
 
 ### OPTIONAL (delete old DB) ###
 
@@ -54,33 +54,7 @@ git clone https://github.com/g3w-suite/g3w-suite-docker/
 cd g3w-suite-docker
 ```
 
-Create a file `.env` starting from [`.env.example`](./.env.example) and tailor it to your needs:
-
-```bash
-# External hostname, for docker internal network aliases
-WEBGIS_PUBLIC_HOSTNAME=demo.g3wsuite.it/
-
-# Persistent data (projects, database, uploads), mounted into g3w-suite container at: `/shared-volume`
-WEBGIS_DOCKER_SHARED_VOLUME=/tmp/shared-volume-g3w-suite
-
-# DB setup
-G3WSUITE_POSTGRES_USER_LOCAL=g3wsuite
-G3WSUITE_POSTGRES_PASS=<your_password>
-G3WSUITE_POSTGRES_DBNAME=g3wsuite
-G3WSUITE_POSTGRES_HOST=postgis
-G3WSUITE_POSTGRES_PORT=5432
-
-
-# QGIS Server env variables
-# To use PostgreSql Service, mounted into postgis container at: `./secrets/pg_service.conf`,
-# ----------------------------------------------------
-PGSERVICEFILE=/pg_service/pg_service.conf
-
-# OPTIONAL: whether activate the frontend module
-# FRONTEND=True
-```
-
-Start docker containers:
+Create a `.env` file starting from [`.env.example`](./.env.example) and tailor it to your needs and then start containers:
 
 ```sh
 docker-compose up -d
@@ -92,13 +66,23 @@ or, if you intend to use [huey](https://github.com/coleifer/huey) (batch process
 docker-compose -f docker-compose-consumer.yml up -d
 ```
 
-**NB:** at the very first start, have a lot of patience 😴 → the system must finalize the installation.
+**NB:** at the very first start, have a lot of patience 😴 → the system must finalize the installation. \*
 
 After some time the suite will be available at:
 
 - http://localhost:8080 (user: `admin`, pass: `admin`)
 
 ![Login Page](docs/img/login_page.png)
+
+\* in case of faulty container (eg. the first time you didn't wait long enough before trying to access):
+
+```sh
+# 🚨 deletes all data
+make db-reset ENV=prod
+
+# or
+# make db-reset ENV=consumer 
+```
 
 ## 💻 How to access into a container 
 
