@@ -2,6 +2,8 @@
 # Entrypoint script for Development purposes.
 # -------------------------------------------
 
+figlet -t "G3W-SUITE" && echo -e "v`git tag --sort=v:refname | tail -1 | sed 's/^v//'`\n"
+
 # Start XVfb
 if [[  -f /tmp/.X99-lock ]]; then
   rm /tmp/.X99-lock
