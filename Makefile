@@ -1,12 +1,12 @@
 ifeq ($(ENV),)
-  $(error ENV is not set)
+	$(error ENV is not set)
 endif
 
 ##
 # Ensure: "Docker Desktop > Resources > WSL Integration"
 ##
 ifeq ($(OS), Windows_NT) 
-  $(error make.exe not supported, please try again within a WSL shell: https://docs.docker.com/desktop/wsl/#enabling-docker-support-in-wsl-2-distros)
+	$(error make.exe not supported, please try again within a WSL shell: https://docs.docker.com/desktop/wsl/#enabling-docker-support-in-wsl-2-distros)
 endif
 
 ##
@@ -21,22 +21,19 @@ endif
 G3W_SUITE:= docker compose exec g3w-suite
 
 ##
-# Import demo data
-#
-# make demo ENV=dev
-##
-demo:
-	ID=demo	./scripts/makefile/db-restore.sh
-
-##
 # Recreate g3w-suite containers
 #
 # make db-reset ENV=dev
 ##
 db-reset:
+	$(DOCKER_COMPOSE) up -d
+	$(G3W_SUITE) bash -c 'rm -rf /shared-volume/cache'
+	$(G3W_SUITE) bash -c 'rm -rf /shared-volume/__pycache__'
 	$(G3W_SUITE) bash -c 'rm -f /shared-volume/build_done'
 	$(G3W_SUITE) bash -c 'rm -f /shared-volume/setup_done'
+	$(G3W_SUITE) bash -c 'rm -f /shared-volume/.secret_key'
 	$(DOCKER_COMPOSE) up -d --force-recreate
+	ID=demo	./scripts/makefile/db-restore.sh
 
 ##
 # Backup databases
