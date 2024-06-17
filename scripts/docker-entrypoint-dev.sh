@@ -23,4 +23,4 @@ cd /code/g3w-admin
 git config --global --add safe.directory /code
 
 # Start Django server
-python3 manage.py runserver 0.0.0.0:8000
+gunicorn base.wsgi:application -c /shared-volume/gunicorn.conf.py
