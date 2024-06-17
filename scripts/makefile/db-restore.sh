@@ -48,10 +48,10 @@ rm .pgpass
 echo "#!/bin/bash" > pg_restore.sh
 
 # Waiting che creation of new cluster.
-echo "sleep 60" > pg_restore.sh
 
 for DB in $DB_NAMES; do
   cat >> pg_restore.sh << EOF
+until pg_isready; do sleep 60; done
 psql ${DB_LOGIN}       -d template1   -c "DROP DATABASE IF EXISTS ${DB}_1634;"
 psql ${DB_LOGIN}       -d template1   -c "create database ${DB}_1634;"
 pg_restore ${DB_LOGIN} -d ${DB}_1634 /var/lib/postgresql/backup/${ID}/${DB}.bck
