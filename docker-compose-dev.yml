@@ -1,6 +1,6 @@
 services:
   postgis:
-    image: kartoza/postgis:15-3.3
+    image: kartoza/postgis:16-3.4
     ports:
       - "5439:5432"
     environment:
@@ -78,6 +78,15 @@ services:
     networks:
       internal:
 
+
+  redis:
+    image: redis:latest
+    expose:
+    - 6379
+    networks:
+      internal:
+    restart: always
+    
 volumes:
   shared-volume:
   g3wsuite-pg-data:

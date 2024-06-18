@@ -5,4 +5,15 @@ projects
 .idea
 code
 
-shared-volume
+shared-volume/**
+
+# DEMO DATA
+!shared-volume/backup/
+!shared-volume/backup/demo/
+!shared-volume/backup/demo/**
+!shared-volume/media/
+!shared-volume/media/project_data/
+!shared-volume/media/project_data/spatialite/
+!shared-volume/media/project_data/spatialite/**
+!shared-volume/media/projects/
+!shared-volume/media/projects/3857_public-building-management-demo.qgs

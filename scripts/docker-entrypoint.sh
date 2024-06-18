@@ -34,11 +34,19 @@ wait-for-it -h ${G3WSUITE_REDIS_HOST:-redis} -p ${G3WSUITE_REDIS_PORT:-6379} -t 
 # Setup once
 /code/ci_scripts/setup_suite.sh
 
-gunicorn base.wsgi:application \
-    --limit-request-fields 0 \
-    --error-logfile - \
-    --log-level=debug \
-    --timeout ${G3WSUITE_GUNICORN_TIMEOUT:-120} \
-    --workers=${G3WSUITE_GUNICORN_NUM_WORKERS:-8} \
-    --max-requests=${G3WSUITE_GUNICORN_MAX_REQUESTS:-200} \
-    -b 0.0.0.0:8000
+if [ ! -f /shared-volume/gunicorn.conf.py ]; then
+  cat > /shared-volume/gunicorn.conf.py << EOF
+import os
+limit_request_fields = 0
+error_logfile        = '-'
+log_level            = 'info'
+timeout              = os.getenv('G3WSUITE_GUNICORN_TIMEOUT', 120)
+workers              = os.getenv('G3WSUITE_GUNICORN_NUM_WORKERS', 8)
+max_requests         = os.getenv('G3WSUITE_GUNICORN_MAX_REQUESTS', 200)
+bind                 = '0.0.0.0:8000'
+reload               = False # os.path.ismount('/code')
+EOF
+fi
+
+# Start Django server
+gunicorn base.wsgi:application -c /shared-volume/gunicorn.conf.py
