@@ -1,24 +1,35 @@
 ifeq ($(ENV),)
-	$(error ENV is not set)
+  $(error ENV is not set)
 endif
 
 ##
 # Ensure: "Docker Desktop > Resources > WSL Integration"
 ##
-ifeq ($(OS), Windows_NT) 
-	$(error make.exe not supported, please try again within a WSL shell: https://docs.docker.com/desktop/wsl/#enabling-docker-support-in-wsl-2-distros)
+ifeq ($(OS), Windows_NT)
+  $(error make.exe not supported, please try again within a WSL shell: https://docs.docker.com/desktop/wsl/#enabling-docker-support-in-wsl-2-distros)
 endif
 
 ##
 # ENV = { dev | prod | consumer }
 ##
 ifeq ($(ENV), prod)
-	DOCKER_COMPOSE:= docker compose -f docker-compose.yml
+  DOCKER_COMPOSE:= docker compose -f docker-compose.yml
 else
-	DOCKER_COMPOSE:= docker compose -f docker-compose-$(ENV).yml
+  DOCKER_COMPOSE:= docker compose -f docker-compose-$(ENV).yml
 endif
 
 G3W_SUITE:= docker compose exec g3w-suite
+
+
+##
+# SSH login
+#
+# make run-g3wsuite ENV=DEV
+# make run-postgis ENV=DEV
+##
+run-%:
+	$(DOCKER_COMPOSE) start $*
+	docker exec -it $$(docker ps | grep $* | head -1 | awk '{print $$1}') bash
 
 ##
 # Recreate g3w-suite containers
@@ -60,7 +71,6 @@ db-restore:
 renew-ssl:
 	./scripts/makefile/renew-ssl.sh
 	$(DOCKER_COMPOSE) up -d --force-recreate
-
 
 ##
 # Rebuild docker image

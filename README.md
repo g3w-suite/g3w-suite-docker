@@ -95,22 +95,19 @@ make db-reset ENV=prod
 
 ## 💻 How to access into a container 
 
-1. check the container name (eg. `postgis` → `g3wsuitedocker_postgis_1`)
+1. login into a service
 
-```bash
-$ docker ps | grep postgis
-84ef6a8d23e6        g3wsuite/postgis:11.0-2.5       "/bin/sh -c /docker-…"   2 days ago          Up 2 days           0.0.0.0:5438->5432/tcp           g3wsuitedocker_postgis_1
+```sh
+$ make run-postgis ENV=prod
+
+# make run-g3w-suite ENV=prod
+# make run-nginx ENV=prod
+# make run-redis ENV=prod
 ```
 
-2. Log into the container
+2. perform your administrative tasks (eg. connect to postgis as "postgres" user):
 
-```bash
-$ docker exec -it g3wsuitedocker_postgis_1 bash
-```
-
-3. perform your administrative tasks (eg. connect to postgis as "postgres" user):
-
-```bash
+```sh
 root@84ef6a8d23e6:/# su - postgres
 
 postgres@84ef6a8d23e6:~$ psql
@@ -187,8 +184,8 @@ Plese refer to the [Add new stack](https://docs.portainer.io/user/docker/stacks/
 
 docker compose up -f docker-compose.yml up -d
 
-make backup-db PG_VERSION=16 ENV=prod
-make restore-db PG_VERSION=16 ENV=prod
+make backup-db ID=foo-backup ENV=prod
+make restore-db ID=foo-backup ENV=prod
 ```
 
 ### Contributors
