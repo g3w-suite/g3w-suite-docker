@@ -14,6 +14,19 @@ Follow instructions are for development environment.
 
 <sub> \* if you customize [docker-compose-dev.yml](./docker-compose-dev.yml) (eg. by choosing a specific <code>image: <del>g3wsuite/g3w-suite:dev</del> g3wsuite/g3w-suite:v3.7.x</code>) you then apply them via: `docker compose -f docker-compose-dev.yml up -d --force-recreate` </sub> 
 
+## Loading default demo
+
+```
+# 🚨 deletes all data
+make db-restore ID=demo ENV=dev
+
+# or (a custom backup):
+
+# make backup-db  ID=foo-backup ENV=dev
+# make restore-db ID=demo       ENV=dev
+# ...
+# make restore-db ID=foo-backup ENV=dev
+```
 
 ## Developing a python plugin (pip install)
 
