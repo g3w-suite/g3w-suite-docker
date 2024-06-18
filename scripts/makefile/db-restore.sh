@@ -55,6 +55,7 @@ until pg_isready; do
   echo "wait 30s until is ready"
   sleep 30;
 done
+sleep 5;
 psql ${DB_LOGIN}       -d template1   -c "DROP DATABASE IF EXISTS ${DB}_1634;"
 psql ${DB_LOGIN}       -d template1   -c "create database ${DB}_1634;"
 pg_restore ${DB_LOGIN} -d ${DB}_1634 /var/lib/postgresql/backup/${ID}/${DB}.bck

@@ -19,7 +19,7 @@ Since **v3.8** PostgreSQL/PostGIS changed from **v11/2.5** to **v16/3.4**, to up
 
 ### BACKUP (v3.7.x) ###
 
-docker compose up -f docker-compose-dev.yml up -d
+docker compose up -f docker-compose.yml up -d
 
 git fetch
 git checkout v3.8.x
