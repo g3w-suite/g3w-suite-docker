@@ -2,6 +2,8 @@
 # Entrypoint script for Development purposes.
 # -------------------------------------------
 
+figlet -t "G3W-SUITE" && echo -e "v`git tag --sort=v:refname | tail -1 | sed 's/^v//'`\n"
+
 # Start XVfb
 if [[  -f /tmp/.X99-lock ]]; then
   rm /tmp/.X99-lock
@@ -21,4 +23,4 @@ cd /code/g3w-admin
 git config --global --add safe.directory /code
 
 # Start Django server
-python3 manage.py runserver 0.0.0.0:8000
+gunicorn base.wsgi:application -c /shared-volume/gunicorn.conf.py

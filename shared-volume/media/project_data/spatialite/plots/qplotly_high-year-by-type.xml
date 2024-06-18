@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dataplotly>
+<Option type="Map">
+ <Option name="dynamic_properties" type="Map">
+  <Option name="name" type="QString" value=""/>
+  <Option name="properties" type="Map">
+   <Option name="color" type="Map">
+    <Option name="active" type="bool" value="true"/>
+    <Option name="expression" type="QString" value="CASE WHEN  &quot;type&quot;  =  'Administrative' THEN 'indianred'&#xd;&#xa;WHEN  &quot;type&quot;  =  'Commercial' THEN 'yellowgreen'&#xd;&#xa;ELSE 'cyan'&#xd;&#xa;END"/>
+    <Option name="type" type="int" value="3"/>
+   </Option>
+   <Option name="stroke_color" type="Map">
+    <Option name="active" type="bool" value="false"/>
+    <Option name="type" type="int" value="1"/>
+    <Option name="val" type="QString" value=""/>
+   </Option>
+  </Option>
+  <Option name="type" type="QString" value="collection"/>
+ </Option>
+ <Option name="plot_layout" type="Map">
+  <Option name="additional_info_expression" type="QString" value=""/>
+  <Option name="bar_mode" type="QString" value="group"/>
+  <Option name="bargaps" type="double" value="0"/>
+  <Option name="bins_check" type="bool" value="false"/>
+  <Option name="legend" type="bool" value="true"/>
+  <Option name="legend_orientation" type="QString" value="h"/>
+  <Option name="legend_title" type="invalid"/>
+  <Option name="polar" type="Map">
+   <Option name="angularaxis" type="Map">
+    <Option name="direction" type="QString" value="clockwise"/>
+   </Option>
+  </Option>
+  <Option name="range_slider" type="Map">
+   <Option name="borderwidth" type="int" value="1"/>
+   <Option name="visible" type="bool" value="false"/>
+  </Option>
+  <Option name="title" type="QString" value="High- Year by type"/>
+  <Option name="x_inv" type="invalid"/>
+  <Option name="x_max" type="invalid"/>
+  <Option name="x_min" type="invalid"/>
+  <Option name="x_title" type="QString" value="Year"/>
+  <Option name="x_type" type="QString" value="linear"/>
+  <Option name="xaxis" type="invalid"/>
+  <Option name="y_inv" type="invalid"/>
+  <Option name="y_max" type="invalid"/>
+  <Option name="y_min" type="invalid"/>
+  <Option name="y_title" type="QString" value="High"/>
+  <Option name="y_type" type="QString" value="linear"/>
+  <Option name="z_title" type="QString" value=""/>
+ </Option>
+ <Option name="plot_properties" type="Map">
+  <Option name="additional_hover_text" type="invalid"/>
+  <Option name="bins" type="int" value="10"/>
+  <Option name="box_orientation" type="QString" value="v"/>
+  <Option name="box_outliers" type="bool" value="false"/>
+  <Option name="box_stat" type="bool" value="false"/>
+  <Option name="color_scale" type="QString" value="Greys"/>
+  <Option name="color_scale_data_defined_in_check" type="bool" value="false"/>
+  <Option name="color_scale_data_defined_in_invert_check" type="bool" value="false"/>
+  <Option name="cont_type" type="QString" value="fill"/>
+  <Option name="contour_type_combo" type="QString" value="Fill"/>
+  <Option name="cumulative" type="bool" value="false"/>
+  <Option name="custom" type="List">
+   <Option type="QString" value="year"/>
+  </Option>
+  <Option name="hover_label_position" type="QString" value="auto"/>
+  <Option name="hover_label_text" type="invalid"/>
+  <Option name="hover_text" type="QString" value="all"/>
+  <Option name="in_color" type="QString" value="#b5ce58"/>
+  <Option name="invert_color_scale" type="bool" value="false"/>
+  <Option name="invert_hist" type="QString" value="increasing"/>
+  <Option name="line_combo" type="QString" value="Solid Line"/>
+  <Option name="line_dash" type="QString" value="solid"/>
+  <Option name="marker" type="QString" value="markers"/>
+  <Option name="marker_size" type="double" value="10"/>
+  <Option name="marker_symbol" type="int" value="0"/>
+  <Option name="marker_type_combo" type="QString" value="Points"/>
+  <Option name="marker_width" type="double" value="1"/>
+  <Option name="name" type="QString" value="Type"/>
+  <Option name="normalization" type="QString" value=""/>
+  <Option name="opacity" type="double" value="1"/>
+  <Option name="out_color" type="QString" value="#b0b0b0"/>
+  <Option name="point_combo" type="QString" value=""/>
+  <Option name="selected_features_only" type="bool" value="false"/>
+  <Option name="show_colorscale_legend" type="bool" value="false"/>
+  <Option name="show_lines" type="bool" value="true"/>
+  <Option name="show_lines_check" type="bool" value="true"/>
+  <Option name="show_mean_line" type="bool" value="true"/>
+  <Option name="violin_box" type="bool" value="true"/>
+  <Option name="violin_side" type="QString" value="both"/>
+  <Option name="visible_features_only" type="bool" value="true"/>
+  <Option name="x_name" type="QString" value="year"/>
+  <Option name="y_name" type="QString" value="high"/>
+  <Option name="z_name" type="QString" value=""/>
+ </Option>
+ <Option name="plot_type" type="QString" value="bar"/>
+ <Option name="source_layer_id" type="QString" value="buildings_2f43dc1d_6725_42d2_a09b_dd446220104a"/>
+</Option>
