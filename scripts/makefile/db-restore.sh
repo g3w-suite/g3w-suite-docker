@@ -59,7 +59,7 @@ pg_restore ${DB_LOGIN} -d ${DB}_1634 /var/lib/postgresql/backup/${ID}/${DB}.bck
 psql ${DB_LOGIN}       -d ${DB}_1634  -c "SELECT postgis_extensions_upgrade();"
 psql ${DB_LOGIN}       -d template1   -c "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname='${DB}';"
 psql ${DB_LOGIN}       -d template1   -c "DROP DATABASE ${DB};"
-psql ${DB_LOGIN}       -d template1   -c "ALTER DATABASE ${DB}_1634 rename to ${DB};"
+psql ${DB_LOGIN}       -d template1   -c "ALTER DATABASE ${DB}_1634 RENAME TO ${DB};"
 EOF
 done
 
