@@ -51,11 +51,10 @@ echo "#!/bin/bash" > pg_restore.sh
 
 for DB in $DB_NAMES; do
   cat >> pg_restore.sh << EOF
-until pg_isready; do
+until pg_isready -h ${G3WSUITE_POSTGRES_HOST} -p ${G3WSUITE_POSTGRES_PORT} -d template1; do
   echo "wait 30s until is ready"
   sleep 30;
 done
-sleep 5;
 psql ${DB_LOGIN}       -d template1   -c "DROP DATABASE IF EXISTS ${DB}_1634;"
 psql ${DB_LOGIN}       -d template1   -c "create database ${DB}_1634;"
 pg_restore ${DB_LOGIN} -d ${DB}_1634 /var/lib/postgresql/backup/${ID}/${DB}.bck
