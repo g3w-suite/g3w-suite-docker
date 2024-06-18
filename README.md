@@ -24,11 +24,11 @@ docker compose up -f docker-compose-dev.yml up -d
 git fetch
 git checkout v3.8.x
 
-make db-backup ID=11 ENV=dev
+make db-backup ID=11 ENV=prod
 
 ### RESTORE (v3.8.x) ###
 
-make db-restore ID=11 ENV=dev
+make db-restore ID=11 ENV=prod
 
 ### OPTIONAL (delete old DB) ###
 
