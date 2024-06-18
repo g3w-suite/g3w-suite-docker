@@ -134,10 +134,10 @@ Docker compose will usually download images from: https://hub.docker.com/u/g3wsu
 A custom (local) docker image for the suite can be created with:
 
 ```bash
-docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:dev --no-cache .
+docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:v3.8.x --no-cache .
 
 # OPTIONAL:
-# docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps-ltr:dev --no-cache .
+# docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps-ltr:v3.8.x --no-cache .
 ```
 
 The image is build on latest Ubuntu and QGIS LTR, following this execution order:
