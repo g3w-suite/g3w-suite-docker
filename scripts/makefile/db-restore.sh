@@ -27,11 +27,30 @@ DB_NAMES="${G3WSUITE_POSTGRES_DBNAME} data_production data_testing"
 ID=${ID:-$PG_VERSION}
 
 ##
-# Check ID
+# Check ID:
+#
+# - /shared-volume/backup/${ID}
+# - /tmp/g3w-suite-demo-projects/backup/${ID} 
 ##
-if [ -z `${DOCKER_COMPOSE} exec postgis bash -c "test -d /var/lib/postgresql/backup/${ID} && echo '1'"` ]; then
-  echo "invalid ID: $ID"
-  exit 1
+if [ -z `${DOCKER_COMPOSE} exec g3w-suite bash -c "test -d /shared-volume/backup/${ID} && echo '1'"` ]; then
+
+  # Extract backup from remote repository
+  if [ ! -d "/tmp/g3w-suite-demo-projects" ]; then
+      bash -c "$DOCKER_COMPOSE exec g3w-suite git clone https://github.com/g3w-suite/g3w-suite-demo-projects.git --single-branch --depth 1 --branch master /tmp/g3w-suite-demo-projects"
+  else
+      bash -c "$DOCKER_COMPOSE exec g3w-suite git config --global --add safe.directory /tmp/g3w-suite-demo-projects"
+      bash -c "$DOCKER_COMPOSE exec g3w-suite git -C /tmp/g3w-suite-demo-projects pull https://github.com/g3w-suite/g3w-suite-demo-projects.git"
+  fi
+  if [ ! -z `${DOCKER_COMPOSE} exec g3w-suite bash -c "test -d /tmp/g3w-suite-demo-projects/backup/${ID} && echo '1'"` ]; then
+    bash -c "$DOCKER_COMPOSE exec g3w-suite cp -r /tmp/g3w-suite-demo-projects/backup/${ID} /shared-volume/backup"
+  fi
+
+  # check id (same as: /shared-volume/backup/${ID})
+  if [ -z `${DOCKER_COMPOSE} exec postgis bash -c "test -d /var/lib/postgresql/backup/${ID} && echo '1'"` ]; then
+    echo "invalid ID: $ID"
+    exit 1
+  fi
+
 fi
 
 ##
@@ -47,19 +66,23 @@ rm .pgpass
 ##
 echo "#!/bin/bash" > pg_restore.sh
 
-for DB in $DB_NAMES; do
-  cat >> pg_restore.sh << EOF
-until pg_isready -h ${G3WSUITE_POSTGRES_HOST} -p ${G3WSUITE_POSTGRES_PORT} -d template1; do
+# Wait until database is ready
+cat >> pg_restore.sh << EOF
+until pg_isready; do
   echo "wait 30s until is ready"
   sleep 30;
 done
+EOF
+
+for DB in $DB_NAMES; do
+  cat >> pg_restore.sh << EOF
 psql ${DB_LOGIN}       -d template1   -c "DROP DATABASE IF EXISTS ${DB}_1634;"
-psql ${DB_LOGIN}       -d template1   -c "CREATE DATABASE ${DB}_1634;"
+psql ${DB_LOGIN}       -d template1   -c "create database ${DB}_1634;"
 pg_restore ${DB_LOGIN} -d ${DB}_1634 /var/lib/postgresql/backup/${ID}/${DB}.bck
-psql ${DB_LOGIN}       -d ${DB}_1634  -c "SELECT postgis_extensions_upgrade();"
+psql ${DB_LOGIN}       -d ${DB}_1634  -c "select postgis_extensions_upgrade();"
 psql ${DB_LOGIN}       -d template1   -c "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname='${DB}';"
-psql ${DB_LOGIN}       -d template1   -c "DROP DATABASE ${DB};"
-psql ${DB_LOGIN}       -d template1   -c "ALTER DATABASE ${DB}_1634 RENAME TO ${DB};"
+psql ${DB_LOGIN}       -d template1   -c "drop database ${DB};"
+psql ${DB_LOGIN}       -d template1   -c "alter database ${DB}_1634 rename to ${DB};"
 EOF
 done
 
