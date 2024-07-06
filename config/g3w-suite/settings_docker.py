@@ -127,8 +127,15 @@ USE_X_FORWARDED_HOST = True
 
 ALLOWED_HOSTS = "*"
 
+# FOR HEADERS
+# ----------------------------------------------
+X_FRAME_OPTIONS = "SAMEORIGIN"
+
 # Is required by caching module
 QDJANGO_SERVER_URL = 'http://localhost:8000'
+
+# Set default language to 'en'
+LANGUAGE_CODE = 'en'
 
 LOGGING = {
     'version': 1,
