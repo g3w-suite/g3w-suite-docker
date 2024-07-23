@@ -30,6 +30,8 @@ services:
     image: g3wsuite/g3w-suite:dev
     environment:
       - DISPLAY=:99
+      - G3WSUITE_ADMIN_USERNAME
+      - G3WSUITE_ADMIN_PASS
       - G3WSUITE_TILECACHE_PATH
       - G3WSUITE_POSTGRES_DBNAME
       - G3WSUITE_POSTGRES_USER
