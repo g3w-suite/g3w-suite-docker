@@ -1,0 +1,22 @@
+client_max_body_size 200M;
+client_body_timeout  600;
+
+upstream g3w_suite {
+  ip_hash;
+  server g3w-suite:8000;
+}
+
+# Expose some ENV variables in NGINX config from docker-compose.yml
+# -----------------------------------------------------------------
+# Ref: docker-nginx/entrypoint/20-envsubst-on-templates.sh
+
+map "" $NGINX_SERVER_NAME {
+  default $WEBGIS_PUBLIC_HOSTNAME;                       # ENVSUBST
+}
+
+map "" $NGINX_ADMIN_EMAIL {
+  default $WEBGIS_ADMIN_EMAIL;                           # ENVSUBST
+}
+
+# HTTP(S) server
+include /etc/nginx/conf.d/conf/django$WEBGIS_SSL;        # ENVSUBST

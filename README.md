@@ -121,8 +121,7 @@ postgres=#
 
 To enable https with LetsEncrypt::
 
-- uncomment ssl section within `config/nginx/nginx.conf`
-- update `WEBGIS_PUBLIC_HOSTNAME` environment variable within the `.env` and `config/nginx/nginx.conf` files
+- toggle `WEBGIS_SSL` environment variable within your `.env` file
 - launch `sudo make renew-ssl`
 - make sure the certs are renewed by adding a cron job with `sudo crontab -e` and add the following line:
   `0 3 * * * /<path_to_your_docker_files>/run_certbot.sh`

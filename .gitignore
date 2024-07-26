@@ -1,9 +1,12 @@
-.env
 *_local.*
 
-projects
+.env
 .idea
 code
+
+config/nginx/nginx.conf
+
+projects
 
 shared-volume/**
 
