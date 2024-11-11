@@ -28,9 +28,10 @@ RUN apt-get update && apt install -y \
     gdal-bin \
     libsqlite3-mod-spatialite \
     dirmngr \
-    xvfb
+    xvfb \
+    postgresql-client
 
-# PyQGIS 3.34
+# PyQGIS Last LTR
 RUN curl -sS https://download.qgis.org/downloads/qgis-archive-keyring.gpg > /etc/apt/keyrings/qgis-archive-keyring.gpg && \
     echo "deb [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/ubuntu-ltr noble main" | \
     tee /etc/apt/sources.list.d/qgis.list && \
