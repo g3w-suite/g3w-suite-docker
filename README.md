@@ -5,39 +5,6 @@
 
 Run a self hosted web-gis application with Docker Compose
 
-<details>
-
-<summary><h2> ⬆️ How to upgrade from v3.7 to v3.8 </h2></summary>
-
-Since **v3.8** PostgreSQL/PostGIS changed from **v11/2.5** to **v16/3.4**, to upgrade follow below steps:
-
-```sh
-# NB:
-# • (ENV = dev)      → docker-compose-dev.yml
-# • (ENV = prod)     → docker-compose.yml
-# • (ENV = consumer) → docker-compose-consumer.yml
-
-### BACKUP (v3.7.x) ###
-
-docker compose up -f docker-compose-dev.yml up -d
-
-git fetch
-git checkout v3.8.x
-
-make db-backup ID=11 ENV=prod
-
-### RESTORE (v3.8.x) ###
-
-make db-restore ID=11 ENV=prod
-
-### OPTIONAL (delete old DB) ###
-
-docker compose exec g3w-suite bash -c 'rm -r /shared-volume/11'
-docker compose exec g3w-suite bash -c 'rm -r /shared-volume/backup/11'
-```
-  
-</details>
-
 ---
 
 ![Docker structure](docs/img/docker.png)
@@ -134,10 +101,10 @@ Docker compose will usually download images from: https://hub.docker.com/u/g3wsu
 A custom (local) docker image for the suite can be created with:
 
 ```bash
-docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:dev --no-cache .
+docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:v3.9.x --no-cache .
 
 # OPTIONAL:
-# docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps-ltr:dev --no-cache .
+# docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps-ltr:v3.9.x --no-cache .
 ```
 
 The image is build on latest Ubuntu and QGIS LTR, following this execution order:
