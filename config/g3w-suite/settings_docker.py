@@ -208,3 +208,7 @@ LOGGING = {
 }
 
 SESSION_COOKIE_NAME = 'gis3w-suite-dev-iehtgdb264t5gr'
+
+# Set trust url for http
+if os.getenv('WEBGIS_PUBLIC_HOSTNAME', None):
+    CSRF_TRUSTED_ORIGINS = [f"http://{os.getenv('WEBGIS_PUBLIC_HOSTNAME', None)}"]
