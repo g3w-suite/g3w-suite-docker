@@ -50,6 +50,7 @@ services:
       - QGIS_SERVER_LOG_FILE
       - QGIS_SERVER_LOG_LEVEL
       - G3WSUITE_CONSUMER=1
+      - WEBGIS_PUBLIC_HOSTNAME
     expose:
       - "8000"
     restart: always
@@ -103,6 +104,7 @@ services:
       - QGIS_OPTIONS_PATH=/shared-volume/
       - QGIS_SERVER_LOG_FILE
       - QGIS_SERVER_LOG_LEVEL
+      - WEBGIS_PUBLIC_HOSTNAME
     restart: always
     logging:
       driver: "json-file"

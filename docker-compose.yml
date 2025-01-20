@@ -51,6 +51,7 @@ services:
       - QGIS_OPTIONS_PATH=/shared-volume/
       - QGIS_SERVER_LOG_FILE
       - QGIS_SERVER_LOG_LEVEL
+      - WEBGIS_PUBLIC_HOSTNAME
     expose:
       - "8000"
     restart: always
