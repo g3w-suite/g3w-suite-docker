@@ -42,7 +42,7 @@ if [ -z `${DOCKER_COMPOSE} exec g3w-suite bash -c "test -d /shared-volume/backup
       bash -c "$DOCKER_COMPOSE exec g3w-suite git -C /tmp/g3w-suite-demo-projects pull https://github.com/g3w-suite/g3w-suite-demo-projects.git"
   fi
   if [ ! -z `${DOCKER_COMPOSE} exec g3w-suite bash -c "test -d /tmp/g3w-suite-demo-projects/backup/${ID} && echo '1'"` ]; then
-    bash -c "$DOCKER_COMPOSE exec g3w-suite cp -r /tmp/g3w-suite-demo-projects/backup/${ID} /shared-volume/backup"
+    bash -c "$DOCKER_COMPOSE exec g3w-suite mkdir -p /shared-volume/backup/ && cp -r /tmp/g3w-suite-demo-projects/backup/${ID} /shared-volume/backup/"
   fi
 
   # check id (same as: /shared-volume/backup/${ID})
