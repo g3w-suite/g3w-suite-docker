@@ -69,7 +69,7 @@ TILESTACHE_CACHE_TOKEN = os.getenv('TILESTACHE_CACHE_TOKEN', '374h5g96831hsgetvm
 # FILEMANAGER SETTINGS
 # =======================================
 FILEMANAGER_ROOT_PATH = os.getenv(
-    'G3WSUITE_FILEMANAGER_ROOT_PATH', '/shared-volume/project_data')
+    'G3WSUITE_FILEMANAGER_ROOT_PATH', '/shared-volume')
 FILENAMANAGER_MAX_N_FILES = os.getenv('G3WSUITE_FILENAMANAGER_MAX_N_FILES', 10)
 
 # EDITING SETTINGS
@@ -221,3 +221,5 @@ if os.getenv('WEBGIS_PUBLIC_HOSTNAME', None):
     ]
 
 DEBUG = True
+FRONTEND = True
+FRONTEND_APP = 'frontend'
