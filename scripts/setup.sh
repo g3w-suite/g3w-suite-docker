@@ -7,6 +7,16 @@ if [ -z "$(ls -A /code)" ]; then
    cd /code
 fi
 
+mkdir -p static/css/
+touch static/css/custom.css
+echo "#legend {
+    background-color: rgb(33, 44, 49);
+}
+
+#legend .legend-item {
+    background-color: rgb(33, 44, 49);
+}" > static/css/custom.css
+
 cp /requirements_rl.txt .
 
 # Override settings

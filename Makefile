@@ -78,7 +78,7 @@ renew-ssl:
 # make docker-image v=v3.8.x
 ##
 docker-image:
-	ifeq ($(v),)
-		$(error v is not set)
-	endif
-	docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:$(v) --no-cache .
+ifeq ($(v),)
+	$(error v is not set)
+endif
+	docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:$(v) .
