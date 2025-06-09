@@ -220,6 +220,11 @@ if os.getenv('WEBGIS_PUBLIC_HOSTNAME', None):
         f"http://{os.getenv('WEBGIS_PUBLIC_HOSTNAME', None)}:8080"
     ]
 
+G3WSUITE_CUSTOM_STATIC_URL = '/static/'
+G3WSUITE_CUSTOM_CSS = [
+    G3WSUITE_CUSTOM_STATIC_URL +'css/custom.css'
+]
+
 DEBUG = True
 FRONTEND = True
 FRONTEND_APP = 'frontend'
