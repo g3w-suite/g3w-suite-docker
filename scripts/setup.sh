@@ -2,8 +2,8 @@
 
 
 if [ -z "$(ls -A /code)" ]; then
-   echo "Cloning g3w-admin branch ${G3W_SUITE_BRANCH:-v3.9.5} ..."
-   git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --depth 1 --branch ${G3W_SUITE_BRANCH:-v3.9.5} /code && \
+   echo "Cloning g3w-admin branch ${G3W_SUITE_BRANCH:-v3.9.6} ..."
+   git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --depth 1 --branch ${G3W_SUITE_BRANCH:-v3.9.6} /code && \
    cd /code
 fi
 
