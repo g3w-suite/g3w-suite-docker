@@ -116,7 +116,7 @@ HUEY = {
     'huey_class': 'huey.RedisExpireHuey',
     'name': 'g3w-suite',
     'url': 'redis://redis:6379/?db=0',
-    'immediate': False,  # If DEBUG=True, run synchronously.
+    'immediate': os.path.ismount('/code'),  # True = run synchronously.
     'consumer': {
         'workers': 1,
         'worker_type': 'process',
@@ -210,7 +210,8 @@ LOGGING = {
         'openrouteservice': {
             'handlers': ['console'],
             'level': 'DEBUG',
-        }
+        },
+        **({ '': { 'handlers': ['console'], 'level': 'DEBUG' } } if DEBUG  else {}),
     }
 }
 
