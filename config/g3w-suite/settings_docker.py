@@ -130,6 +130,13 @@ ALLOWED_HOSTS = ["*"]
 # Is required by caching module
 QDJANGO_SERVER_URL = 'http://localhost:8000'
 
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'http://elasticsearch:9200',
+        #'http_auth': ('username', 'password')
+    }
+}
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
