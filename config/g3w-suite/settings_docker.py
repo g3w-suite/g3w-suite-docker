@@ -116,7 +116,7 @@ HUEY = {
     'huey_class': 'huey.RedisExpireHuey',
     'name': 'g3w-suite',
     'url': 'redis://redis:6379/?db=0',
-    'immediate': False,  # If DEBUG=True, run synchronously.
+    'immediate': os.path.ismount('/code'),  # True = run synchronously.
     'consumer': {
         'workers': 1,
         'worker_type': 'process',
@@ -129,6 +129,13 @@ ALLOWED_HOSTS = ["*"]
 
 # Is required by caching module
 QDJANGO_SERVER_URL = 'http://localhost:8000'
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'http://elasticsearch:9200',
+        #'http_auth': ('username', 'password')
+    }
+}
 
 LOGGING = {
     'version': 1,
@@ -203,7 +210,8 @@ LOGGING = {
         'openrouteservice': {
             'handlers': ['console'],
             'level': 'DEBUG',
-        }
+        },
+        **({ '': { 'handlers': ['console'], 'level': 'DEBUG' } } if DEBUG  else {}),
     }
 }
 
@@ -219,5 +227,3 @@ if os.getenv('WEBGIS_PUBLIC_HOSTNAME', None):
         f"http://{os.getenv('WEBGIS_PUBLIC_HOSTNAME', None)}",
         f"http://{os.getenv('WEBGIS_PUBLIC_HOSTNAME', None)}:8080"
     ]
-
-DEBUG = True
