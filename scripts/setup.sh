@@ -1,5 +1,6 @@
-
-
+# hotfix for Python 11: https://stackoverflow.com/a/76469774
+export PIP_BREAK_SYSTEM_PACKAGES=1
+export PIP_ROOT_USER_ACTION=ignore
 
 if [ -z "$(ls -A /code)" ]; then
    echo "Cloning g3w-admin branch ${G3W_SUITE_BRANCH:-dev} ..."
@@ -10,8 +11,8 @@ fi
 cp /requirements_rl.txt .
 
 # Override settings
-pip3 install -r requirements_rl.txt --break-system-packages
-pip3 install -r requirements_huey.txt --break-system-packages
+pip3 install -r requirements_rl.txt
+pip3 install -r requirements_huey.txt
 
 # Front end
 #TODO make this as generic so that we can install as many plugins as possible
@@ -19,14 +20,14 @@ git submodule add -f https://github.com/g3w-suite/g3w-admin-frontend.git  g3w-ad
 
 
 # Caching
-pip3 install -r /code/g3w-admin/caching/requirements.txt --break-system-packages
+pip3 install -r /code/g3w-admin/caching/requirements.txt
 
 # File manager
-pip3 install -r /code/g3w-admin/filemanager/requirements.txt --break-system-packages
+pip3 install -r /code/g3w-admin/filemanager/requirements.txt
 
 # Qplotly
-pip3 install -r /code/g3w-admin/qplotly/requirements.txt --break-system-packages
+pip3 install -r /code/g3w-admin/qplotly/requirements.txt
 
 # Openrouteservice
-pip3 install -r /code/g3w-admin/openrouteservice/requirements.txt --break-system-packages
+pip3 install -r /code/g3w-admin/openrouteservice/requirements.txt
 
