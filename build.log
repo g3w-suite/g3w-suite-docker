@@ -1,0 +1,635 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.g3wsuite.dockerfile
+#1 transferring dockerfile: 1.05kB done
+#1 WARN: JSONArgsRecommended: JSON arguments recommended for CMD to prevent unintended behavior related to OS signals (line 38)
+#1 WARN: JSONArgsRecommended: JSON arguments recommended for ENTRYPOINT to prevent unintended behavior related to OS signals (line 40)
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/g3wsuite/g3w-suite-deps-ltr:v3.10.x
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 56B done
+#3 DONE 0.0s
+
+#4 [1/6] FROM docker.io/g3wsuite/g3w-suite-deps-ltr:v3.10.x
+#4 CACHED
+
+#5 [internal] load build context
+#5 transferring context: 583B done
+#5 DONE 0.0s
+
+#6 [2/6] RUN apt update &&      apt install git figlet  -y
+#6 0.163 
+#6 0.163 WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+#6 0.163 
+#6 48.26 Ign:1 http://security.ubuntu.com/ubuntu noble-security InRelease
+#6 48.26 Ign:2 https://dl.yarnpkg.com/debian stable InRelease
+#6 48.26 Ign:3 https://qgis.org/ubuntu-ltr noble InRelease
+#6 48.26 Ign:4 http://archive.ubuntu.com/ubuntu noble InRelease
+#6 80.47 Get:5 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+#6 80.73 Hit:6 http://archive.ubuntu.com/ubuntu noble-backports InRelease
+#6 80.79 Hit:4 http://archive.ubuntu.com/ubuntu noble InRelease
+#6 81.47 Hit:1 http://security.ubuntu.com/ubuntu noble-security InRelease
+#6 81.50 Hit:2 https://dl.yarnpkg.com/debian stable InRelease
+#6 82.04 Hit:3 https://ubuntu.qgis.org/ubuntu-ltr noble InRelease
+#6 82.12 Fetched 126 kB in 1min 22s (1539 B/s)
+#6 82.12 Reading package lists...
+#6 83.12 Building dependency tree...
+#6 83.39 Reading state information...
+#6 83.42 7 packages can be upgraded. Run 'apt list --upgradable' to see them.
+#6 83.42 W: https://dl.yarnpkg.com/debian/dists/stable/InRelease: Key is stored in legacy trusted.gpg keyring (/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details.
+#6 83.43 
+#6 83.43 WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+#6 83.43 
+#6 83.43 Reading package lists...
+#6 84.40 Building dependency tree...
+#6 84.63 Reading state information...
+#6 84.91 The following additional packages will be installed:
+#6 84.91   git-man less libcbor0.10 liberror-perl libfido2-1 openssh-client
+#6 84.92 Suggested packages:
+#6 84.92   gettext-base git-daemon-run | git-daemon-sysvinit git-doc git-email git-gui
+#6 84.92   gitk gitweb git-cvs git-mediawiki git-svn keychain libpam-ssh monkeysphere
+#6 84.92   ssh-askpass
+#6 84.97 The following NEW packages will be installed:
+#6 84.98   figlet git git-man less libcbor0.10 liberror-perl libfido2-1 openssh-client
+#6 85.27 0 upgraded, 8 newly installed, 0 to remove and 7 not upgraded.
+#6 85.27 Need to get 6095 kB of archives.
+#6 85.27 After this operation, 29.5 MB of additional disk space will be used.
+#6 85.27 Get:1 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 less amd64 590-2ubuntu2.1 [142 kB]
+#6 85.87 Get:2 http://archive.ubuntu.com/ubuntu noble/main amd64 libcbor0.10 amd64 0.10.2-1.2ubuntu2 [25.8 kB]
+#6 85.89 Get:3 http://archive.ubuntu.com/ubuntu noble/main amd64 libfido2-1 amd64 1.14.0-1build3 [83.5 kB]
+#6 85.94 Get:4 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 openssh-client amd64 1:9.6p1-3ubuntu13.12 [905 kB]
+#6 86.37 Get:5 http://archive.ubuntu.com/ubuntu noble/universe amd64 figlet amd64 2.2.5-3 [133 kB]
+#6 86.38 Get:6 http://archive.ubuntu.com/ubuntu noble/main amd64 liberror-perl all 0.17029-2 [25.6 kB]
+#6 86.38 Get:7 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 git-man all 1:2.43.0-1ubuntu7.3 [1100 kB]
+#6 86.60 Get:8 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 git amd64 1:2.43.0-1ubuntu7.3 [3680 kB]
+#6 87.18 debconf: delaying package configuration, since apt-utils is not installed
+#6 87.22 Fetched 6095 kB in 2s (3102 kB/s)
+#6 87.24 Selecting previously unselected package less.
+#6 87.24 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 90249 files and directories currently installed.)
+#6 87.29 Preparing to unpack .../0-less_590-2ubuntu2.1_amd64.deb ...
+#6 87.30 Unpacking less (590-2ubuntu2.1) ...
+#6 87.34 Selecting previously unselected package libcbor0.10:amd64.
+#6 87.35 Preparing to unpack .../1-libcbor0.10_0.10.2-1.2ubuntu2_amd64.deb ...
+#6 87.35 Unpacking libcbor0.10:amd64 (0.10.2-1.2ubuntu2) ...
+#6 87.38 Selecting previously unselected package libfido2-1:amd64.
+#6 87.38 Preparing to unpack .../2-libfido2-1_1.14.0-1build3_amd64.deb ...
+#6 87.39 Unpacking libfido2-1:amd64 (1.14.0-1build3) ...
+#6 87.42 Selecting previously unselected package openssh-client.
+#6 87.43 Preparing to unpack .../3-openssh-client_1%3a9.6p1-3ubuntu13.12_amd64.deb ...
+#6 87.44 Unpacking openssh-client (1:9.6p1-3ubuntu13.12) ...
+#6 87.50 Selecting previously unselected package figlet.
+#6 87.51 Preparing to unpack .../4-figlet_2.2.5-3_amd64.deb ...
+#6 87.51 Unpacking figlet (2.2.5-3) ...
+#6 87.55 Selecting previously unselected package liberror-perl.
+#6 87.56 Preparing to unpack .../5-liberror-perl_0.17029-2_all.deb ...
+#6 87.56 Unpacking liberror-perl (0.17029-2) ...
+#6 87.58 Selecting previously unselected package git-man.
+#6 87.59 Preparing to unpack .../6-git-man_1%3a2.43.0-1ubuntu7.3_all.deb ...
+#6 87.59 Unpacking git-man (1:2.43.0-1ubuntu7.3) ...
+#6 87.63 Selecting previously unselected package git.
+#6 87.64 Preparing to unpack .../7-git_1%3a2.43.0-1ubuntu7.3_amd64.deb ...
+#6 87.65 Unpacking git (1:2.43.0-1ubuntu7.3) ...
+#6 87.83 Setting up libcbor0.10:amd64 (0.10.2-1.2ubuntu2) ...
+#6 87.83 Setting up less (590-2ubuntu2.1) ...
+#6 87.85 Setting up liberror-perl (0.17029-2) ...
+#6 87.85 Setting up figlet (2.2.5-3) ...
+#6 87.86 update-alternatives: using /usr/bin/figlet-figlet to provide /usr/bin/figlet (figlet) in auto mode
+#6 87.86 update-alternatives: warning: skip creation of /usr/share/man/man6/figlet.6.gz because associated file /usr/share/man/man6/figlet-figlet.6.gz (of link group figlet) doesn't exist
+#6 87.87 Setting up git-man (1:2.43.0-1ubuntu7.3) ...
+#6 87.87 Setting up libfido2-1:amd64 (1.14.0-1build3) ...
+#6 87.88 Setting up openssh-client (1:9.6p1-3ubuntu13.12) ...
+#6 87.97 Setting up git (1:2.43.0-1ubuntu7.3) ...
+#6 87.98 Processing triggers for libc-bin (2.39-0ubuntu8.4) ...
+#6 DONE 88.1s
+
+#7 [3/6] ADD requirements_rl.txt /requirements_rl.txt
+#7 DONE 0.0s
+
+#8 [4/6] ADD scripts /scripts
+#8 DONE 0.0s
+
+#9 [5/6] RUN chmod +x /scripts/*.sh
+#9 DONE 0.2s
+
+#10 [6/6] RUN /scripts/setup.sh     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+#10 0.247 Cloning g3w-admin branch v.3.10.x ...
+#10 0.249 Cloning into '/code'...
+#10 9.198 Collecting git+https://github.com/gis3w/django-file-form.git@behind_proxy (from -r requirements.txt (line 8))
+#10 9.199   Cloning https://github.com/gis3w/django-file-form.git (to revision behind_proxy) to /tmp/pip-req-build-bj3amboe
+#10 9.202   Running command git clone --filter=blob:none --quiet https://github.com/gis3w/django-file-form.git /tmp/pip-req-build-bj3amboe
+#10 11.02   Running command git checkout -b behind_proxy --track origin/behind_proxy
+#10 11.51   Switched to a new branch 'behind_proxy'
+#10 11.51   branch 'behind_proxy' set up to track 'origin/behind_proxy'.
+#10 11.51   Resolved https://github.com/gis3w/django-file-form.git to commit 268ecdddca5f99c07dd7e4e4c19fef1acd2dbe5c
+#10 11.52   Preparing metadata (setup.py): started
+#10 11.70   Preparing metadata (setup.py): finished with status 'done'
+#10 11.97 Collecting Django==4.2.22 (from -r requirements.txt (line 1))
+#10 12.12   Downloading django-4.2.22-py3-none-any.whl.metadata (4.2 kB)
+#10 12.18 Collecting django-formtools==2.2 (from -r requirements.txt (line 2))
+#10 12.21   Downloading django_formtools-2.2-py2.py3-none-any.whl.metadata (3.7 kB)
+#10 12.27 Collecting django-crispy-forms==2.3 (from -r requirements.txt (line 3))
+#10 12.30   Downloading django_crispy_forms-2.3-py3-none-any.whl.metadata (5.1 kB)
+#10 12.35 Collecting crispy-bootstrap3==2024.1 (from -r requirements.txt (line 4))
+#10 12.38   Downloading crispy_bootstrap3-2024.1-py3-none-any.whl.metadata (2.2 kB)
+#10 12.46 Collecting django-extensions==3.1.5 (from -r requirements.txt (line 5))
+#10 12.49   Downloading django_extensions-3.1.5-py3-none-any.whl.metadata (5.9 kB)
+#10 12.55 Collecting django-guardian==2.2.0 (from -r requirements.txt (line 10))
+#10 12.59   Downloading django_guardian-2.2.0-py3-none-any.whl.metadata (4.2 kB)
+#10 12.64 Collecting django-model-utils==4.5.1 (from -r requirements.txt (line 11))
+#10 12.67   Downloading django_model_utils-4.5.1-py3-none-any.whl.metadata (21 kB)
+#10 12.74 Collecting django-sitetree==1.17.2 (from -r requirements.txt (line 12))
+#10 12.77   Downloading django-sitetree-1.17.2.tar.gz (87 kB)
+#10 12.81      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 87.4/87.4 kB 2.0 MB/s eta 0:00:00
+#10 12.84   Preparing metadata (setup.py): started
+#10 13.04   Preparing metadata (setup.py): finished with status 'done'
+#10 13.22 Collecting djangorestframework==3.15.2 (from -r requirements.txt (line 13))
+#10 13.25   Downloading djangorestframework-3.15.2-py3-none-any.whl.metadata (10 kB)
+#10 13.30 Collecting djangorestframework-gis==1.0 (from -r requirements.txt (line 14))
+#10 13.34   Downloading djangorestframework_gis-1.0-py2.py3-none-any.whl.metadata (29 kB)
+#10 13.41 Collecting drf-spectacular==0.25.1 (from -r requirements.txt (line 15))
+#10 13.44   Downloading drf_spectacular-0.25.1-py3-none-any.whl.metadata (13 kB)
+#10 13.50 Collecting django-downloadview==2.3.0 (from -r requirements.txt (line 16))
+#10 13.53   Downloading django_downloadview-2.3.0-py3-none-any.whl.metadata (3.7 kB)
+#10 13.59 Collecting django-mptt==0.13.4 (from -r requirements.txt (line 17))
+#10 13.62   Downloading django_mptt-0.13.4-py3-none-any.whl.metadata (5.1 kB)
+#10 13.67 Collecting django-ordered-model==3.7.4 (from -r requirements.txt (line 18))
+#10 13.70   Downloading django_ordered_model-3.7.4-py3-none-any.whl.metadata (15 kB)
+#10 13.76 Collecting django-ajax-selects==2.2.0 (from -r requirements.txt (line 19))
+#10 13.79   Downloading django_ajax_selects-2.2.0-2-py3-none-any.whl.metadata (1.3 kB)
+#10 13.85 Collecting django-modeltranslation==0.17.5 (from -r requirements.txt (line 20))
+#10 13.88   Downloading django-modeltranslation-0.17.5.tar.gz (70 kB)
+#10 13.90      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 70.5/70.5 kB 6.5 MB/s eta 0:00:00
+#10 13.92   Installing build dependencies: started
+#10 15.99   Installing build dependencies: finished with status 'done'
+#10 15.99   Getting requirements to build wheel: started
+#10 16.20   Getting requirements to build wheel: finished with status 'done'
+#10 16.20   Preparing metadata (pyproject.toml): started
+#10 16.40   Preparing metadata (pyproject.toml): finished with status 'done'
+#10 16.82 Collecting django-filter (from -r requirements.txt (line 21))
+#10 16.85   Downloading django_filter-25.1-py3-none-any.whl.metadata (5.1 kB)
+#10 16.91 Collecting django-bleach==3.1.0 (from -r requirements.txt (line 22))
+#10 16.94   Downloading django_bleach-3.1.0-py2.py3-none-any.whl.metadata (8.0 kB)
+#10 17.00 Collecting pathlib2 (from -r requirements.txt (line 23))
+#10 17.03   Downloading pathlib2-2.3.7.post1-py2.py3-none-any.whl.metadata (3.5 kB)
+#10 17.04 Requirement already satisfied: lxml in /usr/lib/python3/dist-packages (from -r requirements.txt (line 24)) (5.2.1)
+#10 17.04 Requirement already satisfied: pillow in /usr/lib/python3/dist-packages (from -r requirements.txt (line 26)) (10.2.0)
+#10 17.04 Requirement already satisfied: owslib in /usr/lib/python3/dist-packages (from -r requirements.txt (line 27)) (0.29.3)
+#10 17.08 Collecting defusedxml (from -r requirements.txt (line 28))
+#10 17.11   Downloading defusedxml-0.7.1-py2.py3-none-any.whl.metadata (32 kB)
+#10 17.23 Collecting django-import-export==3.2.0 (from -r requirements.txt (line 30))
+#10 17.26   Downloading django_import_export-3.2.0-py3-none-any.whl.metadata (3.1 kB)
+#10 17.94 Collecting coverage (from -r requirements.txt (line 31))
+#10 17.97   Downloading coverage-7.9.2-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (8.9 kB)
+#10 17.99 Requirement already satisfied: urllib3 in /usr/lib/python3/dist-packages (from -r requirements.txt (line 32)) (2.0.7)
+#10 18.04 Collecting python-magic (from -r requirements.txt (line 33))
+#10 18.07   Downloading python_magic-0.4.27-py2.py3-none-any.whl.metadata (5.8 kB)
+#10 18.16 Collecting celery==5.4.0 (from -r requirements.txt (line 34))
+#10 18.20   Downloading celery-5.4.0-py3-none-any.whl.metadata (21 kB)
+#10 18.26 Collecting deprecation (from -r requirements.txt (line 35))
+#10 18.29   Downloading deprecation-2.1.0-py2.py3-none-any.whl.metadata (4.6 kB)
+#10 18.35 Collecting huey==2.4.3 (from -r requirements.txt (line 36))
+#10 18.38   Downloading huey-2.4.3.tar.gz (629 kB)
+#10 18.51      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 629.5/629.5 kB 5.0 MB/s eta 0:00:00
+#10 18.56   Preparing metadata (setup.py): started
+#10 18.79   Preparing metadata (setup.py): finished with status 'done'
+#10 18.87 Collecting redis==4.5.4 (from -r requirements.txt (line 37))
+#10 18.90   Downloading redis-4.5.4-py3-none-any.whl.metadata (8.3 kB)
+#10 18.97 Collecting django-redis==5.2.0 (from -r requirements.txt (line 38))
+#10 19.00   Downloading django_redis-5.2.0-py3-none-any.whl.metadata (30 kB)
+#10 19.06 Collecting django-registration==3.4 (from -r requirements.txt (line 39))
+#10 19.09   Downloading django_registration-3.4-py3-none-any.whl.metadata (2.4 kB)
+#10 19.14 Collecting django-recaptcha==3.0.0 (from -r requirements.txt (line 40))
+#10 19.17   Downloading django_recaptcha-3.0.0-py3-none-any.whl.metadata (17 kB)
+#10 19.39 Collecting pydantic==2.6.3 (from -r requirements.txt (line 41))
+#10 19.43   Downloading pydantic-2.6.3-py3-none-any.whl.metadata (84 kB)
+#10 19.46      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 84.4/84.4 kB 2.7 MB/s eta 0:00:00
+#10 19.53 Collecting weasyprint==63.0 (from -r requirements.txt (line 42))
+#10 19.56   Downloading weasyprint-63.0-py3-none-any.whl.metadata (3.7 kB)
+#10 19.62 Collecting distro==1.7.0 (from -r requirements.txt (line 43))
+#10 19.65   Downloading distro-1.7.0-py3-none-any.whl.metadata (6.9 kB)
+#10 19.71 Collecting django-allauth==0.63.6 (from django-allauth[socialaccount]==0.63.6->-r requirements.txt (line 44))
+#10 19.75   Downloading django_allauth-0.63.6.tar.gz (1.1 MB)
+#10 19.92      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 6.3 MB/s eta 0:00:00
+#10 20.16   Installing build dependencies: started
+#10 21.57   Installing build dependencies: finished with status 'done'
+#10 21.57   Getting requirements to build wheel: started
+#10 21.89   Getting requirements to build wheel: finished with status 'done'
+#10 21.89   Preparing metadata (pyproject.toml): started
+#10 22.24   Preparing metadata (pyproject.toml): finished with status 'done'
+#10 22.30 Collecting django-elasticsearch-dsl==8.0 (from -r requirements.txt (line 45))
+#10 22.33   Downloading django_elasticsearch_dsl-8.0-py2.py3-none-any.whl.metadata (7.3 kB)
+#10 22.40 Collecting natsort==8.4.0 (from -r requirements.txt (line 46))
+#10 22.43   Downloading natsort-8.4.0-py3-none-any.whl.metadata (21 kB)
+#10 22.60 Collecting python-slugify==8.0.4 (from python-slugify[unidecode]==8.0.4->-r requirements.txt (line 47))
+#10 22.63   Downloading python_slugify-8.0.4-py2.py3-none-any.whl.metadata (8.5 kB)
+#10 22.70 Collecting gunicorn (from -r requirements_rl.txt (line 4))
+#10 22.73   Downloading gunicorn-23.0.0-py3-none-any.whl.metadata (4.4 kB)
+#10 22.80 Collecting psycopg[binary] (from -r requirements.txt (line 25))
+#10 22.83   Downloading psycopg-3.2.9-py3-none-any.whl.metadata (4.5 kB)
+#10 22.91 Collecting asgiref<4,>=3.6.0 (from Django==4.2.22->-r requirements.txt (line 1))
+#10 22.94   Downloading asgiref-3.9.1-py3-none-any.whl.metadata (9.3 kB)
+#10 23.00 Collecting sqlparse>=0.3.1 (from Django==4.2.22->-r requirements.txt (line 1))
+#10 23.03   Downloading sqlparse-0.5.3-py3-none-any.whl.metadata (3.9 kB)
+#10 23.24 Collecting uritemplate>=2.0.0 (from drf-spectacular==0.25.1->-r requirements.txt (line 15))
+#10 23.27   Downloading uritemplate-4.2.0-py3-none-any.whl.metadata (2.6 kB)
+#10 23.28 Requirement already satisfied: PyYAML>=5.1 in /usr/lib/python3/dist-packages (from drf-spectacular==0.25.1->-r requirements.txt (line 15)) (6.0.1)
+#10 23.28 Requirement already satisfied: jsonschema>=2.6.0 in /usr/lib/python3/dist-packages (from drf-spectacular==0.25.1->-r requirements.txt (line 15)) (4.10.3)
+#10 23.32 Collecting inflection>=0.3.1 (from drf-spectacular==0.25.1->-r requirements.txt (line 15))
+#10 23.35   Downloading inflection-0.5.1-py2.py3-none-any.whl.metadata (1.7 kB)
+#10 23.37 Requirement already satisfied: requests in /usr/lib/python3/dist-packages (from django-downloadview==2.3.0->-r requirements.txt (line 16)) (2.31.0)
+#10 23.42 Collecting django-js-asset (from django-mptt==0.13.4->-r requirements.txt (line 17))
+#10 23.45   Downloading django_js_asset-3.1.2-py3-none-any.whl.metadata (6.4 kB)
+#10 23.47 Requirement already satisfied: six in /usr/lib/python3/dist-packages (from django-modeltranslation==0.17.5->-r requirements.txt (line 20)) (1.16.0)
+#10 23.63 Collecting bleach<6,>=5 (from bleach[css]<6,>=5->django-bleach==3.1.0->-r requirements.txt (line 22))
+#10 23.66   Downloading bleach-5.0.1-py3-none-any.whl.metadata (27 kB)
+#10 23.77 Collecting diff-match-patch (from django-import-export==3.2.0->-r requirements.txt (line 30))
+#10 23.80   Downloading diff_match_patch-20241021-py3-none-any.whl.metadata (5.5 kB)
+#10 23.86 Collecting tablib>=3.4.0 (from tablib[html,ods,xls,xlsx,yaml]>=3.4.0->django-import-export==3.2.0->-r requirements.txt (line 30))
+#10 23.89   Downloading tablib-3.8.0-py3-none-any.whl.metadata (3.8 kB)
+#10 24.02 Collecting billiard<5.0,>=4.2.0 (from celery==5.4.0->-r requirements.txt (line 34))
+#10 24.05   Downloading billiard-4.2.1-py3-none-any.whl.metadata (4.4 kB)
+#10 24.14 Collecting kombu<6.0,>=5.3.4 (from celery==5.4.0->-r requirements.txt (line 34))
+#10 24.17   Downloading kombu-5.5.4-py3-none-any.whl.metadata (3.5 kB)
+#10 24.23 Collecting vine<6.0,>=5.1.0 (from celery==5.4.0->-r requirements.txt (line 34))
+#10 24.25   Downloading vine-5.1.0-py3-none-any.whl.metadata (2.7 kB)
+#10 24.32 Collecting click<9.0,>=8.1.2 (from celery==5.4.0->-r requirements.txt (line 34))
+#10 24.35   Downloading click-8.2.1-py3-none-any.whl.metadata (2.5 kB)
+#10 24.40 Collecting click-didyoumean>=0.3.0 (from celery==5.4.0->-r requirements.txt (line 34))
+#10 24.43   Downloading click_didyoumean-0.3.1-py3-none-any.whl.metadata (3.9 kB)
+#10 24.48 Collecting click-repl>=0.2.0 (from celery==5.4.0->-r requirements.txt (line 34))
+#10 24.51   Downloading click_repl-0.3.0-py3-none-any.whl.metadata (3.6 kB)
+#10 24.56 Collecting click-plugins>=1.1.1 (from celery==5.4.0->-r requirements.txt (line 34))
+#10 24.59   Downloading click_plugins-1.1.1.2-py2.py3-none-any.whl.metadata (6.5 kB)
+#10 24.64 Collecting tzdata>=2022.7 (from celery==5.4.0->-r requirements.txt (line 34))
+#10 24.68   Downloading tzdata-2025.2-py2.py3-none-any.whl.metadata (1.4 kB)
+#10 24.69 Requirement already satisfied: python-dateutil>=2.8.2 in /usr/lib/python3/dist-packages (from celery==5.4.0->-r requirements.txt (line 34)) (2.8.2)
+#10 24.80 Collecting confusable-homoglyphs~=3.0 (from django-registration==3.4->-r requirements.txt (line 39))
+#10 24.83   Downloading confusable_homoglyphs-3.3.1-py2.py3-none-any.whl.metadata (5.8 kB)
+#10 24.90 Collecting annotated-types>=0.4.0 (from pydantic==2.6.3->-r requirements.txt (line 41))
+#10 24.93   Downloading annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+#10 25.95 Collecting pydantic-core==2.16.3 (from pydantic==2.6.3->-r requirements.txt (line 41))
+#10 25.98   Downloading pydantic_core-2.16.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.5 kB)
+#10 26.05 Collecting typing-extensions>=4.6.1 (from pydantic==2.6.3->-r requirements.txt (line 41))
+#10 26.09   Downloading typing_extensions-4.14.1-py3-none-any.whl.metadata (3.0 kB)
+#10 26.18 Collecting pydyf<0.12,>=0.11.0 (from weasyprint==63.0->-r requirements.txt (line 42))
+#10 26.21   Downloading pydyf-0.11.0-py3-none-any.whl.metadata (2.5 kB)
+#10 26.40 Collecting cffi<2,>=0.6 (from weasyprint==63.0->-r requirements.txt (line 42))
+#10 26.43   Downloading cffi-1.17.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (1.5 kB)
+#10 26.48 Collecting tinyhtml5<3,>=2.0.0b1 (from weasyprint==63.0->-r requirements.txt (line 42))
+#10 26.51   Downloading tinyhtml5-2.0.0-py3-none-any.whl.metadata (2.9 kB)
+#10 26.67 Collecting tinycss2<2,>=1.4.0 (from weasyprint==63.0->-r requirements.txt (line 42))
+#10 26.70   Downloading tinycss2-1.4.0-py3-none-any.whl.metadata (3.0 kB)
+#10 26.75 Collecting cssselect2<0.8,>=0.1 (from weasyprint==63.0->-r requirements.txt (line 42))
+#10 26.78   Downloading cssselect2-0.7.0-py3-none-any.whl.metadata (2.9 kB)
+#10 26.98 Collecting Pyphen<0.16,>=0.9.1 (from weasyprint==63.0->-r requirements.txt (line 42))
+#10 27.01   Downloading pyphen-0.15.0-py3-none-any.whl.metadata (3.3 kB)
+#10 27.03 Requirement already satisfied: fonttools<5,>=4.0.0 in /usr/lib/python3/dist-packages (from fonttools[woff]<5,>=4.0.0->weasyprint==63.0->-r requirements.txt (line 42)) (4.46.0)
+#10 27.11 Collecting elasticsearch-dsl<9.0.0,>=8.9.0 (from django-elasticsearch-dsl==8.0->-r requirements.txt (line 45))
+#10 27.14   Downloading elasticsearch_dsl-8.18.0-py3-none-any.whl.metadata (12 kB)
+#10 27.30 Collecting text-unidecode>=1.3 (from python-slugify==8.0.4->python-slugify[unidecode]==8.0.4->-r requirements.txt (line 47))
+#10 27.33   Downloading text_unidecode-1.3-py2.py3-none-any.whl.metadata (2.4 kB)
+#10 27.47 Collecting requests-oauthlib>=0.3.0 (from django-allauth[socialaccount]==0.63.6->-r requirements.txt (line 44))
+#10 27.50   Downloading requests_oauthlib-2.0.0-py2.py3-none-any.whl.metadata (11 kB)
+#10 27.57 Collecting pyjwt>=1.7 (from pyjwt[crypto]>=1.7; extra == "socialaccount"->django-allauth[socialaccount]==0.63.6->-r requirements.txt (line 44))
+#10 27.60   Downloading PyJWT-2.10.1-py3-none-any.whl.metadata (4.0 kB)
+#10 27.68 Collecting Unidecode>=1.1.1 (from python-slugify[unidecode]==8.0.4->-r requirements.txt (line 47))
+#10 27.71   Downloading Unidecode-1.4.0-py3-none-any.whl.metadata (13 kB)
+#10 28.04 Collecting psycopg-binary==3.2.9 (from psycopg[binary]->-r requirements.txt (line 25))
+#10 28.07   Downloading psycopg_binary-3.2.9-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.9 kB)
+#10 28.14 Requirement already satisfied: packaging in /usr/lib/python3/dist-packages (from deprecation->-r requirements.txt (line 35)) (24.0)
+#10 28.18 Requirement already satisfied: webencodings in /usr/lib/python3/dist-packages (from bleach<6,>=5->bleach[css]<6,>=5->django-bleach==3.1.0->-r requirements.txt (line 22)) (0.5.1)
+#10 28.20 INFO: pip is looking at multiple versions of bleach[css] to determine which version is compatible with other requirements. This could take a while.
+#10 28.21 Collecting bleach[css]<6,>=5 (from django-bleach==3.1.0->-r requirements.txt (line 22))
+#10 28.23   Downloading bleach-5.0.0-py3-none-any.whl.metadata (26 kB)
+#10 28.34 Collecting pycparser (from cffi<2,>=0.6->weasyprint==63.0->-r requirements.txt (line 42))
+#10 28.37   Downloading pycparser-2.22-py3-none-any.whl.metadata (943 bytes)
+#10 28.50 Collecting prompt-toolkit>=3.0.36 (from click-repl>=0.2.0->celery==5.4.0->-r requirements.txt (line 34))
+#10 28.53   Downloading prompt_toolkit-3.0.51-py3-none-any.whl.metadata (6.4 kB)
+#10 28.67 Collecting elasticsearch<9.0.0,>=8.0.0 (from elasticsearch-dsl<9.0.0,>=8.9.0->django-elasticsearch-dsl==8.0->-r requirements.txt (line 45))
+#10 28.70   Downloading elasticsearch-8.18.1-py3-none-any.whl.metadata (9.2 kB)
+#10 28.76 Collecting elastic-transport<9.0.0,>=8.0.0 (from elasticsearch-dsl<9.0.0,>=8.9.0->django-elasticsearch-dsl==8.0->-r requirements.txt (line 45))
+#10 28.80   Downloading elastic_transport-8.17.1-py3-none-any.whl.metadata (3.8 kB)
+#10 28.97 Collecting zopfli>=0.1.4 (from fonttools[woff]<5,>=4.0.0->weasyprint==63.0->-r requirements.txt (line 42))
+#10 29.00   Downloading zopfli-0.2.3.post1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.9 kB)
+#10 29.01 Requirement already satisfied: brotli>=1.0.1 in /usr/lib/python3/dist-packages (from fonttools[woff]<5,>=4.0.0->weasyprint==63.0->-r requirements.txt (line 42)) (1.1.0)
+#10 29.04 Requirement already satisfied: attrs>=17.4.0 in /usr/lib/python3/dist-packages (from jsonschema>=2.6.0->drf-spectacular==0.25.1->-r requirements.txt (line 15)) (23.2.0)
+#10 29.04 Requirement already satisfied: pyrsistent!=0.17.0,!=0.17.1,!=0.17.2,>=0.14.0 in /usr/lib/python3/dist-packages (from jsonschema>=2.6.0->drf-spectacular==0.25.1->-r requirements.txt (line 15)) (0.20.0)
+#10 29.13 Collecting amqp<6.0.0,>=5.1.1 (from kombu<6.0,>=5.3.4->celery==5.4.0->-r requirements.txt (line 34))
+#10 29.17   Downloading amqp-5.3.1-py3-none-any.whl.metadata (8.9 kB)
+#10 29.62 Collecting cryptography>=3.4.0 (from pyjwt[crypto]>=1.7; extra == "socialaccount"->django-allauth[socialaccount]==0.63.6->-r requirements.txt (line 44))
+#10 29.69   Downloading cryptography-45.0.5-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+#10 29.79 Collecting oauthlib>=3.0.0 (from requests-oauthlib>=0.3.0->django-allauth[socialaccount]==0.63.6->-r requirements.txt (line 44))
+#10 29.82   Downloading oauthlib-3.3.1-py3-none-any.whl.metadata (7.9 kB)
+#10 29.93 Collecting odfpy (from tablib[html,ods,xls,xlsx,yaml]>=3.4.0->django-import-export==3.2.0->-r requirements.txt (line 30))
+#10 29.97   Downloading odfpy-1.4.1.tar.gz (717 kB)
+#10 30.14      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 717.0/717.0 kB 4.2 MB/s eta 0:00:00
+#10 30.23   Preparing metadata (setup.py): started
+#10 30.44   Preparing metadata (setup.py): finished with status 'done'
+#10 30.50 Collecting xlrd (from tablib[html,ods,xls,xlsx,yaml]>=3.4.0->django-import-export==3.2.0->-r requirements.txt (line 30))
+#10 30.53   Downloading xlrd-2.0.2-py2.py3-none-any.whl.metadata (3.5 kB)
+#10 30.58 Collecting xlwt (from tablib[html,ods,xls,xlsx,yaml]>=3.4.0->django-import-export==3.2.0->-r requirements.txt (line 30))
+#10 30.61   Downloading xlwt-1.3.0-py2.py3-none-any.whl.metadata (3.5 kB)
+#10 30.67 Collecting openpyxl>=2.6.0 (from tablib[html,ods,xls,xlsx,yaml]>=3.4.0->django-import-export==3.2.0->-r requirements.txt (line 30))
+#10 30.70   Downloading openpyxl-3.1.5-py2.py3-none-any.whl.metadata (2.5 kB)
+#10 30.93 Requirement already satisfied: certifi in /usr/lib/python3/dist-packages (from elastic-transport<9.0.0,>=8.0.0->elasticsearch-dsl<9.0.0,>=8.9.0->django-elasticsearch-dsl==8.0->-r requirements.txt (line 45)) (2023.11.17)
+#10 31.03 Collecting et-xmlfile (from openpyxl>=2.6.0->tablib[html,ods,xls,xlsx,yaml]>=3.4.0->django-import-export==3.2.0->-r requirements.txt (line 30))
+#10 31.06   Downloading et_xmlfile-2.0.0-py3-none-any.whl.metadata (2.7 kB)
+#10 31.13 Collecting wcwidth (from prompt-toolkit>=3.0.36->click-repl>=0.2.0->celery==5.4.0->-r requirements.txt (line 34))
+#10 31.16   Downloading wcwidth-0.2.13-py2.py3-none-any.whl.metadata (14 kB)
+#10 31.32 Downloading django-4.2.22-py3-none-any.whl (8.0 MB)
+#10 33.09    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.0/8.0 MB 4.5 MB/s eta 0:00:00
+#10 33.12 Downloading django_formtools-2.2-py2.py3-none-any.whl (148 kB)
+#10 33.14    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 148.7/148.7 kB 5.9 MB/s eta 0:00:00
+#10 33.18 Downloading django_crispy_forms-2.3-py3-none-any.whl (31 kB)
+#10 33.21 Downloading crispy_bootstrap3-2024.1-py3-none-any.whl (21 kB)
+#10 33.25 Downloading django_extensions-3.1.5-py3-none-any.whl (224 kB)
+#10 33.29    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 224.2/224.2 kB 6.7 MB/s eta 0:00:00
+#10 33.32 Downloading django_guardian-2.2.0-py3-none-any.whl (104 kB)
+#10 33.34    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 104.9/104.9 kB 6.0 MB/s eta 0:00:00
+#10 33.37 Downloading django_model_utils-4.5.1-py3-none-any.whl (39 kB)
+#10 33.41 Downloading djangorestframework-3.15.2-py3-none-any.whl (1.1 MB)
+#10 33.58    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 6.5 MB/s eta 0:00:00
+#10 33.60 Downloading djangorestframework_gis-1.0-py2.py3-none-any.whl (21 kB)
+#10 33.64 Downloading drf_spectacular-0.25.1-py3-none-any.whl (90 kB)
+#10 33.66    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 90.5/90.5 kB 6.6 MB/s eta 0:00:00
+#10 33.69 Downloading django_downloadview-2.3.0-py3-none-any.whl (35 kB)
+#10 33.73 Downloading django_mptt-0.13.4-py3-none-any.whl (137 kB)
+#10 33.75    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 137.1/137.1 kB 6.3 MB/s eta 0:00:00
+#10 33.78 Downloading django_ordered_model-3.7.4-py3-none-any.whl (20 kB)
+#10 33.82 Downloading django_ajax_selects-2.2.0-2-py3-none-any.whl (46 kB)
+#10 33.83    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 46.1/46.1 kB 5.7 MB/s eta 0:00:00
+#10 33.86 Downloading django_bleach-3.1.0-py2.py3-none-any.whl (13 kB)
+#10 33.90 Downloading django_import_export-3.2.0-py3-none-any.whl (107 kB)
+#10 33.92    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 107.1/107.1 kB 4.3 MB/s eta 0:00:00
+#10 33.95 Downloading celery-5.4.0-py3-none-any.whl (425 kB)
+#10 34.03    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 426.0/426.0 kB 5.4 MB/s eta 0:00:00
+#10 34.06 Downloading redis-4.5.4-py3-none-any.whl (238 kB)
+#10 34.11    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 238.9/238.9 kB 5.2 MB/s eta 0:00:00
+#10 34.15 Downloading django_redis-5.2.0-py3-none-any.whl (30 kB)
+#10 34.23 Downloading django_registration-3.4-py3-none-any.whl (96 kB)
+#10 34.24    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 96.6/96.6 kB 13.0 MB/s eta 0:00:00
+#10 34.28 Downloading django_recaptcha-3.0.0-py3-none-any.whl (22 kB)
+#10 34.31 Downloading pydantic-2.6.3-py3-none-any.whl (395 kB)
+#10 34.40    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 395.2/395.2 kB 5.1 MB/s eta 0:00:00
+#10 34.43 Downloading weasyprint-63.0-py3-none-any.whl (299 kB)
+#10 34.51    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 299.9/299.9 kB 3.7 MB/s eta 0:00:00
+#10 34.54 Downloading distro-1.7.0-py3-none-any.whl (20 kB)
+#10 34.58 Downloading django_elasticsearch_dsl-8.0-py2.py3-none-any.whl (20 kB)
+#10 34.61 Downloading natsort-8.4.0-py3-none-any.whl (38 kB)
+#10 34.65 Downloading python_slugify-8.0.4-py2.py3-none-any.whl (10 kB)
+#10 34.69 Downloading pydantic_core-2.16.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.2 MB)
+#10 35.15    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.2/2.2 MB 4.7 MB/s eta 0:00:00
+#10 35.18 Downloading django_filter-25.1-py3-none-any.whl (94 kB)
+#10 35.20    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 94.1/94.1 kB 4.3 MB/s eta 0:00:00
+#10 35.23 Downloading pathlib2-2.3.7.post1-py2.py3-none-any.whl (18 kB)
+#10 35.27 Downloading psycopg_binary-3.2.9-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (4.4 MB)
+#10 36.23    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.4/4.4 MB 4.6 MB/s eta 0:00:00
+#10 36.26 Downloading defusedxml-0.7.1-py2.py3-none-any.whl (25 kB)
+#10 36.29 Downloading coverage-7.9.2-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (245 kB)
+#10 36.34    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 245.6/245.6 kB 5.1 MB/s eta 0:00:00
+#10 36.37 Downloading python_magic-0.4.27-py2.py3-none-any.whl (13 kB)
+#10 36.41 Downloading deprecation-2.1.0-py2.py3-none-any.whl (11 kB)
+#10 36.45 Downloading gunicorn-23.0.0-py3-none-any.whl (85 kB)
+#10 36.47    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 85.0/85.0 kB 4.1 MB/s eta 0:00:00
+#10 36.50 Downloading annotated_types-0.7.0-py3-none-any.whl (13 kB)
+#10 36.54 Downloading asgiref-3.9.1-py3-none-any.whl (23 kB)
+#10 36.58 Downloading billiard-4.2.1-py3-none-any.whl (86 kB)
+#10 36.60    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 86.8/86.8 kB 6.2 MB/s eta 0:00:00
+#10 36.63 Downloading bleach-5.0.0-py3-none-any.whl (160 kB)
+#10 36.66    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 160.3/160.3 kB 6.1 MB/s eta 0:00:00
+#10 36.69 Downloading cffi-1.17.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (479 kB)
+#10 36.80    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 479.4/479.4 kB 4.4 MB/s eta 0:00:00
+#10 36.83 Downloading click-8.2.1-py3-none-any.whl (102 kB)
+#10 36.85    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 102.2/102.2 kB 5.2 MB/s eta 0:00:00
+#10 36.88 Downloading click_didyoumean-0.3.1-py3-none-any.whl (3.6 kB)
+#10 36.92 Downloading click_plugins-1.1.1.2-py2.py3-none-any.whl (11 kB)
+#10 36.95 Downloading click_repl-0.3.0-py3-none-any.whl (10 kB)
+#10 36.99 Downloading confusable_homoglyphs-3.3.1-py2.py3-none-any.whl (144 kB)
+#10 37.02    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 144.8/144.8 kB 4.5 MB/s eta 0:00:00
+#10 37.06 Downloading cssselect2-0.7.0-py3-none-any.whl (15 kB)
+#10 37.09 Downloading elasticsearch_dsl-8.18.0-py3-none-any.whl (10 kB)
+#10 37.13 Downloading inflection-0.5.1-py2.py3-none-any.whl (9.5 kB)
+#10 37.16 Downloading kombu-5.5.4-py3-none-any.whl (210 kB)
+#10 37.20    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 210.0/210.0 kB 5.8 MB/s eta 0:00:00
+#10 37.23 Downloading vine-5.1.0-py3-none-any.whl (9.6 kB)
+#10 37.27 Downloading pydyf-0.11.0-py3-none-any.whl (8.1 kB)
+#10 37.30 Downloading PyJWT-2.10.1-py3-none-any.whl (22 kB)
+#10 37.34 Downloading pyphen-0.15.0-py3-none-any.whl (2.1 MB)
+#10 37.74    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 5.3 MB/s eta 0:00:00
+#10 37.77 Downloading requests_oauthlib-2.0.0-py2.py3-none-any.whl (24 kB)
+#10 37.81 Downloading sqlparse-0.5.3-py3-none-any.whl (44 kB)
+#10 37.82    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 44.4/44.4 kB 4.0 MB/s eta 0:00:00
+#10 37.85 Downloading tablib-3.8.0-py3-none-any.whl (47 kB)
+#10 37.86    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 47.9/47.9 kB 6.4 MB/s eta 0:00:00
+#10 37.89 Downloading text_unidecode-1.3-py2.py3-none-any.whl (78 kB)
+#10 37.92    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.2/78.2 kB 3.4 MB/s eta 0:00:00
+#10 37.95 Downloading tinycss2-1.4.0-py3-none-any.whl (26 kB)
+#10 37.99 Downloading tinyhtml5-2.0.0-py3-none-any.whl (39 kB)
+#10 38.02 Downloading typing_extensions-4.14.1-py3-none-any.whl (43 kB)
+#10 38.05    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 43.9/43.9 kB 2.6 MB/s eta 0:00:00
+#10 38.08 Downloading tzdata-2025.2-py2.py3-none-any.whl (347 kB)
+#10 38.13    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 347.8/347.8 kB 6.4 MB/s eta 0:00:00
+#10 38.16 Downloading Unidecode-1.4.0-py3-none-any.whl (235 kB)
+#10 38.21    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 235.8/235.8 kB 5.1 MB/s eta 0:00:00
+#10 38.24 Downloading uritemplate-4.2.0-py3-none-any.whl (11 kB)
+#10 38.28 Downloading diff_match_patch-20241021-py3-none-any.whl (43 kB)
+#10 38.29    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 43.3/43.3 kB 5.3 MB/s eta 0:00:00
+#10 38.32 Downloading django_js_asset-3.1.2-py3-none-any.whl (5.9 kB)
+#10 38.36 Downloading psycopg-3.2.9-py3-none-any.whl (202 kB)
+#10 38.42    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 202.7/202.7 kB 3.4 MB/s eta 0:00:00
+#10 38.45 Downloading amqp-5.3.1-py3-none-any.whl (50 kB)
+#10 38.47    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 50.9/50.9 kB 3.7 MB/s eta 0:00:00
+#10 38.49 Downloading cryptography-45.0.5-cp311-abi3-manylinux_2_34_x86_64.whl (4.5 MB)
+#10 39.30    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.5/4.5 MB 5.5 MB/s eta 0:00:00
+#10 39.34 Downloading elastic_transport-8.17.1-py3-none-any.whl (64 kB)
+#10 39.36    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 65.0/65.0 kB 4.0 MB/s eta 0:00:00
+#10 39.39 Downloading elasticsearch-8.18.1-py3-none-any.whl (906 kB)
+#10 39.55    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 906.3/906.3 kB 6.0 MB/s eta 0:00:00
+#10 39.58 Downloading oauthlib-3.3.1-py3-none-any.whl (160 kB)
+#10 39.62    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 160.1/160.1 kB 5.1 MB/s eta 0:00:00
+#10 39.65 Downloading openpyxl-3.1.5-py2.py3-none-any.whl (250 kB)
+#10 39.69    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 250.9/250.9 kB 6.1 MB/s eta 0:00:00
+#10 39.72 Downloading prompt_toolkit-3.0.51-py3-none-any.whl (387 kB)
+#10 39.80    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 387.8/387.8 kB 5.0 MB/s eta 0:00:00
+#10 39.83 Downloading zopfli-0.2.3.post1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (851 kB)
+#10 39.98    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 851.1/851.1 kB 5.6 MB/s eta 0:00:00
+#10 40.01 Downloading pycparser-2.22-py3-none-any.whl (117 kB)
+#10 40.04    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 117.6/117.6 kB 5.5 MB/s eta 0:00:00
+#10 40.06 Downloading xlrd-2.0.2-py2.py3-none-any.whl (96 kB)
+#10 40.09    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 96.6/96.6 kB 4.7 MB/s eta 0:00:00
+#10 40.12 Downloading xlwt-1.3.0-py2.py3-none-any.whl (99 kB)
+#10 40.14    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.0/100.0 kB 5.2 MB/s eta 0:00:00
+#10 40.17 Downloading et_xmlfile-2.0.0-py3-none-any.whl (18 kB)
+#10 40.20 Downloading wcwidth-0.2.13-py2.py3-none-any.whl (34 kB)
+#10 40.35 Building wheels for collected packages: django-sitetree, django-modeltranslation, huey, django-allauth, django-file-form, odfpy
+#10 40.35   Building wheel for django-sitetree (setup.py): started
+#10 40.68   Building wheel for django-sitetree (setup.py): finished with status 'done'
+#10 40.68   Created wheel for django-sitetree: filename=django_sitetree-1.17.2-py3-none-any.whl size=117534 sha256=b7a20dd81c1c644890f7b0363bbaa690000aa194889264ecc2393ab94eff642f
+#10 40.68   Stored in directory: /root/.cache/pip/wheels/d9/b8/77/4e4ea39c85a19cc4c74ab3f43203b984b77f640bed07266c6d
+#10 40.69   Building wheel for django-modeltranslation (pyproject.toml): started
+#10 40.93   Building wheel for django-modeltranslation (pyproject.toml): finished with status 'done'
+#10 40.93   Created wheel for django-modeltranslation: filename=django_modeltranslation-0.17.5-py3-none-any.whl size=46902 sha256=35d711b4edf8f8f3357c528071a695a43e65e5458b0b361eb3c537bd1c99d4b8
+#10 40.93   Stored in directory: /root/.cache/pip/wheels/be/91/93/6d6972bed56ee71122b55eb84e72bd49e8c8f5f63a8d0a0cd8
+#10 40.93   Building wheel for huey (setup.py): started
+#10 41.24   Building wheel for huey (setup.py): finished with status 'done'
+#10 41.24   Created wheel for huey: filename=huey-2.4.3-py3-none-any.whl size=71232 sha256=1ed792ae88f533800728b35fef263aa0ce7e3381788f28e1c50b0d9e9bf030a2
+#10 41.24   Stored in directory: /root/.cache/pip/wheels/c4/87/74/8fd537d2c9c56b12ea6d03ae4007203423b9f3093974859018
+#10 41.25   Building wheel for django-allauth (pyproject.toml): started
+#10 42.41   Building wheel for django-allauth (pyproject.toml): finished with status 'done'
+#10 42.42   Created wheel for django-allauth: filename=django_allauth-0.63.6-py3-none-any.whl size=1420995 sha256=86707ceddd5dfe03c8d851835696f0a30deaa49bd0c9bb909ecd13598894a74b
+#10 42.42   Stored in directory: /root/.cache/pip/wheels/76/6e/12/012687d39c005fca67d97c601db8fdaba2b5d46cfbadfef426
+#10 42.43   Building wheel for django-file-form (setup.py): started
+#10 42.76   Building wheel for django-file-form (setup.py): finished with status 'done'
+#10 42.76   Created wheel for django-file-form: filename=django_file_form-3.5.2-py3-none-any.whl size=352888 sha256=788552b8a1e04c4d14dd9b4d502c63d48ae8e0a21a3281766cd4c3932cfc12f6
+#10 42.76   Stored in directory: /tmp/pip-ephem-wheel-cache-acncsj55/wheels/b8/05/d0/16c00ddcc88b1ad906c52077e96e7dd937759fffb31b3a4455
+#10 42.76   Building wheel for odfpy (setup.py): started
+#10 43.13   Building wheel for odfpy (setup.py): finished with status 'done'
+#10 43.13   Created wheel for odfpy: filename=odfpy-1.4.1-py2.py3-none-any.whl size=160673 sha256=3a675a458dc26a0c193a36fcc9b86dc3d27b86a70ca4afdb6a5a7bb333fba112
+#10 43.13   Stored in directory: /root/.cache/pip/wheels/36/5d/63/8243a7ee78fff0f944d638fd0e66d7278888f5e2285d7346b6
+#10 43.13 Successfully built django-sitetree django-modeltranslation huey django-allauth django-file-form odfpy
+#10 43.73 Installing collected packages: xlwt, wcwidth, text-unidecode, huey, django-sitetree, django-ordered-model, django-file-form, django-ajax-selects, confusable-homoglyphs, zopfli, xlrd, vine, uritemplate, Unidecode, tzdata, typing-extensions, tinyhtml5, tinycss2, tablib, sqlparse, redis, python-slugify, python-magic, Pyphen, pyjwt, pydyf, pycparser, psycopg-binary, prompt-toolkit, pathlib2, oauthlib, natsort, inflection, gunicorn, et-xmlfile, elastic-transport, distro, diff-match-patch, deprecation, defusedxml, coverage, click, bleach, billiard, asgiref, annotated-types, requests-oauthlib, pydantic-core, psycopg, openpyxl, odfpy, elasticsearch, Django, cssselect2, click-repl, click-plugins, click-didyoumean, cffi, amqp, weasyprint, pydantic, kombu, elasticsearch-dsl, djangorestframework, django-registration, django-redis, django-recaptcha, django-modeltranslation, django-model-utils, django-js-asset, django-guardian, django-formtools, django-filter, django-extensions, django-downloadview, django-crispy-forms, django-bleach, django-allauth, cryptography, drf-spectacular, djangorestframework-gis, django-mptt, django-import-export, django-elasticsearch-dsl, crispy-bootstrap3, celery
+#10 53.24 Successfully installed Django-4.2.22 Pyphen-0.15.0 Unidecode-1.4.0 amqp-5.3.1 annotated-types-0.7.0 asgiref-3.9.1 billiard-4.2.1 bleach-5.0.0 celery-5.4.0 cffi-1.17.1 click-8.2.1 click-didyoumean-0.3.1 click-plugins-1.1.1.2 click-repl-0.3.0 confusable-homoglyphs-3.3.1 coverage-7.9.2 crispy-bootstrap3-2024.1 cryptography-45.0.5 cssselect2-0.7.0 defusedxml-0.7.1 deprecation-2.1.0 diff-match-patch-20241021 distro-1.7.0 django-ajax-selects-2.2.0 django-allauth-0.63.6 django-bleach-3.1.0 django-crispy-forms-2.3 django-downloadview-2.3.0 django-elasticsearch-dsl-8.0 django-extensions-3.1.5 django-file-form-3.5.2 django-filter-25.1 django-formtools-2.2 django-guardian-2.2.0 django-import-export-3.2.0 django-js-asset-3.1.2 django-model-utils-4.5.1 django-modeltranslation-0.17.5 django-mptt-0.13.4 django-ordered-model-3.7.4 django-recaptcha-3.0.0 django-redis-5.2.0 django-registration-3.4 django-sitetree-1.17.2 djangorestframework-3.15.2 djangorestframework-gis-1.0 drf-spectacular-0.25.1 elastic-transport-8.17.1 elasticsearch-8.18.1 elasticsearch-dsl-8.18.0 et-xmlfile-2.0.0 gunicorn-23.0.0 huey-2.4.3 inflection-0.5.1 kombu-5.5.4 natsort-8.4.0 oauthlib-3.3.1 odfpy-1.4.1 openpyxl-3.1.5 pathlib2-2.3.7.post1 prompt-toolkit-3.0.51 psycopg-3.2.9 psycopg-binary-3.2.9 pycparser-2.22 pydantic-2.6.3 pydantic-core-2.16.3 pydyf-0.11.0 pyjwt-2.10.1 python-magic-0.4.27 python-slugify-8.0.4 redis-4.5.4 requests-oauthlib-2.0.0 sqlparse-0.5.3 tablib-3.8.0 text-unidecode-1.3 tinycss2-1.4.0 tinyhtml5-2.0.0 typing-extensions-4.14.1 tzdata-2025.2 uritemplate-4.2.0 vine-5.1.0 wcwidth-0.2.13 weasyprint-63.0 xlrd-2.0.2 xlwt-1.3.0 zopfli-0.2.3.post1
+#10 53.24 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#10 54.64 Collecting git+https://github.com/boxine/bx_py_utils.git@v36 (from -r requirements_huey.txt (line 6))
+#10 54.64   Cloning https://github.com/boxine/bx_py_utils.git (to revision v36) to /tmp/pip-req-build-2smzdi2b
+#10 54.65   Running command git clone --filter=blob:none --quiet https://github.com/boxine/bx_py_utils.git /tmp/pip-req-build-2smzdi2b
+#10 56.56   Running command git checkout -q bcac520b8401f701046757e629e1fdd6f3ff8ca8
+#10 57.15   Resolved https://github.com/boxine/bx_py_utils.git to commit bcac520b8401f701046757e629e1fdd6f3ff8ca8
+#10 57.15   Installing build dependencies: started
+#10 71.35   Installing build dependencies: finished with status 'done'
+#10 71.35   Getting requirements to build wheel: started
+#10 71.45   Getting requirements to build wheel: finished with status 'done'
+#10 71.45   Preparing metadata (pyproject.toml): started
+#10 71.66   Preparing metadata (pyproject.toml): finished with status 'done'
+#10 71.67 Collecting git+https://github.com/g3w-suite/django-huey-monitor.git (from -r requirements_huey.txt (line 7))
+#10 71.67   Cloning https://github.com/g3w-suite/django-huey-monitor.git to /tmp/pip-req-build-80tnbz9j
+#10 71.67   Running command git clone --filter=blob:none --quiet https://github.com/g3w-suite/django-huey-monitor.git /tmp/pip-req-build-80tnbz9j
+#10 73.10   Resolved https://github.com/g3w-suite/django-huey-monitor.git to commit aa9e00045f0bcaea82c518dace8a4c4cae532230
+#10 73.11   Installing build dependencies: started
+#10 82.45   Installing build dependencies: finished with status 'done'
+#10 82.45   Getting requirements to build wheel: started
+#10 82.55   Getting requirements to build wheel: finished with status 'done'
+#10 82.55   Preparing metadata (pyproject.toml): started
+#10 82.74   Preparing metadata (pyproject.toml): finished with status 'done'
+#10 82.76 Requirement already satisfied: django in /usr/local/lib/python3.12/dist-packages (from bx_py_utils==36->-r requirements_huey.txt (line 6)) (4.2.22)
+#10 82.92 Collecting python-stdnum (from bx_py_utils==36->-r requirements_huey.txt (line 6))
+#10 83.10   Downloading python_stdnum-2.1-py3-none-any.whl.metadata (18 kB)
+#10 83.13 Requirement already satisfied: huey in /usr/local/lib/python3.12/dist-packages (from django-huey-monitor==0.3.0->-r requirements_huey.txt (line 7)) (2.4.3)
+#10 83.13 Requirement already satisfied: asgiref<4,>=3.6.0 in /usr/local/lib/python3.12/dist-packages (from django->bx_py_utils==36->-r requirements_huey.txt (line 6)) (3.9.1)
+#10 83.13 Requirement already satisfied: sqlparse>=0.3.1 in /usr/local/lib/python3.12/dist-packages (from django->bx_py_utils==36->-r requirements_huey.txt (line 6)) (0.5.3)
+#10 83.17 Downloading python_stdnum-2.1-py3-none-any.whl (1.1 MB)
+#10 83.47    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 3.8 MB/s eta 0:00:00
+#10 83.48 Building wheels for collected packages: bx_py_utils, django-huey-monitor
+#10 83.49   Building wheel for bx_py_utils (pyproject.toml): started
+#10 83.74   Building wheel for bx_py_utils (pyproject.toml): finished with status 'done'
+#10 83.74   Created wheel for bx_py_utils: filename=bx_py_utils-36-py3-none-any.whl size=50251 sha256=fcf6aff379a7e0d87713f861196322091dfaa96d23d3f6c5ef218e3406a369fa
+#10 83.74   Stored in directory: /tmp/pip-ephem-wheel-cache-h_kx6cj9/wheels/ae/c8/71/ce0356250536d36a5df81ba072ceb460d7cb410059b2f506c1
+#10 83.75   Building wheel for django-huey-monitor (pyproject.toml): started
+#10 83.99   Building wheel for django-huey-monitor (pyproject.toml): finished with status 'done'
+#10 83.99   Created wheel for django-huey-monitor: filename=django_huey_monitor-0.3.0-py3-none-any.whl size=47820 sha256=03ff5584976b655cc94d59aa65ec41f04ccd9129f0c31725e9314e865c628dc8
+#10 83.99   Stored in directory: /tmp/pip-ephem-wheel-cache-h_kx6cj9/wheels/98/68/f7/25e36ce5dea5b1ebacbe1e7bf634fa42eff2f18fec857c6710
+#10 83.99 Successfully built bx_py_utils django-huey-monitor
+#10 84.35 Installing collected packages: python-stdnum, bx_py_utils, django-huey-monitor
+#10 84.62 Successfully installed bx_py_utils-36 django-huey-monitor-0.3.0 python-stdnum-2.1
+#10 84.62 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#10 84.89 Cloning into '/code/g3w-admin/frontend'...
+#10 91.70 Collecting git+https://github.com/gis3w/TileStache.git (from -r /code/g3w-admin/caching/requirements.txt (line 2))
+#10 91.70   Cloning https://github.com/gis3w/TileStache.git to /tmp/pip-req-build-2ainvqet
+#10 91.70   Running command git clone --filter=blob:none --quiet https://github.com/gis3w/TileStache.git /tmp/pip-req-build-2ainvqet
+#10 93.82   Resolved https://github.com/gis3w/TileStache.git to commit 514595d90ce18d9ae72c3f7a2cafc78ba9b3a77a
+#10 93.82   Preparing metadata (setup.py): started
+#10 94.09   Preparing metadata (setup.py): finished with status 'done'
+#10 94.29 Collecting python3-memcached (from -r /code/g3w-admin/caching/requirements.txt (line 3))
+#10 94.41   Downloading python3-memcached-1.51.tar.gz (14 kB)
+#10 94.43   Preparing metadata (setup.py): started
+#10 94.65   Preparing metadata (setup.py): finished with status 'done'
+#10 94.70 Collecting python-memcached-stats (from -r /code/g3w-admin/caching/requirements.txt (line 4))
+#10 94.72   Downloading python-memcached-stats-0.1.tar.gz (1.4 kB)
+#10 94.73   Preparing metadata (setup.py): started
+#10 94.93   Preparing metadata (setup.py): finished with status 'done'
+#10 94.99 Collecting ModestMaps>=1.3.0 (from TileStache==1.51.14->-r /code/g3w-admin/caching/requirements.txt (line 2))
+#10 95.02   Downloading ModestMaps-1.4.7.tar.gz (10 kB)
+#10 95.03   Preparing metadata (setup.py): started
+#10 95.24   Preparing metadata (setup.py): finished with status 'done'
+#10 95.24 Requirement already satisfied: Pillow in /usr/lib/python3/dist-packages (from TileStache==1.51.14->-r /code/g3w-admin/caching/requirements.txt (line 2)) (10.2.0)
+#10 95.32 Collecting Werkzeug (from TileStache==1.51.14->-r /code/g3w-admin/caching/requirements.txt (line 2))
+#10 95.34   Downloading werkzeug-3.1.3-py3-none-any.whl.metadata (3.7 kB)
+#10 95.51 Collecting simplejson (from TileStache==1.51.14->-r /code/g3w-admin/caching/requirements.txt (line 2))
+#10 95.54   Downloading simplejson-3.20.1-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.2 kB)
+#10 95.57 Requirement already satisfied: MarkupSafe>=2.1.1 in /usr/lib/python3/dist-packages (from Werkzeug->TileStache==1.51.14->-r /code/g3w-admin/caching/requirements.txt (line 2)) (2.1.5)
+#10 95.60 Downloading simplejson-3.20.1-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (152 kB)
+#10 95.66    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 152.2/152.2 kB 2.6 MB/s eta 0:00:00
+#10 95.69 Downloading werkzeug-3.1.3-py3-none-any.whl (224 kB)
+#10 95.72    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 224.5/224.5 kB 7.0 MB/s eta 0:00:00
+#10 95.73 Building wheels for collected packages: TileStache, python3-memcached, python-memcached-stats, ModestMaps
+#10 95.73   Building wheel for TileStache (setup.py): started
+#10 96.13   Building wheel for TileStache (setup.py): finished with status 'done'
+#10 96.13   Created wheel for TileStache: filename=TileStache-1.51.14-py3-none-any.whl size=167290 sha256=8acb416677988ede2f34b896455f99ef61cac3b0fbb61f4b427b2fef0a5a8521
+#10 96.13   Stored in directory: /tmp/pip-ephem-wheel-cache-h_e2zl8t/wheels/15/5b/13/b3f32639e2017351b056a32fc95bf1f619ebe50d09b50fd952
+#10 96.14   Building wheel for python3-memcached (setup.py): started
+#10 96.44   Building wheel for python3-memcached (setup.py): finished with status 'done'
+#10 96.44   Created wheel for python3-memcached: filename=python3_memcached-1.51-py3-none-any.whl size=14382 sha256=3da39726b0f0c3f27859c45dfc2a5cc6b74c91ed872f476e19b556c7fda03521
+#10 96.44   Stored in directory: /root/.cache/pip/wheels/e4/a7/e6/bbe6a76ee996f16049106ae3719e98e02d43aee044a87efbc8
+#10 96.44   Building wheel for python-memcached-stats (setup.py): started
+#10 96.64   Building wheel for python-memcached-stats (setup.py): finished with status 'done'
+#10 96.64   Created wheel for python-memcached-stats: filename=python_memcached_stats-0.1-py3-none-any.whl size=2057 sha256=ed0a7757e1b11a2d723d9f5e694eeca60069d7934589fe839d5d2025d57506ca
+#10 96.64   Stored in directory: /root/.cache/pip/wheels/bb/01/82/ab91138288da8b640c0546798bf8d8673cdef74e03461bdad5
+#10 96.64   Building wheel for ModestMaps (setup.py): started
+#10 96.93   Building wheel for ModestMaps (setup.py): finished with status 'done'
+#10 96.93   Created wheel for ModestMaps: filename=ModestMaps-1.4.7-py3-none-any.whl size=16463 sha256=5bc9225793df8065209680b74c45cfb4b4c2599b322c8a96660f5c519041ade7
+#10 96.93   Stored in directory: /root/.cache/pip/wheels/18/7f/1b/e936532ad5e7adbd1b0ab3c9b4cdabf0bdab9120e8b12fcce5
+#10 96.93 Successfully built TileStache python3-memcached python-memcached-stats ModestMaps
+#10 97.29 Installing collected packages: python3-memcached, python-memcached-stats, ModestMaps, Werkzeug, simplejson, TileStache
+#10 97.78 Successfully installed ModestMaps-1.4.7 TileStache-1.51.14 Werkzeug-3.1.3 python-memcached-stats-0.1 python3-memcached-1.51 simplejson-3.20.1
+#10 97.78 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#10 98.55 Collecting Werkzeug==3.0.6 (from -r /code/g3w-admin/filemanager/requirements.txt (line 1))
+#10 98.67   Downloading werkzeug-3.0.6-py3-none-any.whl.metadata (3.7 kB)
+#10 98.69 Requirement already satisfied: MarkupSafe>=2.1.1 in /usr/lib/python3/dist-packages (from Werkzeug==3.0.6->-r /code/g3w-admin/filemanager/requirements.txt (line 1)) (2.1.5)
+#10 98.73 Downloading werkzeug-3.0.6-py3-none-any.whl (227 kB)
+#10 98.81    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 228.0/228.0 kB 2.8 MB/s eta 0:00:00
+#10 99.27 Installing collected packages: Werkzeug
+#10 99.27   Attempting uninstall: Werkzeug
+#10 99.29     Found existing installation: Werkzeug 3.1.3
+#10 99.29     Uninstalling Werkzeug-3.1.3:
+#10 99.29       Successfully uninstalled Werkzeug-3.1.3
+#10 99.41 Successfully installed Werkzeug-3.0.6
+#10 99.41 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#10 99.82 Requirement already satisfied: plotly==5.15.0 in /usr/lib/python3/dist-packages (from -r /code/g3w-admin/qplotly/requirements.txt (line 1)) (5.15.0)
+#10 100.1 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#10 100.7 Collecting requests==2.32.4 (from -r /code/g3w-admin/openrouteservice/requirements.txt (line 1))
+#10 100.7   Using cached requests-2.32.4-py3-none-any.whl.metadata (4.9 kB)
+#10 100.8 Collecting django-multiselectfield==0.1.12 (from -r /code/g3w-admin/openrouteservice/requirements.txt (line 2))
+#10 100.9   Downloading django_multiselectfield-0.1.12-py3-none-any.whl.metadata (9.2 kB)
+#10 101.0 Collecting charset_normalizer<4,>=2 (from requests==2.32.4->-r /code/g3w-admin/openrouteservice/requirements.txt (line 1))
+#10 101.0   Using cached charset_normalizer-3.4.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (35 kB)
+#10 101.1 Requirement already satisfied: idna<4,>=2.5 in /usr/lib/python3/dist-packages (from requests==2.32.4->-r /code/g3w-admin/openrouteservice/requirements.txt (line 1)) (3.6)
+#10 101.1 Requirement already satisfied: urllib3<3,>=1.21.1 in /usr/lib/python3/dist-packages (from requests==2.32.4->-r /code/g3w-admin/openrouteservice/requirements.txt (line 1)) (2.0.7)
+#10 101.1 Requirement already satisfied: certifi>=2017.4.17 in /usr/lib/python3/dist-packages (from requests==2.32.4->-r /code/g3w-admin/openrouteservice/requirements.txt (line 1)) (2023.11.17)
+#10 101.1 Requirement already satisfied: django>=1.4 in /usr/local/lib/python3.12/dist-packages (from django-multiselectfield==0.1.12->-r /code/g3w-admin/openrouteservice/requirements.txt (line 2)) (4.2.22)
+#10 101.1 Requirement already satisfied: asgiref<4,>=3.6.0 in /usr/local/lib/python3.12/dist-packages (from django>=1.4->django-multiselectfield==0.1.12->-r /code/g3w-admin/openrouteservice/requirements.txt (line 2)) (3.9.1)
+#10 101.1 Requirement already satisfied: sqlparse>=0.3.1 in /usr/local/lib/python3.12/dist-packages (from django>=1.4->django-multiselectfield==0.1.12->-r /code/g3w-admin/openrouteservice/requirements.txt (line 2)) (0.5.3)
+#10 101.1 Using cached requests-2.32.4-py3-none-any.whl (64 kB)
+#10 101.1 Downloading django_multiselectfield-0.1.12-py3-none-any.whl (15 kB)
+#10 101.1 Using cached charset_normalizer-3.4.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (148 kB)
+#10 101.6 Installing collected packages: charset_normalizer, requests, django-multiselectfield
+#10 101.6   Attempting uninstall: requests
+#10 101.7     Found existing installation: requests 2.31.0
+#10 101.7     Uninstalling requests-2.31.0:
+#10 101.8       Successfully uninstalled requests-2.31.0
+#10 102.0 Successfully installed charset_normalizer-3.4.2 django-multiselectfield-0.1.12 requests-2.32.4
+#10 102.0 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#10 DONE 102.2s
+
+#11 exporting to image
+#11 exporting layers
+#11 exporting layers 3.3s done
+#11 writing image sha256:de4aa43d542183d7c402af5e13625a0136dc3fc5d3bc1c933768d2623a373d5b done
+#11 naming to docker.io/g3wsuite/g3w-suite:v3.10.x done
+#11 DONE 3.3s
+
+ [33m2 warnings found (use docker --debug to expand):
+[0m - JSONArgsRecommended: JSON arguments recommended for CMD to prevent unintended behavior related to OS signals (line 38)
+ - JSONArgsRecommended: JSON arguments recommended for ENTRYPOINT to prevent unintended behavior related to OS signals (line 40)
