@@ -32,9 +32,9 @@ ADD scripts /scripts
 
 RUN chmod +x /scripts/*.sh
 
-RUN /scripts/setup.sh \
+RUN /bin/bash /scripts/setup.sh \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-CMD echo "Base image for g3w-suite-dev" && tail -f /dev/null
+CMD ["sh", "-c", "echo 'Base image for g3w-suite-dev' && tail -f /dev/null"]
 
-ENTRYPOINT /scripts/docker-entrypoint.sh
+ENTRYPOINT ["/scripts/docker-entrypoint.sh"]
