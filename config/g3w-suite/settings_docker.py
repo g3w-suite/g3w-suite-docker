@@ -137,6 +137,17 @@ ELASTICSEARCH_DSL = {
     }
 }
 
+LANGUAGES = (
+    ('en', 'English'),
+    ('it', 'Italian'),
+    ('fr', 'French'),
+    ('fi', 'Finnish'),
+    ('se', 'Swedish'), # FIXME: correct language code should be "sv"
+    ('ro', 'Romanian'),
+    ('de', 'Deutsch'),
+    #('bg', 'Bulgarian'), # TODO: to add when g3w-client is ready translated
+)
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
