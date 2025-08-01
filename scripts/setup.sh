@@ -22,7 +22,7 @@ pip3 install -r requirements_huey.txt --break-system-packages
 
 # Front end
 #TODO make this as generic so that we can install as many plugins as possible
-git submodule add -b feature/theming https://github.com/kartoza/g3w-admin-frontend.git g3w-admin/frontend
+git submodule add -b GeoHosting https://github.com/kartoza/g3w-admin-frontend.git g3w-admin/frontend
 
 
 # Caching
