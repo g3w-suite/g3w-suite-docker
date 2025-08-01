@@ -35,6 +35,9 @@ rm -f /shared-volume/build_done
 # Setup once
 /code/ci_scripts/setup_suite.sh
 
+# copy custom static if not exist
+[ -d /shared-volume/custom_static/ ] || cp -r /code/g3w-admin/core/static/custom_static/ /shared-volume/custom_static/
+
 if [ ! -f /shared-volume/gunicorn.conf.py ]; then
   cat > /shared-volume/gunicorn.conf.py << EOF
 import os
