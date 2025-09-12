@@ -28,7 +28,7 @@ services:
 
 
   g3w-suite:
-    image: g3wsuite/g3w-suite:dev
+    image: zamuzakki/g3w-suite-docker-default:v3.8.5
     environment:
       - DISPLAY=:99
       - G3WSUITE_TILECACHE_PATH
@@ -52,6 +52,8 @@ services:
       - QGIS_OPTIONS_PATH=/shared-volume/
       - QGIS_SERVER_LOG_FILE
       - QGIS_SERVER_LOG_LEVEL
+      - G3WSUITE_ADMIN_USERNAME
+      - G3WSUITE_ADMIN_PASSWORD
     expose:
       - "8000"
     ports:
@@ -71,6 +73,7 @@ services:
       - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
       - ./scripts:/scripts
       - ${G3WSUITE_LOCAL_CODE_PATH}:/code
+      - ${G3WSUITE_FRONTEND_PATH}:/code/g3w-admin/frontend
       - ./config/qgis/QGIS3.ini:/shared-volume/QGIS/QGIS3.ini
 
     entrypoint: /scripts/docker-entrypoint-dev.sh

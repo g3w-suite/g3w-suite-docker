@@ -1,6 +1,3 @@
-
-
-
 if [ -z "$(ls -A /code)" ]; then
    echo "Cloning g3w-admin branch ${G3W_SUITE_BRANCH:-GeoHosting} ..."
    git clone https://github.com/kartoza/g3w-admin.git --single-branch --depth 1 --branch ${G3W_SUITE_BRANCH:-GeoHosting} /code && \
@@ -25,7 +22,7 @@ pip3 install -r requirements_huey.txt --break-system-packages
 
 # Front end
 #TODO make this as generic so that we can install as many plugins as possible
-git submodule add -f https://github.com/g3w-suite/g3w-admin-frontend.git  g3w-admin/frontend
+git submodule add -f -b GeoHosting https://github.com/kartoza/g3w-admin-frontend.git g3w-admin/frontend
 
 
 # Caching

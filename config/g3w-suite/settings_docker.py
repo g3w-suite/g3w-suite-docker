@@ -4,6 +4,7 @@
 import os
 from django.conf import settings
 from base import __version__ as version
+from base.settings.base import THIRD_PARTY_APPS
 
 # Load custom templates and static files from your docker volume (eg. "./config/g3w-suite/overrides/")
 # --------------------------------------------
@@ -220,11 +221,46 @@ if os.getenv('WEBGIS_PUBLIC_HOSTNAME', None):
         f"http://{os.getenv('WEBGIS_PUBLIC_HOSTNAME', None)}:8080"
     ]
 
-G3WSUITE_CUSTOM_STATIC_URL = '/static/'
-G3WSUITE_CUSTOM_CSS = [
-    G3WSUITE_CUSTOM_STATIC_URL +'css/custom.css'
+if DEBUG:
+    G3WSUITE_CUSTOM_STATIC_URL = '/static/custom_static/'
+else:
+    G3WSUITE_CUSTOM_STATIC_URL = '/custom_static/'
+
+G3WSUITE_CUSTOM_JS = [
+    G3WSUITE_CUSTOM_STATIC_URL + 'js/custom.js'
 ]
 
-DEBUG = True
+G3WSUITE_CUSTOM_CSS = [
+    G3WSUITE_CUSTOM_STATIC_URL + 'css/custom.css',
+    G3WSUITE_CUSTOM_STATIC_URL + 'css/style.css'
+]
+
+G3WSUITE_FAVICON = G3WSUITE_CUSTOM_STATIC_URL + 'favicon.ico'
+G3WSUITE_MAIN_LOGO = G3WSUITE_CUSTOM_STATIC_URL + 'logo_main.png'
+G3WSUITE_RID_LOGO = G3WSUITE_CUSTOM_STATIC_URL + 'logo_reduced.png'
+G3WSUITE_LOGIN_LOGO = G3WSUITE_CUSTOM_STATIC_URL + 'logo_login.png'
+G3WSUITE_POWERD_BY = True
+
+if DEBUG:
+    FRONTEND_IMAGES_DIR = '/code/g3w-admin/core/static/custom_static/images/home/'
+else:
+    FRONTEND_IMAGES_DIR = '/shared-volume/custom_static/images/home/'
+
+
+if DEBUG:
+    FRONTEND_IMAGES_URL = '/static/custom_static/images/home/'
+else:
+    FRONTEND_IMAGES_URL = '/custom_static/images/home/'
+
+THIRD_PARTY_APPS += ['constance']
+
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+CONSTANCE_CONFIG = {
+    'CUSTOM_WEBSITE_TITLE': (
+        'My Website', 'Custom website title that will be shown on page header', str
+    )
+}
+
 FRONTEND = True
 FRONTEND_APP = 'frontend'

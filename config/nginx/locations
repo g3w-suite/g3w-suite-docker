@@ -10,6 +10,10 @@ location /static/projects/ {
   return 403;
 }
 
+location /custom_static/ {
+    root /shared-volume/;
+}
+
 location /static/ {
   root /shared-volume/;
 }
