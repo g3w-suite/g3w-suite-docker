@@ -264,3 +264,5 @@ CONSTANCE_CONFIG = {
 
 FRONTEND = True
 FRONTEND_APP = 'frontend'
+FRONTEND = True
+FRONTEND_APP = 'frontend'

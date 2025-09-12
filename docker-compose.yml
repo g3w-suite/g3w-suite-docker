@@ -27,7 +27,7 @@ services:
       internal:
 
   g3w-suite:
-    image: zamuzakki/g3w-suite-docker-default:v3.8.5
+    image: zamuzakki/g3w-suite-docker-default:v3.8.5-1.2
     environment:
       - DISPLAY=:99
       - G3WSUITE_ADMIN_USERNAME
