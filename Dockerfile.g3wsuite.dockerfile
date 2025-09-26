@@ -15,7 +15,8 @@ LABEL maintainer="Gis3W" \
 # Based on main CI Docker from  g3w-suite, checkout code + caching,
 # custom settings file
 ##
-RUN apt update &&  \
+RUN sed -i 's|http://|https://|g' /etc/apt/sources.list.d/ubuntu.sources && \
+    apt update &&  \
     apt install git figlet  -y
 
 ##
