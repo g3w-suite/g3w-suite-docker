@@ -28,6 +28,3 @@ pip3 install -r /code/g3w-admin/filemanager/requirements.txt
 # Qplotly
 pip3 install -r /code/g3w-admin/qplotly/requirements.txt
 
-# Openrouteservice
-pip3 install -r /code/g3w-admin/openrouteservice/requirements.txt
-
