@@ -95,6 +95,9 @@ services:
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/esdata:/usr/share/elasticsearch/data
       #- esdata:/usr/share/elasticsearch/data
+    networks:
+      internal:
+    restart: always
 
   nginx:
     image: nginx
@@ -118,6 +121,7 @@ services:
     restart: always
     networks:
       internal:
+    restart: always
 
   # Letsencrypt certs
   certbot:
