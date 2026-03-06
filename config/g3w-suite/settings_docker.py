@@ -112,7 +112,7 @@ QDJANGO_SERVER_URL = 'http://localhost:8000'
 
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': 'http://elasticsearch:9200',
+        'hosts': os.getenv('G3WSUITE_ELASTIC_HOST', 'http://elasticsearch:9200'),
         #'http_auth': ('username', 'password')
     }
 }
