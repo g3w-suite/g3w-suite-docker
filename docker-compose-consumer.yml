@@ -1,7 +1,6 @@
-version: "3"
 services:
   postgis:
-    image: kartoza/postgis:15-3.3
+    image: kartoza/postgis:16-3.4
     ports:
       - "5439:5432"
     environment:
@@ -52,6 +51,8 @@ services:
       - QGIS_SERVER_LOG_FILE
       - QGIS_SERVER_LOG_LEVEL
       - G3WSUITE_CONSUMER=1
+      - G3WSUITE_ADMIN_USERNAME
+      - G3WSUITE_ADMIN_PASSWORD
     expose:
       - "8000"
     restart: always
@@ -81,6 +82,18 @@ services:
     restart: always
     networks:
       internal:
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.1
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}/esdata:/usr/share/elasticsearch/data
 
   # Asynchronous tasks consumer (run_huey)
   g3w-suite-consumer:

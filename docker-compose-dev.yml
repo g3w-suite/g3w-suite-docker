@@ -1,7 +1,6 @@
-version: "3"
 services:
   postgis:
-    image: kartoza/postgis:15-3.3
+    image: kartoza/postgis:16-3.4
     ports:
       - "5439:5432"
     environment:
@@ -11,7 +10,7 @@ services:
       - ALLOW_IP_RANGE=0.0.0.0/0
       - RUN_AS_ROOT=true
       - FORCE_SSL=False
-    restart: on-failure
+    restart: "no"
     logging:
       driver: "json-file"
       options:
@@ -30,6 +29,8 @@ services:
 
   g3w-suite:
     image: g3wsuite/g3w-suite:dev
+    stdin_open: true
+    tty: true
     environment:
       - DISPLAY=:99
       - G3WSUITE_TILECACHE_PATH
@@ -74,11 +75,40 @@ services:
       - ${G3WSUITE_LOCAL_CODE_PATH}:/code
       - ./config/qgis/QGIS3.ini:/shared-volume/QGIS/QGIS3.ini
 
-    entrypoint: /scripts/docker-entrypoint-dev.sh
+    entrypoint: ["/bin/bash", "-c", "/scripts/docker-entrypoint-dev.sh"]
+
 
     networks:
       internal:
 
+    extra_hosts:
+      - "postgis16:host-gateway"
+
+
+  redis:
+    image: redis:latest
+    expose:
+    - 6379
+    networks:
+      internal:
+    restart: no
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.1
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    restart: no
+    volumes:
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}/esdata:/usr/share/elasticsearch/data
+      #- esdata:/usr/share/elasticsearch/data
+    networks:
+      internal:
+    
 volumes:
   shared-volume:
   g3wsuite-pg-data:

@@ -1,15 +1,6 @@
-##
-# DOCKER BUILD: Dockerfile.g3wsuite-deps.ltr.dockerfile
-##
+name: G3W-SUITE-DOCKER build tests
 
-name: Build G3W-SUITE LTR dependencies
-
-on:
-  push:
-    branches:
-      - dev
-  schedule:
-    - cron: "0 2 * * *"
+on: [push, pull_request]
 
 jobs:
 
@@ -24,28 +15,30 @@ jobs:
         shell: bash
         run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')"
         env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true  
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       -
         name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
       -
-        name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-      -
-        name: Build and push
-        id: docker_build
+        name: Build deps image
+        id: docker_build_deps
         uses: docker/build-push-action@v2
         with:
           context: ./
           file: ./Dockerfile.g3wsuite-deps.ltr.dockerfile
-          push: true
+          push: false
           tags: g3wsuite/g3w-suite-deps-ltr:${{ env.BRANCH_NAME }}
 
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
+
+      - name: Build main image
+        id: docker_build_main
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./Dockerfile.g3wsuite.dockerfile
+          push: false
+          tags: g3wsuite/g3w-suite:${{ env.BRANCH_NAME }}

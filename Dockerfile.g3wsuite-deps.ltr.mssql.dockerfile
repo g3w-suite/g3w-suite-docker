@@ -6,7 +6,7 @@
 # AGREEMENT FOR THE MICROSOFT SOFTWARE (see: ACCEPT_EULA=Y)
 ##
 
-FROM ubuntu:jammy
+FROM ubuntu:noble
 
 LABEL maintainer="Gis3w" \
       Description="Image used to prepare build requirements for g3w-suite docker images" \
@@ -20,10 +20,9 @@ RUN chown root:root /tmp && chmod ugo+rwXt /tmp
 RUN apt-get update && apt install -y \
     libxml2-dev \
     libxslt-dev \
-    postgresql-server-dev-all \
     libgdal-dev \
     python3-dev \
-    libgdal30 \
+    libgdal34t64 \
     python3-gdal \
     python3-pip \
     curl \
@@ -35,19 +34,19 @@ RUN apt-get update && apt install -y \
     libqt5sql5-tds \
     xvfb
 
-# PyQGIS 3.22
-RUN curl -sS https://download.qgis.org/downloads/qgis-archive-keyring.gpg > /etc/apt/keyrings/qgis-archive-keyring.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/ubuntu-ltr jammy main" | \
+# PyQGIS LTR
+RUN curl -L -sS https://download.qgis.org/downloads/qgis-archive-keyring.gpg > /etc/apt/keyrings/qgis-archive-keyring.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/ubuntu-ltr noble main" | \
     tee /etc/apt/sources.list.d/qgis.list && \
     apt-get update && apt-get install -y python3-qgis qgis-server
 
 # MSSQL
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add && \
-    echo "deb https://packages.microsoft.com/ubuntu/22.04/prod jammy main" >> /etc/apt/sources.list && \
-    apt update && ACCEPT_EULA=Y apt install -y msodbcsql18 mssql-tools
+    echo "deb https://packages.microsoft.com/ubuntu/24.04/prod noble main" >> /etc/apt/sources.list && \
+    apt update && ACCEPT_EULA=Y apt install -y msodbcsql18 mssql-tools18
 
 # Yarn
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
+RUN curl -L -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | \
     tee /etc/apt/sources.list.d/yarn.list && \
     apt-get update && apt install -y yarn
