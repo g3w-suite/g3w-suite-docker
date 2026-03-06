@@ -21,8 +21,6 @@ G3WADMIN_LOCAL_MORE_APPS = [
     'editing',
     'filemanager',
     'qplotly',
-    # Uncomment if you wont activate the following module
-    #'openrouteservice',
     'qtimeseries',
     'frontend'
 ]
@@ -90,24 +88,6 @@ CACHES = {
     }
 }
 
-
-# OPENROUTESERVICE SETTINGS
-# ===============================
-# settings for 'openrouteservice' module is in 'G3WADMIN_LOCAL_MORE_APPS'
-# ORS API endpoint
-ORS_API_ENDPOINT = os.getenv('ORS_API_ENDPOINT', 'https://api.openrouteservice.org/v2')
-# Optional, can be blank if the key is not required by the endpoint
-ORS_API_KEY = os.getenv('ORS_API_KEY', '')
-# List of available ORS profiles
-ORS_PROFILES = {
-    "driving-car": {"name": "Car"},
-    "driving-hgv": {"name": "Heavy Goods Vehicle"}
-}
-# Max number of ranges (it depends on the server configuration)
-ORS_MAX_RANGES = int(os.getenv('ORS_MAX_RANGES', 6))
-# Max number of locations(it depends on the server configuration)
-ORS_MAX_LOCATIONS = int(os.getenv('ORS_MAX_LOCATIONS', 2))
-
 # HUEY Task scheduler
 # Requires redis
 # HUEY configuration
@@ -132,7 +112,7 @@ QDJANGO_SERVER_URL = 'http://localhost:8000'
 
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': 'http://elasticsearch:9200',
+        'hosts': os.getenv('G3WSUITE_ELASTIC_HOST', 'http://elasticsearch:9200'),
         #'http_auth': ('username', 'password')
     }
 }
@@ -204,10 +184,6 @@ LOGGING = {
             'level': 'DEBUG',
         },
         'celery.task': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        },
-        'openrouteservice': {
             'handlers': ['console'],
             'level': 'DEBUG',
         },
