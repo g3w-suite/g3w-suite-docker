@@ -60,7 +60,6 @@ else
   # https://github.com/emmett-framework/granian
   granian --interface wsgi \
       --workers ${G3WSUITE_WEBSERVER_NUM_WORKERS:-8} \
-      --threading-mode runtime \
       --host 0.0.0.0 \
       --port 8000 \
       base.wsgi:application
