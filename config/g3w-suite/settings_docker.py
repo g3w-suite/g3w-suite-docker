@@ -22,8 +22,7 @@ G3WADMIN_LOCAL_MORE_APPS = [
     'filemanager',
     'qplotly',
     'qtimeseries',
-    'frontend',
-    'qes'
+    'frontend'
 ]
 
 DATABASES = {
@@ -204,6 +203,3 @@ if os.getenv('WEBGIS_PUBLIC_HOSTNAME', None):
         f"http://{os.getenv('WEBGIS_PUBLIC_HOSTNAME', None)}",
         f"http://{os.getenv('WEBGIS_PUBLIC_HOSTNAME', None)}:8080"
     ]
-
-
-QES_INDEXING_CRON_SCHEDULE = False
