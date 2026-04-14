@@ -66,13 +66,7 @@ Create a `.env` file starting from [`.env.example`](./.env.example) and tailor i
 Start containers:
 
 ```sh
-docker-compose up -d
-```
-
-or, if you intend to use [huey](https://github.com/coleifer/huey) (batch processing)
-
-```sh
-docker-compose -f docker-compose-consumer.yml up -d
+docker compose up -d
 ```
 
 **NB:** at the very first start, have a lot of patience 😴 → the system must finalize the installation. \*
@@ -92,6 +86,42 @@ make db-reset ENV=prod
 # or
 # make db-reset ENV=consumer 
 ```
+
+### 🔌 Extensions
+
+G3W-SUITE supports additional extensions for advanced functionality:
+
+#### Elasticsearch
+
+[Enable full-text search and advanced querying capabilities](https://www.elastic.co/elasticsearch) by deploying the Elasticsearch extension.
+
+```sh
+docker compose -f docker-compose.yml -f extent/docker-compose-elasticsearch.yml up -d
+```
+
+#### Consumer (Batch Processing)
+
+Enable batch processing with [Huey](https://github.com/coleifer/huey) for asynchronous task execution.
+
+To use these extensions, deploy the corresponding Docker Compose files from the `extent/` folder:
+
+```sh
+docker compose -f docker-compose.yml -f extent/docker-compose-consumer.yml up -d
+```
+
+##### Using multiple extensions together
+
+Both extensions can be deployed simultaneously for a complete feature set:
+
+```sh
+docker compose -f docker-compose.yml -f extent/docker-compose-consumer.yml -f extent/docker-compose-elasticsearch.yml up -d
+```
+
+This configuration enables:
+- Batch processing with Huey (Consumer)
+- Full-text search capabilities (Elasticsearch)
+- Standard G3W-SUITE functionality
+
 
 ## 💻 How to access into a container 
 

@@ -70,7 +70,7 @@ db-restore:
 ##
 renew-ssl:
 	./scripts/makefile/renew-ssl.sh
-	$(DOCKER_COMPOSE) up -d --force-recreate
+	$(DOCKER_COMPOSE) up -d nginx --force-recreate
 
 ##
 # Rebuild docker image

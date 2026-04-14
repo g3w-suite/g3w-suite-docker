@@ -31,7 +31,7 @@ services:
     environment:
       - DISPLAY=:99
       - G3WSUITE_ADMIN_USERNAME
-      - G3WSUITE_ADMIN_PASS
+      - G3WSUITE_ADMIN_PASSWORD
       - G3WSUITE_TILECACHE_PATH
       - G3WSUITE_POSTGRES_DBNAME
       - G3WSUITE_POSTGRES_USER
@@ -82,19 +82,6 @@ services:
     networks:
       internal:
     restart: always
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.1
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    volumes:
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/esdata:/usr/share/elasticsearch/data
-      #- esdata:/usr/share/elasticsearch/data
 
   nginx:
     image: nginx
