@@ -49,7 +49,7 @@ fi
 wait-for-it -h ${G3WSUITE_REDIS_HOST:-redis} -p ${G3WSUITE_REDIS_PORT:-6379} -t 30
 
 # DEV MODE: Check Python requirements  
-if [ -z "${G3WSUITE_LOCAL_CODE_PATH}" && ! -e "/shared-volume/setup_done" ]; then
+if [[ -z "${G3WSUITE_LOCAL_CODE_PATH}" && ! -e "/shared-volume/setup_done" ]]; then
   pip3 install -r /code/requirements.txt
 fi
 
