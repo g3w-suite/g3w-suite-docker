@@ -46,6 +46,7 @@ x-g3w-suite-logging: &g3w-suite-logging
     max-file: "10"
 
 services:
+
   postgis:
     image: kartoza/postgis:16-3.4
     ports:
@@ -89,6 +90,7 @@ services:
       internal:
 
   # Asynchronous tasks consumer (run_huey)
+  
   g3w-suite-consumer:
     image: g3wsuite/g3w-suite:dev
     environment:
@@ -150,6 +152,7 @@ services:
       internal:
 
   # Letsencrypt certs
+  
   certbot:
     image: certbot/certbot
     volumes:

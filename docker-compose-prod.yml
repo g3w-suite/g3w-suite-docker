@@ -13,6 +13,18 @@ services:
     deploy:
       replicas: 1  # 0 = disable g3w-suite service
 
+  g3w-suite-consumer:
+    deploy:
+      replicas: 1  # 0 = disable huey service
+
+  redis:
+    deploy:
+      replicas: 1  # 0 = disable redis service
+
+  elasticsearch:
+    deploy:
+      replicas: 1  # 0 = disable elasticsearch service
+
   nginx:
     deploy:
       replicas: 1  # 0 = disable nginx service
@@ -20,10 +32,6 @@ services:
   certbot:
     deploy:
       replicas: 1  # 0 = disable certbot service
-
-  g3w-suite-consumer:
-    deploy:
-      replicas: 1  # 0 = disable huey service
 
 volumes:
   shared-volume:
