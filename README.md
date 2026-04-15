@@ -15,7 +15,6 @@ Since **v3.8** PostgreSQL/PostGIS changed from **v11/2.5** to **v16/3.4**, to up
 # NB:
 # • (ENV = dev)      → docker-compose-dev.yml
 # • (ENV = prod)     → docker-compose.yml
-# • (ENV = consumer) → docker-compose-consumer.yml
 
 ### BACKUP (v3.7.x) ###
 
@@ -63,18 +62,11 @@ Create a `.env` file starting from [`.env.example`](./.env.example) and tailor i
 + G3WSUITE_POSTGRES_PASS=<your__password>
 ```
 
-Start containers:
+And then start containers:
 
 ```sh
 docker-compose up -d
 ```
-
-If you intend to use [huey](https://github.com/coleifer/huey) (batch processing):
-
-```sh
-G3WSUITE_RUN_HUEY=True docker-compose up -d
-```
-
 
 **NB:** at the very first start, have a lot of patience 😴 → the system must finalize the installation. \*
 
@@ -89,9 +81,6 @@ After some time the suite will be available at:
 ```sh
 # 🚨 deletes all data
 make db-reset ENV=prod
-
-# or
-# make db-reset ENV=consumer 
 ```
 
 ## 💻 How to access into a container 
@@ -172,7 +161,7 @@ The image is build on latest Ubuntu and QGIS LTR, following this execution order
 
 Portainer (https://www.portainer.io) is a docker-based web application used to edit and manage Docker applications in a simple and intuitive way.
 
-Plese refer to the [Add new stack](https://docs.portainer.io/user/docker/stacks/add) section to learn how to deploy the `docker-compose-consumer.yml` stack with Portainer (>= v2.1.1).
+Plese refer to the [Add new stack](https://docs.portainer.io/user/docker/stacks/add) section to learn how to deploy the `docker-compose.yml` stack with Portainer (>= v2.1.1).
 
 ## ♻️ Database backup / restore 
 
@@ -180,7 +169,6 @@ Plese refer to the [Add new stack](https://docs.portainer.io/user/docker/stacks/
 # NB:
 # • (ENV = dev)      → docker-compose-dev.yml
 # • (ENV = prod)     → docker-compose.yml
-# • (ENV = consumer) → docker-compose-consumer.yml
 
 docker compose up -f docker-compose.yml up -d
 

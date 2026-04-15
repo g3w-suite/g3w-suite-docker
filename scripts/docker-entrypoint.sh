@@ -3,7 +3,19 @@
 # ---------------------------------------
 
 # Gis3W Sign
-figlet -t "G3W-SUITE Docker by Gis3w"
+figlet -t "G3W-SUITE" && echo -e "v`git tag --sort=v:refname | tail -1 | sed 's/^v//'`\n"
+
+# HUEY CONSUMER
+if [[ "${G3WSUITE_RUN_HUEY}" =~ [Tt][Rr][Uu][Ee] && "${HUEY_CONSUMER}" =~ [Tt][Rr][Uu][Ee] ]]; then
+    cd /code/g3w-admin
+    # wait for main g3w-suite container to start
+    wait-for-it -h g3w-suite -p 8000 -t 60
+    cd /code/g3w-admin
+    ls /usr/local/lib/python3.6/dist-packages/
+    # Start the consumer
+    /usr/bin/xvfb-run -a python3 manage.py run_huey
+    exit $?
+fi
 
 # Start XVfb
 if [[  -f /tmp/.X99-lock ]]; then

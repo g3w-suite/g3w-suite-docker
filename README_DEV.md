@@ -6,13 +6,13 @@ Follow instructions are for development environment.
    * set `G3WSUITE_DEBUG` to `True`;
    * set `G3WSUITE_LOCAL_CODE_PATH` with path to your local G3W-SUITE code location.
 
-2. Run `docker compose -f docker-compose-dev.yml up -d`. \*
+2. Run `make ENV=dev`. \*
    1. If all went well G3W-SUITE is running in development mode on http://127.0.0.1:8000
 
 ---
 <sub> \* if necessary, comment out any missing installed modules from [G3WADMIN_LOCAL_MORE_APPS](./config/g3w-suite/settings_docker.py) list and then try again </sub>
 
-<sub> \* if you customize [docker-compose-dev.yml](./docker-compose-dev.yml) (eg. by choosing a specific <code>image: <del>g3wsuite/g3w-suite:dev</del> g3wsuite/g3w-suite:v3.7.x</code>) you then apply them via: `docker compose -f docker-compose-dev.yml up -d --force-recreate` </sub> 
+<sub> \* if you customize [docker-compose-dev.yml](./docker-compose-dev.yml) (eg. by choosing a specific <code>image: <del>g3wsuite/g3w-suite:dev</del> g3wsuite/g3w-suite:v3.7.x</code>) you then apply them via: `make recreate ENV=dev` </sub> 
 
 ## Loading default demo
 
@@ -39,9 +39,11 @@ Below you can find some sample plugins from which to take inspiration:
 For example, installing a plugin within the docker container (editable mode):
 
 ```
-docker compose -f docker-compose-dev.yml exec g3w-suite mkdir -p /shared-volume/plugins
-docker compose -f docker-compose-dev.yml exec g3w-suite git clone https://github.com/g3w-suite/g3w-admin-ps-timeseries
-docker compose -f docker-compose-dev.yml exec g3w-suite pip3 install -v -e /shared-volume/plugins/qps_timeseries
+make run-g3w-suite ENV=dev
+mkdir -p /shared-volume/plugins
+git clone https://github.com/g3w-suite/g3w-admin-ps-timeseries
+pip3 install -v -e /shared-volume/plugins/qps_timeseries
+exit
 ```
 
 **NB:** If the above seems wordy to you, you can also inject a custom script within: [scripts/docker-entrypoint-dev.sh](./scripts/docker-entrypoint-dev.sh)

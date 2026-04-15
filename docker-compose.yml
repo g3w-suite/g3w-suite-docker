@@ -96,7 +96,7 @@ services:
     restart: always
     logging:
       *g3w-suite-logging
-    entrypoint: /scripts/docker-consumer-entrypoint.sh
+    entrypoint: /bin/bash -c "HUEY_CONSUMER=True /scripts/docker-entrypoint.sh"
     depends_on:
       - g3w-suite
       - redis
