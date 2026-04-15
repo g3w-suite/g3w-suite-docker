@@ -1,6 +1,6 @@
 ## HOW TO RUN: ##
 #
-# docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d
+# make reload ENV=prod
 #
 
 services:
