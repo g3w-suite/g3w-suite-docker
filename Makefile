@@ -37,7 +37,7 @@ default:
 # make reload ENV=PROD
 # make reload ENV=DEV
 ##
-recreate:
+reload:
 	$(DOCKER_COMPOSE) up -d --force-recreate
 
 ##
