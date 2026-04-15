@@ -1,6 +1,6 @@
 ## HOW TO RUN: ##
 #
-# docker compose -f docker-compose.yml up -d
+# docker compose up -d
 #
 
 x-g3w-suite-env: &g3w-suite-env
@@ -113,22 +113,12 @@ services:
       internal:
     restart: always
 
-  elasticsearch-init:
-    image: busybox
-    user: root
-    command: ["sh", "-c", "chown -R 1000:0 /data && chmod -R 777 /data"]
-    volumes:
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/esdata:/data
-    restart: "no"
-    networks:
-      internal:
-
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.19.14
-    user: "1000:0"
-    depends_on:
-      elasticsearch-init:
-        condition: service_completed_successfully
+    user: root
+    command: >
+      bash -c "chown -R 1000:0 /usr/share/elasticsearch/data && 
+               exec setpriv --reuid=1000 --regid=0 --init-groups /usr/local/bin/docker-entrypoint.sh elasticsearch"
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
