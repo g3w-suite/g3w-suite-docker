@@ -45,12 +45,12 @@ import os
 
 limit_request_fields = 0
 error_logfile        = '-'
-log_level            = 'debug'
+log_level            = 'info'
 timeout              = os.getenv('G3WSUITE_GUNICORN_TIMEOUT', 120)
 workers              = os.getenv('G3WSUITE_GUNICORN_NUM_WORKERS', 8)
 max_requests         = os.getenv('G3WSUITE_GUNICORN_MAX_REQUESTS', 200)
 bind                 = '0.0.0.0:8000'
-reload               = False if os.getenv('G3WSUITE_DEBUG', 'False') == 'False' else True
+reload               = False if os.getenv('G3WSUITE_DEBUG', 'False') == 'False' else True # os.path.ismount('/code')
 EOF
 fi
 
