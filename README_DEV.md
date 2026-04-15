@@ -6,7 +6,7 @@ Follow instructions are for development environment.
    * set `G3WSUITE_DEBUG` to `True`;
    * set `G3WSUITE_LOCAL_CODE_PATH` with path to your local G3W-SUITE code location.
 
-2. Run `make ENV=dev`. \*
+2. Run `make reload ENV=dev`. \*
    1. If all went well G3W-SUITE is running in development mode on http://127.0.0.1:8000
 
 ---
@@ -22,10 +22,10 @@ make db-restore ID=demo ENV=dev
 
 # or (a custom backup):
 
-# make backup-db  ID=foo-backup ENV=dev
-# make restore-db ID=demo       ENV=dev
+# make db-backup  ID=foo-backup ENV=dev
+# make db-restore ID=demo       ENV=dev
 # ...
-# make restore-db ID=foo-backup ENV=dev
+# make db-restore ID=foo-backup ENV=dev
 ```
 
 ## Developing a python plugin (pip install)

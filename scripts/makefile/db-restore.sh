@@ -13,11 +13,7 @@ if [ -z $ID ]; then
   exit 1
 fi
 
-if [ "$ENV" = "prod" ]; then
-  DOCKER_COMPOSE="docker compose -f docker-compose.yml"
-else
-  DOCKER_COMPOSE="docker compose -f docker-compose.yml -f docker-compose-${ENV}.yml"
-fi
+DOCKER_COMPOSE="docker compose -f docker-compose.yml -f docker-compose-${ENV}.yml"
 
 source .env
 

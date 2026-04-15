@@ -1,0 +1,33 @@
+## HOW TO RUN: ##
+#
+# docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d
+#
+
+services:
+
+  postgis:
+    deploy:
+      replicas: 1  # 0 = disable postgis service
+
+  g3w-suite:
+    deploy:
+      replicas: 1  # 0 = disable g3w-suite service
+
+  nginx:
+    deploy:
+      replicas: 1  # 0 = disable nginx service
+
+  certbot:
+    deploy:
+      replicas: 1  # 0 = disable certbot service
+
+  g3w-suite-consumer:
+    deploy:
+      replicas: 1  # 0 = disable huey service
+
+volumes:
+  shared-volume:
+  g3wsuite-pg-data:
+
+networks:
+  internal:

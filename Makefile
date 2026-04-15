@@ -1,5 +1,3 @@
-.DEFAULT_GOAL := default
-
 ifeq ($(ENV),)
   $(error ENV is not set)
 endif
@@ -14,22 +12,9 @@ endif
 ##
 # ENV = { dev | prod }
 ##
-ifeq ($(ENV), prod)
-  DOCKER_COMPOSE:= docker compose -f docker-compose.yml
-else
-  DOCKER_COMPOSE:= docker compose -f docker-compose.yml -f docker-compose-$(ENV).yml
-endif
+DOCKER_COMPOSE:= docker compose -f docker-compose.yml -f docker-compose-$(ENV).yml
 
 G3W_SUITE:= docker compose exec g3w-suite
-
-##
-# Default target
-#
-# make ENV=PROD
-# make ENV=DEV
-##
-default:
-	$(DOCKER_COMPOSE) up -d
 
 ##
 # Recreate containers

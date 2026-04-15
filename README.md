@@ -7,9 +7,9 @@ Run a self hosted web-gis application with Docker Compose
 
 <details>
 
-<summary><h2> ⬆️ How to upgrade from v3.7 to v3.8 </h2></summary>
+<summary><h2> ⬆️ How to upgrade from v3.10 to v3.11 </h2></summary>
 
-Since **v3.8** PostgreSQL/PostGIS changed from **v11/2.5** to **v16/3.4**, to upgrade follow below steps:
+To upgrade follow below steps:
 
 ```sh
 # NB:
@@ -18,21 +18,21 @@ Since **v3.8** PostgreSQL/PostGIS changed from **v11/2.5** to **v16/3.4**, to up
 
 ### BACKUP (v3.7.x) ###
 
-docker compose up -f docker-compose-dev.yml up -d
+make reload ENV=prod
 
 git fetch
-git checkout v3.8.x
+git checkout v3.10.x
 
-make db-backup ID=11 ENV=prod
+make db-backup ID=310 ENV=prod
 
-### RESTORE (v3.8.x) ###
+### RESTORE (v3.10.x) ###
 
-make db-restore ID=11 ENV=prod
+make db-restore ID=310 ENV=prod
 
 ### OPTIONAL (delete old DB) ###
 
-docker compose exec g3w-suite bash -c 'rm -r /shared-volume/11'
-docker compose exec g3w-suite bash -c 'rm -r /shared-volume/backup/11'
+docker compose exec g3w-suite bash -c 'rm -r /shared-volume/310'
+docker compose exec g3w-suite bash -c 'rm -r /shared-volume/backup/310'
 ```
   
 </details>
@@ -163,17 +163,17 @@ Portainer (https://www.portainer.io) is a docker-based web application used to e
 
 Plese refer to the [Add new stack](https://docs.portainer.io/user/docker/stacks/add) section to learn how to deploy the `docker-compose.yml` stack with Portainer (>= v2.1.1).
 
-## ♻️ Database backup / restore 
+## ♻️ Database backup / restore
 
 ```sh
 # NB:
 # • (ENV = dev)      → docker-compose-dev.yml
-# • (ENV = prod)     → docker-compose.yml
+# • (ENV = prod)     → docker-compose-prod.yml
 
-docker compose up -f docker-compose.yml up -d
+make reload ENV=prod
 
-make backup-db ID=foo-backup ENV=prod
-make restore-db ID=foo-backup ENV=prod
+make db-backup ID=foo-backup ENV=prod
+make db-restore ID=foo-backup ENV=prod
 ```
 
 ### Contributors
