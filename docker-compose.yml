@@ -7,7 +7,7 @@ x-g3w-suite-env: &g3w-suite-env
   - DISPLAY=:99
   - FRONTEND
   - G3WSUITE_ADMIN_USERNAME
-  - G3WSUITE_ADMIN_PASS
+  - G3WSUITE_ADMIN_PASSWORD
   - G3WSUITE_GUNICORN_MAX_REQUESTS
   - G3WSUITE_GUNICORN_NUM_WORKERS
   - G3WSUITE_GUNICORN_TIMEOUT
@@ -113,8 +113,22 @@ services:
       internal:
     restart: always
 
+  elasticsearch-init:
+    image: busybox
+    user: root
+    command: ["sh", "-c", "chown -R 1000:0 /data && chmod -R 777 /data"]
+    volumes:
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}/esdata:/data
+    restart: "no"
+    networks:
+      internal:
+
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.19.14
+    user: "1000:0"
+    depends_on:
+      elasticsearch-init:
+        condition: service_completed_successfully
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
@@ -124,7 +138,6 @@ services:
       - "9300:9300"
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/esdata:/usr/share/elasticsearch/data
-      #- esdata:/usr/share/elasticsearch/data
 
   nginx:
     image: nginx
