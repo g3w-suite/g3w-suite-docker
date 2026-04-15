@@ -16,7 +16,7 @@ fi
 if [ "$ENV" = "prod" ]; then
   DOCKER_COMPOSE="docker compose -f docker-compose.yml"
 else
-  DOCKER_COMPOSE="docker compose -f docker-compose-${ENV}.yml"
+  DOCKER_COMPOSE="docker compose -f docker-compose.yml -f docker-compose-${ENV}.yml"
 fi
 
 source .env

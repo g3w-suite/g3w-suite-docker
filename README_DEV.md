@@ -104,13 +104,13 @@ G3WADMIN_LOCAL_MORE_APPS = [
 Start the containers: 
 
 ```bash
-    docker compose -f docker-compose-dev.yml up -d 
+    docker compose -f docker-compose.yml -f docker-compose-dev.yml up -d 
 ```
 
 Stop the containers: 
 
 ```bash
-    docker compose -f docker-compose-dev.yml down
+    docker compose -f docker-compose.yml -f docker-compose-dev.yml down
 ```
     
 
