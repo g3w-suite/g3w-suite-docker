@@ -18,6 +18,11 @@ services:
       - G3WSUITE_DEBUG=${G3WSUITE_DEBUG:-True}
       - G3WSUITE_GUNICORN_NUM_WORKERS=${G3WSUITE_GUNICORN_NUM_WORKERS:-1}
       - G3WSUITE_QDJANGO_SERVER_URL
+      # hotfix for Python 11: https://stackoverflow.com/a/76469774
+      - PIP_BREAK_SYSTEM_PACKAGES=1
+      - PIP_ROOT_USER_ACTION=ignore
+      # hotfix for Ubuntu Jammy: https://github.com/pypa/setuptools/issues/3269#issuecomment-1254507377
+      - DEB_PYTHON_INSTALL_LAYOUT=deb_system
     stdin_open: true
     tty: true
 

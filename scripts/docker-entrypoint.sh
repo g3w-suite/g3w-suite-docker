@@ -14,17 +14,9 @@ Xvfb ${DISPLAY:-:99} -screen 0 640x480x24 -nolisten tcp &
 # Start
 cd /code/g3w-admin
 
-# DEV MODE
+# DEV MODE: prevent git ownership issues
 if [[ -z "${G3WSUITE_LOCAL_CODE_PATH}" ]] ; then
-  # To get git properties loose on code overrides.
   git config --global --add safe.directory /code
-  # hotfix for Python 11: https://stackoverflow.com/a/76469774
-  export PIP_BREAK_SYSTEM_PACKAGES=1
-  export PIP_ROOT_USER_ACTION=ignore
-  # check python requirements  
-  if [ ! -e "/shared-volume/setup_done" ]; then
-    pip3 install -r /code/requirements.txt
-  fi
 fi
 
 # Activate the front end app settings
@@ -56,18 +48,20 @@ fi
 # Check Redis is started
 wait-for-it -h ${G3WSUITE_REDIS_HOST:-redis} -p ${G3WSUITE_REDIS_PORT:-6379} -t 30
 
+# DEV MODE: Check Python requirements  
+if [ -z "${G3WSUITE_LOCAL_CODE_PATH}" && ! -e "/shared-volume/setup_done" ]; then
+  pip3 install -r /code/requirements.txt
+fi
+
 # Build the suite
 /code/ci_scripts/build_suite.sh
 # Setup once
 /code/ci_scripts/setup_suite.sh
 
-# DEV MODE
+# DEV MODE: cleanup django database 
 if [[ -z "${G3WSUITE_LOCAL_CODE_PATH}" ]] ; then
   python3 /code/g3w-admin/manage.py check_features_locked
   python3 /code/g3w-admin/manage.py delete_unused_files
-
-  # hotfix for Ubuntu Jammy: https://github.com/pypa/setuptools/issues/3269#issuecomment-1254507377
-  export DEB_PYTHON_INSTALL_LAYOUT=deb_system
 fi
 
 gunicorn base.wsgi:application -c /shared-volume/gunicorn.conf.py
