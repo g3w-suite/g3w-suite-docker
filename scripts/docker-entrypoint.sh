@@ -5,14 +5,14 @@
 # Gis3W Sign
 figlet -t "G3W-SUITE" && echo -e "v`git tag --sort=v:refname | tail -1 | sed 's/^v//'`\n"
 
+cd /code/g3w-admin
+
 # HUEY CONSUMER
 if [[ "${G3WSUITE_RUN_HUEY}" =~ [Tt][Rr][Uu][Ee] && "${HUEY_CONSUMER}" =~ [Tt][Rr][Uu][Ee] ]]; then
-    cd /code/g3w-admin
-    # wait for main g3w-suite container to start
+    # wait for main "g3w-suite" service
     wait-for-it -h g3w-suite -p 8000 -t 60
-    cd /code/g3w-admin
     ls /usr/local/lib/python3.6/dist-packages/
-    # Start the consumer
+    # start the "g3w-suite-consumer" service
     /usr/bin/xvfb-run -a python3 manage.py run_huey
     exit $?
 fi
@@ -22,9 +22,6 @@ if [[  -f /tmp/.X99-lock ]]; then
   rm /tmp/.X99-lock
 fi
 Xvfb ${DISPLAY:-:99} -screen 0 640x480x24 -nolisten tcp &
-
-# Start
-cd /code/g3w-admin
 
 # DEV MODE: prevent git ownership issues
 if [[ -z "${G3WSUITE_LOCAL_CODE_PATH}" ]] ; then
