@@ -1,0 +1,8 @@
+error_page 502 /502.html;
+
+# Custom 502 page
+location = /502.html {
+    ssi on;
+    root /var/www/html;
+    internal;
+}

@@ -1,0 +1,29 @@
+# HTTPS reverse proxy server (g3w-suite)
+server {
+  include /etc/nginx/conf.d/locations;
+  include /etc/nginx/conf.d/letsencrypt;
+
+  location / {
+    proxy_read_timeout                  120;
+    proxy_set_header Host               $host;
+    proxy_set_header X-Forwarded-For    $remote_addr;
+    proxy_set_header X-Forwarded-Proto  $scheme;
+    proxy_set_header X-Forwarded-Host   $host;
+    proxy_pass                          http://g3w_suite/;
+  }
+
+  listen 443 ssl;
+
+  resolver 8.8.8.8;
+}
+
+# HTTP (redirect)
+server {
+  include /etc/nginx/conf.d/locations;
+
+  location / {
+    return 301 https://$host$request_uri;
+  }
+
+  listen 8080;
+}

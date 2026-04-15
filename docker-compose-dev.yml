@@ -2,7 +2,7 @@
 #
 # docker compose -f docker-compose.yml -f docker-compose-dev.yml up -d
 #
-version: "3.4"
+
 services:
 
   postgis:
@@ -11,8 +11,6 @@ services:
       - g3wsuite-pg-data:/var/lib/postgresql
     networks:
       internal:
-        aliases:
-          - ${WEBGIS_PUBLIC_HOSTNAME}
 
   g3w-suite:
     environment:
@@ -20,17 +18,16 @@ services:
       - G3WSUITE_DEBUG=${G3WSUITE_DEBUG:-True}
       - G3WSUITE_GUNICORN_NUM_WORKERS=${G3WSUITE_GUNICORN_NUM_WORKERS:-1}
       - G3WSUITE_QDJANGO_SERVER_URL
+    stdin_open: true
+    tty: true
+
     ports:
       - "8000:8000"
     restart: "no" # disable autorestart
     volumes:
       - ./scripts:/scripts
       - ${G3WSUITE_LOCAL_CODE_PATH}:/code
-    entrypoint: /scripts/docker-entrypoint.sh
-
-  redis:
-    deploy:
-      replicas: 0  # disable redis service
+    entrypoint: ["/bin/bash", "-c", "/scripts/docker-entrypoint.sh"]
 
   nginx:
     deploy:

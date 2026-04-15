@@ -15,7 +15,8 @@ LABEL maintainer="Gis3W" \
 # Based on main CI Docker from  g3w-suite, checkout code + caching,
 # custom settings file
 ##
-RUN apt update && apt install git -y
+RUN apt update &&  \
+    apt install git figlet  -y
 
 ##
 # G3W-ADMIN git branch to checkout.
@@ -34,6 +35,6 @@ RUN chmod +x /scripts/*.sh
 RUN /scripts/setup.sh \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-CMD echo "Base image for g3w-suite-dev" && tail -f /dev/null
+CMD ["echo", "Base image for g3w-suite-dev", "&&", "tail", "-f", "/dev/null"]
 
-ENTRYPOINT /scripts/docker-entrypoint.sh
+ENTRYPOINT ["/scripts/docker-entrypoint.sh"]

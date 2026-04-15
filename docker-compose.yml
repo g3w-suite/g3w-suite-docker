@@ -2,11 +2,12 @@
 #
 # docker compose -f docker-compose.yml up -d
 #
-version: "3.4"
 
 x-g3w-suite-env: &g3w-suite-env
   - DISPLAY=:99
   - FRONTEND
+  - G3WSUITE_ADMIN_USERNAME
+  - G3WSUITE_ADMIN_PASS
   - G3WSUITE_GUNICORN_MAX_REQUESTS
   - G3WSUITE_GUNICORN_NUM_WORKERS
   - G3WSUITE_GUNICORN_TIMEOUT
@@ -27,6 +28,7 @@ x-g3w-suite-env: &g3w-suite-env
   - QGIS_SERVER_PARALLEL_RENDERING=1
   - TILESTACHE_CACHE_BUFFER_SIZE
   - TILESTACHE_CACHE_TOKEN
+  - WEBGIS_PUBLIC_HOSTNAME
 
 x-g3w-suite-vol: &g3w-suite-vol
   - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
@@ -45,7 +47,7 @@ x-g3w-suite-logging: &g3w-suite-logging
 
 services:
   postgis:
-    image: g3wsuite/postgis:11.0-2.5
+    image: kartoza/postgis:16-3.4
     ports:
       - "5439:5432"
     environment:
@@ -53,6 +55,8 @@ services:
       - POSTGRES_USER=${G3WSUITE_POSTGRES_USER_LOCAL}
       - POSTGRES_PASS=${G3WSUITE_POSTGRES_PASS}
       - ALLOW_IP_RANGE=0.0.0.0/0
+      - RUN_AS_ROOT=true
+      - FORCE_SSL=False
     restart: on-failure
     logging:
       *g3w-suite-logging
@@ -62,7 +66,7 @@ services:
       interval: 60s
       timeout: 30s
       retries: 3
-      test: "pg_isready"
+      test: "PGPASSWORD=${G3WSUITE_POSTGRES_PASS} pg_isready -h 127.0.0.1 -U ${G3WSUITE_POSTGRES_USER_LOCAL} -d ${G3WSUITE_POSTGRES_DBNAME}"
     networks:
       internal:
         aliases:
@@ -84,13 +88,6 @@ services:
     networks:
       internal:
 
-  redis:
-    image: redis:latest
-    expose:
-    - 6379
-    networks:
-      internal:
-
   # Asynchronous tasks consumer (run_huey)
   g3w-suite-consumer:
     image: g3wsuite/g3w-suite:dev
@@ -108,6 +105,27 @@ services:
     networks:
       internal:
 
+  redis:
+    image: redis:latest
+    expose:
+    - 6379
+    networks:
+      internal:
+    restart: always
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.1
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}/esdata:/usr/share/elasticsearch/data
+      #- esdata:/usr/share/elasticsearch/data
+
   nginx:
     image: nginx
     ports:
@@ -119,7 +137,9 @@ services:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known:/var/www/.well-known
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt:ro
-      - ./config/nginx:/etc/nginx/conf.d:ro
+      - ./config/g3w-suite/overrides/static:/shared-volume/static/overrides:ro
+      - ./config/nginx:/etc/nginx/conf.d/:ro
+      - ./config/nginx/html:/var/www/html:ro
     logging:
       *g3w-suite-logging
     restart: always

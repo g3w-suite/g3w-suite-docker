@@ -1,9 +1,10 @@
-
-
+# hotfix for Python 11: https://stackoverflow.com/a/76469774
+export PIP_BREAK_SYSTEM_PACKAGES=1
+export PIP_ROOT_USER_ACTION=ignore
 
 if [ -z "$(ls -A /code)" ]; then
    echo "Cloning g3w-admin branch ${G3W_SUITE_BRANCH:-dev} ..."
-   git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --branch ${G3W_SUITE_BRANCH:-dev} /code && \
+   git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --depth 1 --branch ${G3W_SUITE_BRANCH:-dev} /code && \
    cd /code
 fi
 
@@ -26,7 +27,4 @@ pip3 install -r /code/g3w-admin/filemanager/requirements.txt
 
 # Qplotly
 pip3 install -r /code/g3w-admin/qplotly/requirements.txt
-
-# Openrouteservice
-pip3 install -r /code/g3w-admin/openrouteservice/requirements.txt
 
