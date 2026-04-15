@@ -34,8 +34,8 @@ default:
 ##
 # Recreate containers
 #
-# make recreate ENV=PROD
-# make recreate ENV=DEV
+# make reload ENV=PROD
+# make reload ENV=DEV
 ##
 recreate:
 	$(DOCKER_COMPOSE) up -d --force-recreate

@@ -12,7 +12,7 @@ Follow instructions are for development environment.
 ---
 <sub> \* if necessary, comment out any missing installed modules from [G3WADMIN_LOCAL_MORE_APPS](./config/g3w-suite/settings_docker.py) list and then try again </sub>
 
-<sub> \* if you customize [docker-compose-dev.yml](./docker-compose-dev.yml) (eg. by choosing a specific <code>image: <del>g3wsuite/g3w-suite:dev</del> g3wsuite/g3w-suite:v3.7.x</code>) you then apply them via: `make recreate ENV=dev` </sub> 
+<sub> \* if you customize [docker-compose-dev.yml](./docker-compose-dev.yml) (eg. by choosing a specific <code>image: <del>g3wsuite/g3w-suite:dev</del> g3wsuite/g3w-suite:v3.7.x</code>) you then apply them via: `make reload ENV=dev` </sub> 
 
 ## Loading default demo
 
