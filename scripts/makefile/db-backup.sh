@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ##
-# ENV = { dev | prod | consumer }
+# ENV = { dev | prod }
 ##
 if [ -z $ENV ]; then
   echo "ENV is not set"
