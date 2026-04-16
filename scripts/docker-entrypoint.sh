@@ -45,8 +45,7 @@ fi
 if mountpoint -q /code || [ ! -f /shared-volume/gunicorn.conf.py ]; then
   python3 -c "import debugpy" 2>/dev/null || python3 -m pip install debugpy
   cat > /shared-volume/gunicorn.conf.py << EOF
-import os
-import debugpy
+import os, debugpy
 
 DEBUG = os.getenv('G3WSUITE_DEBUG', 'False') == 'True' # os.path.ismount('/code')
 

@@ -1,7 +1,7 @@
 # Override settings for G3W-SUITE docker
 # Destination: /code/g3w-admin/base/settings/local_settings.py
 # Read connection parameters from environment
-import os
+import os, sys
 from django.conf import settings
 from base import __version__ as version
 
@@ -96,7 +96,7 @@ HUEY = {
     'huey_class': 'huey.RedisExpireHuey',
     'name': 'g3w-suite',
     'url': 'redis://redis:6379/?db=0',
-    'immediate': os.path.ismount('/code'),  # True = run synchronously.
+    'immediate': False if 'run_huey' in sys.argv else os.path.ismount('/code'),  # True = run synchronously.
     'consumer': {
         'workers': 1,
         'worker_type': 'process',
