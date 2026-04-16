@@ -17,7 +17,7 @@ DOCKER_COMPOSE:= docker compose -f docker-compose.yml -f docker-compose-$(ENV).y
 G3W_SUITE:= docker compose exec g3w-suite
 
 ##
-# Recreate containers
+# Reload compose configuration
 #
 # make reload ENV=PROD
 # make reload ENV=DEV
