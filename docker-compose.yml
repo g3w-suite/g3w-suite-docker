@@ -20,7 +20,6 @@ x-g3w-suite-env: &g3w-suite-env
   - G3WSUITE_POSTGRES_HOST
   - G3WSUITE_POSTGRES_PORT
   - G3WSUITE_TILECACHE_PATH
-  - G3WSUITE_CONSUMER=1
   - PGSERVICEFILE
   - G3WSUITE_RUN_HUEY
   - QGIS_OPTIONS_PATH=/shared-volume/
@@ -100,7 +99,7 @@ services:
     restart: always
     logging:
       *g3w-suite-logging
-    entrypoint: /bin/bash -c "HUEY_CONSUMER=True /scripts/docker-entrypoint.sh"
+    entrypoint: /bin/bash -c "G3WSUITE_CONSUMER=1 /scripts/docker-entrypoint.sh"
     depends_on:
       - g3w-suite
       - redis
