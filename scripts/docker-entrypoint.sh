@@ -7,14 +7,15 @@ figlet -t "G3W-SUITE" && echo -e "v`git tag --sort=v:refname | tail -1 | sed 's/
 
 cd /code/g3w-admin
 
+
 # HUEY CONSUMER
-if [[ "${G3WSUITE_RUN_HUEY}" =~ [Tt][Rr][Uu][Ee] && "${HUEY_CONSUMER}" =~ [Tt][Rr][Uu][Ee] ]]; then
-    # wait for main "g3w-suite" service
-    wait-for-it -h g3w-suite -p 8000 -t 60
-    ls /usr/local/lib/python3.6/dist-packages/
-    # start the "g3w-suite-consumer" service
-    /usr/bin/xvfb-run -a python3 manage.py run_huey
-    exit $?
+if [[ "${G3WSUITE_RUN_HUEY}" =~ [Tt][Rr][Uu][Ee] && "${G3WSUITE_CONSUMER}" = "0" ]]; then
+  # wait for main "g3w-suite" service
+  wait-for-it -h g3w-suite -p 8000 -t 60
+  ls /usr/local/lib/python3.6/dist-packages/
+  # start the "g3w-suite-consumer" service
+  /usr/bin/xvfb-run -a python3 manage.py run_huey
+  exit $?
 fi
 
 # Start XVfb

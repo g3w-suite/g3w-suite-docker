@@ -20,6 +20,7 @@ x-g3w-suite-env: &g3w-suite-env
   - G3WSUITE_POSTGRES_HOST
   - G3WSUITE_POSTGRES_PORT
   - G3WSUITE_TILECACHE_PATH
+  - G3WSUITE_CONSUMER=1
   - PGSERVICEFILE
   - G3WSUITE_RUN_HUEY
   - QGIS_OPTIONS_PATH=/shared-volume/
@@ -82,6 +83,7 @@ services:
     restart: always
     logging:
       *g3w-suite-logging
+    entrypoint: /bin/bash -c "G3WSUITE_CONSUMER=0 /scripts/docker-entrypoint.sh"
     depends_on:
       - postgis
     volumes:
@@ -119,8 +121,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.19.14
     user: root
     command: >
-      bash -c "chown -R 1000:0 /usr/share/elasticsearch/data && 
-               exec setpriv --reuid=1000 --regid=0 --init-groups /usr/local/bin/docker-entrypoint.sh elasticsearch"
+      bash -c "chown -R 1000:0 /usr/share/elasticsearch/data && exec setpriv --reuid=1000 --regid=0 --init-groups /usr/local/bin/docker-entrypoint.sh elasticsearch"
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false

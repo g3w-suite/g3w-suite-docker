@@ -23,7 +23,7 @@ G3W_SUITE:= docker compose exec g3w-suite
 # make reload ENV=DEV
 ##
 reload:
-	$(DOCKER_COMPOSE) up -d --force-recreate
+	$(DOCKER_COMPOSE) up -d --force-recreate --remove-orphans
 
 ##
 # SSH login
