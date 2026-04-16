@@ -26,9 +26,7 @@ if [[ "${G3WSUITE_RUN_HUEY}" =~ [Tt][Rr][Uu][Ee] && "${G3WSUITE_CONSUMER}" = "0"
 fi
 
 # Start XVfb
-if [[  -f /tmp/.X99-lock ]]; then
-  rm /tmp/.X99-lock
-fi
+rm -f /tmp/.X99-lock
 Xvfb ${DISPLAY:-:99} -screen 0 640x480x24 -nolisten tcp &
 
 # Activate the front end app settings
