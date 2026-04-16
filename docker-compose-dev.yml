@@ -15,37 +15,59 @@ services:
   g3w-suite:
     environment:
       - BITBUCKET_TOKEN
-      - G3WSUITE_DEBUG=${G3WSUITE_DEBUG:-True}
+      - G3WSUITE_DEBUG=True
       - G3WSUITE_GUNICORN_NUM_WORKERS=${G3WSUITE_GUNICORN_NUM_WORKERS:-1}
       - WEBGIS_PUBLIC_HOSTNAME=${WEBGIS_PUBLIC_HOSTNAME:-localhost}
       - WEBGIS_ADMIN_EMAIL=${WEBGIS_ADMIN_EMAIL:-info@gis3w.it}
-      # hotfix for Python 11: https://stackoverflow.com/a/76469774
+      # HOTFIX: for Python 11: https://stackoverflow.com/a/76469774
       - PIP_BREAK_SYSTEM_PACKAGES=1
       - PIP_ROOT_USER_ACTION=ignore
-      # hotfix for Ubuntu Jammy: https://github.com/pypa/setuptools/issues/3269#issuecomment-1254507377
+      # HOTFIX: for Ubuntu Jammy: https://github.com/pypa/setuptools/issues/3269#issuecomment-1254507377
       - DEB_PYTHON_INSTALL_LAYOUT=deb_system
+      # HOTFIX: for git ownership issues
+      - GIT_CONFIG_PARAMETERS='safe.directory=/code'
     stdin_open: true
     tty: true
 
     ports:
-      - "8000:8000"
+      - "8000:8000" # g3w-suite
+      - "5678:5678" # debugpy
     restart: "no" # disable autorestart
     volumes:
       - ./scripts:/scripts
       - ${G3WSUITE_LOCAL_CODE_PATH}:/code
-    entrypoint: ["/bin/bash", "-c", "/scripts/docker-entrypoint.sh"]
 
   g3w-suite-consumer:
     deploy:
-      replicas: 0  # 0 = disable g3w-suite-consumer service
+      replicas: 1  # 0 = disable g3w-suite-consumer service
+    environment:
+      - BITBUCKET_TOKEN
+      - G3WSUITE_DEBUG=True
+      - G3WSUITE_GUNICORN_NUM_WORKERS=${G3WSUITE_GUNICORN_NUM_WORKERS:-1}
+      - G3WSUITE_GUNICORN_TIMEOUT=${G3WSUITE_GUNICORN_TIMEOUT:-3600}
+      - WEBGIS_PUBLIC_HOSTNAME=${WEBGIS_PUBLIC_HOSTNAME:-localhost}
+      - WEBGIS_ADMIN_EMAIL=${WEBGIS_ADMIN_EMAIL:-info@gis3w.it}
+      # HOTFIX: for Python 11: https://stackoverflow.com/a/76469774
+      - PIP_BREAK_SYSTEM_PACKAGES=1
+      - PIP_ROOT_USER_ACTION=ignore
+      # HOTFIX: for Ubuntu Jammy: https://github.com/pypa/setuptools/issues/3269#issuecomment-1254507377
+      - DEB_PYTHON_INSTALL_LAYOUT=deb_system
+      # HOTFIX: for git ownership issues
+      - GIT_CONFIG_PARAMETERS='safe.directory=/code'
+    stdin_open: true
+    tty: true
+    restart: "no" # disable autorestart
+    volumes:
+      - ./scripts:/scripts
+      - ${G3WSUITE_LOCAL_CODE_PATH}:/code
 
   nginx:
     deploy:
-      replicas: 0  # 0 = disable nginx service
+      replicas: 1  # 0 = disable nginx service
 
   certbot:
     deploy:
-      replicas: 0  # 0 = disable certbot service
+      replicas: 1  # 0 = disable certbot service
 
 volumes:
   shared-volume:

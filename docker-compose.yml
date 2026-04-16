@@ -82,7 +82,7 @@ services:
     restart: always
     logging:
       *g3w-suite-logging
-    entrypoint: /bin/bash -c "G3WSUITE_CONSUMER=0 /scripts/docker-entrypoint.sh"
+    entrypoint: /bin/bash -c "G3WSUITE_CONSUMER=1 /scripts/docker-entrypoint.sh"
     depends_on:
       - postgis
     volumes:
@@ -99,7 +99,7 @@ services:
     restart: always
     logging:
       *g3w-suite-logging
-    entrypoint: /bin/bash -c "G3WSUITE_CONSUMER=1 /scripts/docker-entrypoint.sh"
+    entrypoint: /bin/bash -c "G3WSUITE_CONSUMER=0 /scripts/docker-entrypoint.sh"
     depends_on:
       - g3w-suite
       - redis
