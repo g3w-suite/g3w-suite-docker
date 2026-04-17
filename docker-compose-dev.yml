@@ -8,7 +8,7 @@ services:
   postgis:
     restart: "no" # disable autorestart
     volumes:
-      - g3wsuite-pg-data:/var/lib/postgresql
+      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/var/lib/postgresql
     networks:
       internal:
 
