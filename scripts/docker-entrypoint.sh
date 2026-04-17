@@ -21,7 +21,6 @@ if [[ "${G3WSUITE_RUN_HUEY}" =~ [Tt][Rr][Uu][Ee] && "${G3WSUITE_CONSUMER}" = "0"
   wait-for-it -h g3w-suite -p 8000 -t 60
   # start the "g3w-suite-consumer" service
   /usr/bin/xvfb-run -a python3 manage.py run_huey
-  echo -e "END G3WSUITE_CONSUMER"
   exit $?
 fi
 
