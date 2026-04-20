@@ -16,7 +16,7 @@ To upgrade follow below steps:
 # • (ENV = dev)      → docker-compose-dev.yml
 # • (ENV = prod)     → docker-compose.yml
 
-### BACKUP (v3.7.x) ###
+### BACKUP (v3.10.x) ###
 
 make reload ENV=prod
 
