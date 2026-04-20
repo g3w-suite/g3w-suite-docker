@@ -46,7 +46,7 @@ pip3 install -v -e /shared-volume/plugins/qps_timeseries
 exit
 ```
 
-**NB:** If the above seems wordy to you, you can also inject a custom script within: [scripts/docker-entrypoint-dev.sh](./scripts/docker-entrypoint-dev.sh)
+**NB:** If the above seems wordy to you, you can also inject a custom script within: [scripts/docker-entrypoint.sh](./scripts/docker-entrypoint.sh)
 
 ## Developing a python plugin (git only)
 
