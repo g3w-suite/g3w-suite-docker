@@ -5,7 +5,6 @@
 # Gis3W Sign
 figlet -t "G3W-SUITE" && echo -e "v`git tag --sort=v:refname | tail -1 | sed 's/^v//'`\n"
 
-
 echo -e "----------------------"
 echo -e "IS_DEV: $(mountpoint -q /code && echo "True" || echo "False")"
 echo -e "G3WSUITE_RUN_HUEY: ${G3WSUITE_RUN_HUEY}"
@@ -40,7 +39,10 @@ fi
 
 # TODO: move this into a more appropriate location (eg. g3w-admin ?)
 if mountpoint -q /code || [ ! -f /shared-volume/gunicorn.conf.py ]; then
+  # 1. install "debugpy"
   python3 -c "import debugpy" 2>/dev/null || python3 -m pip install debugpy
+  
+  # 2. inject a custom "gunicorn.conf.py"
   cat > /shared-volume/gunicorn.conf.py << EOF
 import os, debugpy
 
@@ -53,7 +55,7 @@ if DEBUG:
     except Exception as e:
         print(f"Debugger error: {e}")
 
-# Configurazione Gunicorn
+# gunicorn config
 bind = '0.0.0.0:8000'
 workers = os.getenv('G3WSUITE_GUNICORN_NUM_WORKERS', 8)
 timeout = os.getenv('G3WSUITE_GUNICORN_TIMEOUT', 120)
@@ -63,6 +65,38 @@ limit_request_fields = 0
 error_logfile = '-'
 log_level = 'debug' if DEBUG else 'info'
 reload = DEBUG
+EOF
+
+  # 3. inject a custom "G3W-SUITE-DOCKER: Debugger" within local ".vscode/launch.json"
+  python3 <<EOF
+import json, os
+path = "/code/.vscode/launch.json"
+
+os.makedirs(os.path.dirname(path), exist_ok=True)
+
+try:
+    data = json.load(open(path))
+except:
+    data = {"version": "0.2.0", "configurations": []}
+
+conf = {
+    "name": "G3W-SUITE-DOCKER: Debugger",
+    "type": "debugpy",
+    "request": "attach",
+    "connect": {"host": "localhost", "port": 5678},
+    "pathMappings": [
+        {
+            "localRoot": "\${workspaceFolder}/g3w-admin",
+            "remoteRoot": "/code/g3w-admin"
+        }
+    ],
+    "justMyCode": False,
+    "django": True
+}
+
+if not any(c.get("name") == conf["name"] for c in data["configurations"]):
+    data.setdefault("configurations", []).append(conf)
+    json.dump(data, open(path, "w"), indent=2)
 EOF
 fi
 
