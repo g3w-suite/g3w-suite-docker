@@ -1,0 +1,51 @@
+publiccodeYmlVersion: 0.5.0
+name: G3W-SUITE
+url: https://github.com/g3w-suite/g3w-suite-docker
+landingURL: https://g3wsuite.it/
+platforms:
+  - web
+developmentStatus: stable
+softwareType: standalone/web
+description:
+  en:
+    shortDescription: Publish your QGIS projects as WebGIS services. Built with Django and Vue.
+    longDescription: >-
+      G3W-SUITE is a frame-work, based on Django and written in Python language,
+      which allows to manage in an integrated way the different components of
+      QGIS for the realization of its own Geographic Information System and for
+      the publication on WebGis of its own projects in a simple and intuitive
+      way.
+
+
+      G3W-SUITE is entirely based on tested Open Source software components
+      built around QGIS:
+
+          QGIS Desktop: for cartographic data management, editing and realization of high quality graphic projects
+
+          QGIS Server: for the publication of QGIS projects as OGC services
+
+      The current development policy provides for the compatibility of the
+      G3W-SUITE application only with the latest LTR version of QGIS
+    documentation: https://g3w-suite.readthedocs.io/en/latest/index.html
+    features:
+      - webgis
+legal:
+  license: MPL-2.0
+maintenance:
+  type: community
+  contacts:
+    - name: Gis3W SNC
+      email: info@gis3w.it
+      phone: "+393938534336"
+localisation:
+  localisationReady: true
+  availableLanguages:
+    - en
+    - it
+    - fr
+    - fi
+    - sv
+    - ro
+    - de
+    - bg
+    - pt
