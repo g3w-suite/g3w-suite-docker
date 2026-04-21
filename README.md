@@ -179,7 +179,7 @@ make db-restore ID=foo-backup ENV=prod
 ## Additional notes
 
 <details>
-<summary> <h3> How to Develop </h3> </summary>
+<summary> 1. How to Develop </summary>
 
 1. Copy `.env.example` file into `.env` and edit it: 
    * set `WEBGIS_DOCKER_SHARED_VOLUME=./shared-volume` (path to your local data folder);
@@ -197,7 +197,7 @@ make db-restore ID=foo-backup ENV=prod
 </details>
 
 <details>
-<summary> <h3> Loading default demo </h3> </summary>
+<summary> 2. Loading default demo </summary>
 
 ```
 # 🚨 deletes all data
@@ -214,7 +214,7 @@ make db-restore ID=demo ENV=dev
 </details>
 
 <details>
-<summary> <h3> Developing a python plugin (pip install) </h3> </summary>
+<summary> 3. Developing a python plugin (pip install) </summary>
 
 Below you can find some sample plugins from which to take inspiration:
 
@@ -237,7 +237,7 @@ exit
 </details>
 
 <details>
-<summary> <h3> Developing a python plugin (git only) </h3> </summary>
+<summary> 4. Developing a python plugin (git only) </summary>
 
 Below are the steps to develop a new Django app into g3w-admin (as git submodule).
 
@@ -305,7 +305,7 @@ Stop the containers:
 </details>
 
 <details>
-<summary> <h3> Debugging using vscode </h3> </summary>
+<summary> 5. Debugging using vscode </summary>
 To develop inside the container with Visual Studio Code, you need to avoid starting up the server when you start the container. To do so, change the last line of the docker-entrypoint-dev.sh from:
 
 ```bash
@@ -350,7 +350,7 @@ You should now be able to debug the suite with the common vscode tools.
 </details>
 
 <details>
-<summary> <h3>Connecting to a local DB (PostGIS) </h3> </summary>
+<summary> 6. Connecting to a local DB (PostGIS) </summary>
 
 If you are working in a mixed setup (ie. a local [postgis](https://postgis.net/) instance + a [g3w-suite-docker](https://github.com/g3w-suite/g3w-suite-docker) container), you should add an `extra_hosts` directive within your `docker-compose-dev.yml` to make your local postgres databases accessible from both sides:
 
