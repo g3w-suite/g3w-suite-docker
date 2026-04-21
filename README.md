@@ -305,26 +305,20 @@ Stop the containers:
 </details>
 
 <details>
-<summary> 5. Debugging the G3W-ADMIN repository (vscode) </summary>
-To develop inside the container with Visual Studio Code, you need to avoid starting up the server when you start the container. To do so, change the last line of the docker-entrypoint-dev.sh from:
+<summary> 5. Attach the python debugger (vscode) </summary>
+
+Suppress built-in server within `docker-entrypoint.sh`:
 
 ```bash
-    python3 manage.py runserver 0.0.0.0:8000
+- gunicorn base.wsgi:application -c /shared-volume/gunicorn.conf.py
++ tail -f /dev/null
 ```
 
-to
-
-```bash
-    # python3 manage.py runserver 0.0.0.0:8000
-    tail -f /dev/null
-```
-
-This will make sure that the environment for the server to run properly is set, but the server not started.
-
-With the docker plugin of vscode installed, you can attach to the container and start the server manually.
+Attach to the container and start the server manually.
 
 Righ click on the running container and run **Attach Visual Studio Code**. 
-Once inside the container run the suite using a newly created launch.json file that looks like:
+
+Once inside the container run the suite using a newly created `launch.json` file that looks like:
 
 ```json
     {
@@ -347,6 +341,12 @@ Once inside the container run the suite using a newly created launch.json file t
 ```
 
 You should now be able to debug the suite with the common vscode tools.
+
+**For more info:**
+
+- https://code.visualstudio.com/docs/python/debugging
+- https://code.visualstudio.com/docs/containers/overview
+
 </details>
 
 <details>
