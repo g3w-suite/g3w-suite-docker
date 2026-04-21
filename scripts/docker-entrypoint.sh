@@ -14,7 +14,7 @@ echo -e "----------------------\n"
 cd /code/g3w-admin
 
 # HUEY CONSUMER
-if [[ "${G3WSUITE_RUN_HUEY}" =~ [Tt][Rr][Uu][Ee] && "${G3WSUITE_CONSUMER}" = "0" ]]; then
+if [[ "${G3WSUITE_RUN_HUEY,,}" == "true" && "${G3WSUITE_CONSUMER}" == "0" ]]; then
   echo -e "START G3WSUITE_CONSUMER"
   # wait for main "g3w-suite" service
   wait-for-it -h g3w-suite -p 8000 -t 60
@@ -28,7 +28,7 @@ rm -f /tmp/.X99-lock
 Xvfb ${DISPLAY:-:99} -screen 0 640x480x24 -nolisten tcp &
 
 # Activate the front end app settings
-if [[ "${FRONTEND}" =~ [Tt][Rr][Uu][Ee] ]] ; then
+if [[ "${FRONTEND,,}" == "true" ]] ; then
   SETTINGS_LOCKFILE=/shared-volume/.settings.lockfile
   if [[ ! -f ${SETTINGS_LOCKFILE} ]]; then
     echo "FRONTEND = True"  >> /code/g3w-admin/base/settings/local_settings.py
