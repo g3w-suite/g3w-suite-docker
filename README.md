@@ -7,9 +7,9 @@ Run a self hosted web-gis application with Docker Compose
 
 <details>
 
-<summary><h2> ⬆️ How to upgrade from v3.10 to v3.11 </h2></summary>
+<summary><h2> ⬆️ How to upgrade containers </h2></summary>
 
-To upgrade follow below steps:
+To upgrade your containers (eg. v3.10.x → v3.11.x) follow below steps:
 
 ```sh
 # NB:
@@ -21,11 +21,11 @@ To upgrade follow below steps:
 make reload ENV=prod
 
 git fetch
-git checkout v3.10.x
+git checkout v3.11.x
 
 make db-backup ID=310 ENV=prod
 
-### RESTORE (v3.10.x) ###
+### RESTORE (v3.11.x) ###
 
 make db-restore ID=310 ENV=prod
 
