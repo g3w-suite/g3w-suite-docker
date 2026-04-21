@@ -176,7 +176,7 @@ make db-backup ID=foo-backup ENV=prod
 make db-restore ID=foo-backup ENV=prod
 ```
 
-## Additional notes
+## 🛠️ Developers
 
 <details>
 <summary> 1. How to Develop </summary>
@@ -305,7 +305,7 @@ Stop the containers:
 </details>
 
 <details>
-<summary> 5. Debugging using vscode </summary>
+<summary> 5. Debugging the G3W-ADMIN repository (vscode) </summary>
 To develop inside the container with Visual Studio Code, you need to avoid starting up the server when you start the container. To do so, change the last line of the docker-entrypoint-dev.sh from:
 
 ```bash
