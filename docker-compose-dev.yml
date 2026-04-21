@@ -28,7 +28,7 @@ services:
 
 
   g3w-suite:
-    image: g3wsuite/g3w-suite:dev
+    image: g3wsuite/g3w-suite:v3.11.x
     stdin_open: true
     tty: true
     environment:
