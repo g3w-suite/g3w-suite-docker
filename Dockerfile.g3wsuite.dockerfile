@@ -19,6 +19,11 @@ RUN apt update &&  \
     apt install git figlet  -y
 
 ##
+# uv package manager
+##
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+##
 # G3W-ADMIN git branch to checkout.
 # Defaults to `dev` but can be set to another branch name to build
 # a particular suite version

@@ -40,7 +40,7 @@ fi
 # TODO: move this into a more appropriate location (eg. g3w-admin ?)
 if mountpoint -q /code || [ ! -f /shared-volume/gunicorn.conf.py ]; then
   # 1. install "debugpy"
-  python3 -c "import debugpy" 2>/dev/null || python3 -m pip install debugpy
+  python3 -c "import debugpy" 2>/dev/null || uv pip install debugpy
   
   # 2. inject a custom "gunicorn.conf.py"
   cat > /shared-volume/gunicorn.conf.py << EOF
@@ -105,7 +105,7 @@ wait-for-it -h ${G3WSUITE_REDIS_HOST:-redis} -p ${G3WSUITE_REDIS_PORT:-6379} -t 
 
 # DEV MODE: Check Python requirements  
 if  mountpoint -q /code && [[ ! -e "/shared-volume/setup_done" ]]; then
-  pip3 install -r /code/requirements.txt
+  uv pip install -r /code/requirements.txt
 fi
 
 # Build the suite

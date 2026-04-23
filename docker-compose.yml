@@ -3,49 +3,60 @@
 # docker compose up -d
 #
 
-x-g3w-suite-env: &g3w-suite-env
-  - DISPLAY=:99
-  - FRONTEND
-  - G3WSUITE_ADMIN_USERNAME
-  - G3WSUITE_ADMIN_PASSWORD
-  - G3WSUITE_GUNICORN_MAX_REQUESTS
-  - G3WSUITE_GUNICORN_NUM_WORKERS
-  - G3WSUITE_GUNICORN_TIMEOUT
-  - G3WSUITE_POSTGRES_DBNAME
-  - G3WSUITE_POSTGRES_USER
-  - G3WSUITE_POSTGRES_USER_LOCAL
-  - G3WSUITE_POSTGRES_PASS
-  - G3WSUITE_POSTGRES_HOST
-  - G3WSUITE_POSTGRES_PORT
-  - G3WSUITE_TILECACHE_PATH
-  - PGSERVICEFILE
-  - G3WSUITE_RUN_HUEY
-  - QGIS_OPTIONS_PATH=/shared-volume/
-  - QGIS_SERVER_LOG_FILE
-  - QGIS_SERVER_LOG_LEVEL
-  - QGIS_SERVER_PARALLEL_RENDERING=1
-  - TILESTACHE_CACHE_BUFFER_SIZE
-  - TILESTACHE_CACHE_TOKEN
-  - WEBGIS_PUBLIC_HOSTNAME
-
-x-g3w-suite-vol: &g3w-suite-vol
-  - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
-  - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
-  - ./config/g3w-suite/overrides/static:/code/static:ro
-  - ./config/g3w-suite/overrides/templates:/code/templates:ro
-  - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
-  - ./secrets/pg_service.conf:${PGSERVICEFILE}
-  - ./config/qgis/QGIS3.ini:/shared-volume/QGIS/QGIS3.ini
-
-x-g3w-suite-logging: &g3w-suite-logging
-  driver: "json-file"
-  options:
-    max-size: "200k"
-    max-file: "10"
+x-g3w-suite: &g3w-suite
+  image: g3wsuite/g3w-suite:dev
+  restart: always
+  environment:
+    - DISPLAY=:99
+    - FRONTEND
+    - G3WSUITE_ADMIN_USERNAME
+    - G3WSUITE_ADMIN_PASSWORD
+    - G3WSUITE_DEBUG=${G3WSUITE_DEBUG:-False}
+    - G3WSUITE_GUNICORN_MAX_REQUESTS
+    - G3WSUITE_GUNICORN_NUM_WORKERS=${G3WSUITE_GUNICORN_NUM_WORKERS:-1}
+    - G3WSUITE_GUNICORN_TIMEOUT=${G3WSUITE_GUNICORN_TIMEOUT:-3600}
+    - G3WSUITE_POSTGRES_DBNAME
+    - G3WSUITE_POSTGRES_USER
+    - G3WSUITE_POSTGRES_USER_LOCAL
+    - G3WSUITE_POSTGRES_PASS
+    - G3WSUITE_POSTGRES_HOST
+    - G3WSUITE_POSTGRES_PORT
+    - G3WSUITE_TILECACHE_PATH
+    - PGSERVICEFILE
+    - G3WSUITE_RUN_HUEY
+    - QGIS_OPTIONS_PATH=/shared-volume/
+    - QGIS_SERVER_LOG_FILE
+    - QGIS_SERVER_LOG_LEVEL
+    - QGIS_SERVER_PARALLEL_RENDERING=1
+    - TILESTACHE_CACHE_BUFFER_SIZE
+    - TILESTACHE_CACHE_TOKEN
+    - WEBGIS_PUBLIC_HOSTNAME=${WEBGIS_PUBLIC_HOSTNAME:-localhost}
+    - WEBGIS_ADMIN_EMAIL=${WEBGIS_ADMIN_EMAIL:-info@gis3w.it}
+    - UV_SYSTEM_PYTHON=1
+    - UV_BREAK_SYSTEM_PACKAGES=1
+  volumes:
+    - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
+    - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
+    - ./config/g3w-suite/overrides/static:/code/static:ro
+    - ./config/g3w-suite/overrides/templates:/code/templates:ro
+    - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
+    - ./secrets/pg_service.conf:${PGSERVICEFILE}
+    - ./config/qgis/QGIS3.ini:/shared-volume/QGIS/QGIS3.ini
+  logging: &g3w-suite-logging
+    driver: "json-file"
+    options:
+      max-size: "200k"
+      max-file: "10"
+  stdin_open: ${G3WSUITE_DEBUG:-false}
+  tty: ${G3WSUITE_DEBUG:-false}
+  networks:
+    internal:
 
 services:
 
   postgis:
+    deploy:
+      replicas: 1  # 0 = disable service
     image: kartoza/postgis:16-3.4
     ports:
       - "5439:5432"
@@ -72,41 +83,28 @@ services:
           - ${WEBGIS_PUBLIC_HOSTNAME}
 
   g3w-suite:
-    image: g3wsuite/g3w-suite:dev
-    environment:
-      *g3w-suite-env
+    <<: *g3w-suite
+    deploy:
+      replicas: 1  # 0 = disable service
     expose:
       - "8000"
-    restart: always
-    logging:
-      *g3w-suite-logging
     entrypoint: /bin/bash -c "G3WSUITE_CONSUMER=1 /scripts/docker-entrypoint.sh"
     depends_on:
       - postgis
-    volumes:
-      *g3w-suite-vol
-    networks:
-      internal:
 
   # Asynchronous tasks consumer (run_huey)
-  
   g3w-suite-consumer:
-    image: g3wsuite/g3w-suite:dev
-    environment:
-      *g3w-suite-env
-    restart: always
-    logging:
-      *g3w-suite-logging
+    <<: *g3w-suite
+    deploy:
+      replicas: 1  # 0 = disable service
     entrypoint: /bin/bash -c "G3WSUITE_CONSUMER=0 /scripts/docker-entrypoint.sh"
     depends_on:
       - g3w-suite
       - redis
-    volumes:
-      *g3w-suite-vol
-    networks:
-      internal:
 
   redis:
+    deploy:
+      replicas: 1  # 0 = disable service
     image: redis:latest
     expose:
     - 6379
@@ -115,6 +113,8 @@ services:
     restart: always
 
   elasticsearch:
+    deploy:
+      replicas: 1  # 0 = disable service
     image: docker.elastic.co/elasticsearch/elasticsearch:8.19.14
     user: root
     command: >
@@ -130,6 +130,8 @@ services:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/esdata:/usr/share/elasticsearch/data
 
   nginx:
+    deploy:
+      replicas: 1  # 0 = disable service
     image: nginx
     ports:
       - "8080:8080"
@@ -152,6 +154,8 @@ services:
   # Letsencrypt certs
   
   certbot:
+    deploy:
+      replicas: 1  # 0 = disable service
     image: certbot/certbot
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/certbot:/var/www/certbot

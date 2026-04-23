@@ -9,19 +9,13 @@ x-g3w-suite: &g3w-suite
   environment:
     - BITBUCKET_TOKEN
     - G3WSUITE_DEBUG=True
-    - G3WSUITE_GUNICORN_NUM_WORKERS=${G3WSUITE_GUNICORN_NUM_WORKERS:-1}
-    - G3WSUITE_GUNICORN_TIMEOUT=${G3WSUITE_GUNICORN_TIMEOUT:-3600}
-    - WEBGIS_PUBLIC_HOSTNAME=${WEBGIS_PUBLIC_HOSTNAME:-localhost}
-    - WEBGIS_ADMIN_EMAIL=${WEBGIS_ADMIN_EMAIL:-info@gis3w.it}
     - PIP_BREAK_SYSTEM_PACKAGES=1
     - PIP_ROOT_USER_ACTION=ignore
     - DEB_PYTHON_INSTALL_LAYOUT=deb_system
-    - GIT_CONFIG_PARAMETERS='safe.directory=/code'
+    - GIT_CONFIG_PARAMETERS='safe.directory=*'
   volumes:
     - ./scripts:/scripts
     - ${G3WSUITE_LOCAL_CODE_PATH}:/code
-  stdin_open: true
-  tty: true
 
 services:
 
@@ -29,8 +23,6 @@ services:
     restart: "no" # disable autorestart
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}:/var/lib/postgresql
-    networks:
-      internal:
 
   g3w-suite:
     <<: *g3w-suite
@@ -41,15 +33,7 @@ services:
   g3w-suite-consumer:
     <<: *g3w-suite
     deploy:
-      replicas: 1  # 0 = disable g3w-suite-consumer service
-
-  nginx:
-    deploy:
-      replicas: 1  # 0 = disable nginx service
-
-  certbot:
-    deploy:
-      replicas: 1  # 0 = disable certbot service
+      replicas: 1  # 0 = disable service
 
 volumes:
   shared-volume:
