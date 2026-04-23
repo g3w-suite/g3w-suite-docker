@@ -307,7 +307,7 @@ Stop the containers:
 <details>
 <summary> 5. Attach the python debugger (vscode) </summary>
 
-Suppress built-in server within `docker-entrypoint.sh`:
+You can suppress built-in server within `docker-entrypoint.sh`:
 
 ```bash
 - gunicorn base.wsgi:application -c /shared-volume/gunicorn.conf.py
