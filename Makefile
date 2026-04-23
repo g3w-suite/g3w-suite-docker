@@ -1,3 +1,8 @@
+##
+# Force ENV to lowercase
+##
+override ENV := $(shell echo $(ENV) | tr '[:upper:]' '[:lower:]')
+
 ifeq ($(ENV),)
   $(error ENV is not set)
 endif
@@ -82,7 +87,7 @@ renew-ssl:
 # make docker-image v=v3.8.x
 ##
 docker-image:
-	ifeq ($(v),)
-		$(error v is not set)
-	endif
+ifeq ($(v),)
+	$(error v is not set)
+endif
 	docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:$(v) --no-cache .
