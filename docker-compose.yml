@@ -96,10 +96,8 @@ services:
       replicas: 1  # 0 = disable service
     expose:
       - 8000
+      - 5768
     entrypoint: /bin/bash -c "G3WSUITE_CONSUMER=1 /scripts/docker-entrypoint.sh"
-    # ports:
-    # - "8000:8000"  # g3w-suite (dev mode)
-    # - "5768:5768"  # debugpy (dev mode)
     depends_on:
       - postgis
 
@@ -140,6 +138,7 @@ services:
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/esdata:/usr/share/elasticsearch/data
 
+  # PROD SERVER: expose port 8000 (django) and 443 (django)
   nginx:
     deploy:
       replicas: 1  # 0 = disable service
@@ -160,6 +159,42 @@ services:
       - ./config/nginx/html:/var/www/html:ro
     logging: *g3w-suite-logging
     restart: "${RESTART_POLICY:-on-failure}"
+    networks:
+      internal:
+
+  # DEV SERVER: expose port 8000 (django) and 5768 (debug.py)
+  dev-server:
+    deploy:
+      replicas: ${DEV_SERVER:-0}  # 0 = disable service
+    image: nginx
+    ports:
+      - "8000:8000"
+      - "5768:5768"
+    expose:
+      - 8000
+      - 5768
+    command: >
+      /bin/sh -c "printf 'events {}
+      http {
+        server {
+          listen 8000;
+          location / {
+            proxy_pass http://g3w-suite:8000;
+            proxy_set_header Host $$host;
+            proxy_set_header X-Real-IP $$remote_addr;
+          }
+        }
+      }
+      stream {
+        server {
+          listen 5768;
+          proxy_pass g3w-suite:5768;
+        }
+      }' > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    logging: *g3w-suite-logging
+    restart: "${RESTART_POLICY:-on-failure}"
+    depends_on:
+      - g3w-suite
     networks:
       internal:
 
