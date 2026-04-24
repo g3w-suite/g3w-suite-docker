@@ -49,7 +49,7 @@ DEBUG = os.getenv('G3WSUITE_DEBUG', 'False') == 'True' # os.path.ismount('/code'
 
 if DEBUG:
     try:
-      import debugpy
+        import debugpy
         debugpy.listen(("0.0.0.0", 5678))
         print("--- Debugger listening on port 5678 ---")
     except ImportError:
