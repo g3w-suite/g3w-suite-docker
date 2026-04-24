@@ -40,17 +40,20 @@ if [[ "${FRONTEND,,}" == "true" ]] ; then
 fi
 
 # TODO: move this into a more appropriate location (eg. g3w-admin ?)
-if [ ! -f /shared-volume/gunicorn.conf.py ]; then
+if [ ! -f /shared-volume/gunicorn.conf.py ] || [[ "${DEV_MODE,,}" == "true" ]]; then
   # 1. inject a custom "gunicorn.conf.py"
   cat > /shared-volume/gunicorn.conf.py << EOF
-import os, debugpy
+import os
 
 DEBUG = os.getenv('G3WSUITE_DEBUG', 'False') == 'True' # os.path.ismount('/code')
 
 if DEBUG:
     try:
+      import debugpy
         debugpy.listen(("0.0.0.0", 5678))
         print("--- Debugger listening on port 5678 ---")
+    except ImportError:
+        print("--- Debug.py not installed: skipping ---")
     except Exception as e:
         print(f"Debugger error: {e}")
 
