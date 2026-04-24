@@ -17,15 +17,15 @@ endif
 ##
 # ENV = { dev | prod }
 ##
-DOCKER_COMPOSE:= docker compose -f docker-compose.yml -f docker-compose-$(ENV).yml
+DOCKER_COMPOSE := docker compose --env-file .env $(if $(wildcard .env.$(ENV)),--env-file .env.$(ENV)) -f docker-compose.yml
 
 G3W_SUITE:= docker compose exec g3w-suite
 
 ##
 # Reload compose configuration
 #
-# make reload ENV=PROD
-# make reload ENV=DEV
+# make reload ENV=prod
+# make reload ENV=dev
 ##
 reload:
 	$(DOCKER_COMPOSE) up -d --force-recreate --remove-orphans
@@ -33,8 +33,8 @@ reload:
 ##
 # SSH login
 #
-# make run-g3wsuite ENV=DEV
-# make run-postgis ENV=DEV
+# make run-g3wsuite ENV=dev
+# make run-postgis ENV=dev
 ##
 run-%:
 	$(DOCKER_COMPOSE) start $*
@@ -53,7 +53,7 @@ db-reset:
 	$(G3W_SUITE) bash -c 'rm -f /shared-volume/setup_done'
 	$(G3W_SUITE) bash -c 'rm -f /shared-volume/.secret_key'
 	$(DOCKER_COMPOSE) up -d --force-recreate
-	ID=demo	./scripts/makefile/db-restore.sh
+	ENV=$(ENV) ID=demo ./scripts/makefile/db-restore.sh
 
 ##
 # Backup databases
@@ -61,7 +61,7 @@ db-reset:
 # make db-backup ID=name ENV=dev 
 ##
 db-backup:
-	./scripts/makefile/db-backup.sh
+	ENV=$(ENV) ./scripts/makefile/db-backup.sh
 
 ##
 # Restore databases
@@ -70,7 +70,7 @@ db-backup:
 ##
 db-restore:
 	$(DOCKER_COMPOSE) up -d --force-recreate
-	./scripts/makefile/db-restore.sh
+	ENV=$(ENV) ./scripts/makefile/db-restore.sh
 
 ##
 # Run certbot
@@ -78,7 +78,7 @@ db-restore:
 # make renew-ssl ENV=dev
 ##
 renew-ssl:
-	./scripts/makefile/renew-ssl.sh
+	ENV=$(ENV) ./scripts/makefile/renew-ssl.sh
 	$(DOCKER_COMPOSE) up -d nginx --force-recreate
 
 ##

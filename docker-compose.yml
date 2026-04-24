@@ -1,12 +1,15 @@
 ## HOW TO RUN: ##
 #
-# docker compose up -d
+# make reload ENV=dev   (for development)
+# make reload ENV=prod  (for production)
 #
 
 x-g3w-suite: &g3w-suite
   image: g3wsuite/g3w-suite:dev
-  restart: always
+  restart: "${RESTART_POLICY:-always}"
   environment:
+    - BITBUCKET_TOKEN
+    - DEV_MODE=${DEV_MODE:-False}
     - DISPLAY=:99
     - FRONTEND
     - G3WSUITE_ADMIN_USERNAME
@@ -32,8 +35,12 @@ x-g3w-suite: &g3w-suite
     - TILESTACHE_CACHE_TOKEN
     - WEBGIS_PUBLIC_HOSTNAME=${WEBGIS_PUBLIC_HOSTNAME:-localhost}
     - WEBGIS_ADMIN_EMAIL=${WEBGIS_ADMIN_EMAIL:-info@gis3w.it}
-    - UV_SYSTEM_PYTHON=1
     - UV_BREAK_SYSTEM_PACKAGES=1
+    - UV_SYSTEM_PYTHON=1
+    - PIP_BREAK_SYSTEM_PACKAGES=1
+    - PIP_ROOT_USER_ACTION=ignore
+    - DEB_PYTHON_INSTALL_LAYOUT=deb_system
+    - GIT_CONFIG_PARAMETERS='safe.directory=/code' 'safe.directory=/shared-volume/plugins/*'
   volumes:
     - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
     - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
@@ -42,13 +49,15 @@ x-g3w-suite: &g3w-suite
     - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
     - ./secrets/pg_service.conf:${PGSERVICEFILE}
     - ./config/qgis/QGIS3.ini:/shared-volume/QGIS/QGIS3.ini
+    - "${SCRIPTS_VOLUME:-void:/void}"
+    - "${CODE_VOLUME:-void:/void}"
   logging: &g3w-suite-logging
     driver: "json-file"
     options:
       max-size: "200k"
       max-file: "10"
-  stdin_open: ${G3WSUITE_DEBUG:-false}
-  tty: ${G3WSUITE_DEBUG:-false}
+  stdin_open: ${DEV_MODE:-false}
+  tty: ${DEV_MODE:-false}
   networks:
     internal:
 
@@ -67,9 +76,8 @@ services:
       - ALLOW_IP_RANGE=0.0.0.0/0
       - RUN_AS_ROOT=true
       - FORCE_SSL=False
-    restart: on-failure
-    logging:
-      *g3w-suite-logging
+    restart: "${RESTART_POLICY:-on-failure}"
+    logging: *g3w-suite-logging
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}:/var/lib/postgresql
     healthcheck:
@@ -87,8 +95,11 @@ services:
     deploy:
       replicas: 1  # 0 = disable service
     expose:
-      - "8000"
+      - 8000
     entrypoint: /bin/bash -c "G3WSUITE_CONSUMER=1 /scripts/docker-entrypoint.sh"
+    ports:
+    - "${DJANGO_PORT:-8000}"   # g3w-suite (dev mode)
+    - "${DEBUGPY_PORT:-5768}"  # debugpy (dev mode)
     depends_on:
       - postgis
 
@@ -110,7 +121,7 @@ services:
     - 6379
     networks:
       internal:
-    restart: always
+    restart: "${RESTART_POLICY:-always}"
 
   elasticsearch:
     deploy:
@@ -137,7 +148,7 @@ services:
       - "8080:8080"
       - "443:443"
     expose:
-      - "8080"
+      - 8080
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known:/var/www/.well-known
@@ -145,9 +156,8 @@ services:
       - ./config/g3w-suite/overrides/static:/shared-volume/static/overrides:ro
       - ./config/nginx:/etc/nginx/conf.d/:ro
       - ./config/nginx/html:/var/www/html:ro
-    logging:
-      *g3w-suite-logging
-    restart: always
+    logging: *g3w-suite-logging
+    restart: "${RESTART_POLICY:-always}"
     networks:
       internal:
 
@@ -164,6 +174,7 @@ services:
 volumes:
   shared-volume:
   g3wsuite-pg-data:
+  void: # fallback for production (dev mounts)
 
 networks:
   internal:

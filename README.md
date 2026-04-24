@@ -13,8 +13,8 @@ To upgrade your containers (eg. `v3.10.x` → `v3.11.x`):
 
 ```sh
 # NB:
-# • (ENV = dev)      → docker-compose-dev.yml
-# • (ENV = prod)     → docker-compose.yml
+# • (ENV = dev)      → .env + .env.dev
+# • (ENV = prod)     → .env
 
 ### BACKUP (v3.10.x) ###
 
@@ -167,8 +167,8 @@ Plese refer to the [Add new stack](https://docs.portainer.io/user/docker/stacks/
 
 ```sh
 # NB:
-# • (ENV = dev)      → docker-compose-dev.yml
-# • (ENV = prod)     → docker-compose-prod.yml
+# • (ENV = dev)      → .env + .env.dev
+# • (ENV = prod)     → .env
 
 make reload ENV=prod
 
@@ -192,7 +192,7 @@ make db-restore ID=foo-backup ENV=prod
 ---
 <sub> \* if necessary, comment out any missing installed modules from [G3WADMIN_LOCAL_MORE_APPS](./config/g3w-suite/settings_docker.py) list and then try again </sub>
 
-<sub> \* if you customize [docker-compose-dev.yml](./docker-compose-dev.yml) (eg. by choosing a specific <code>image: <del>g3wsuite/g3w-suite:dev</del> g3wsuite/g3w-suite:v3.7.x</code>) you then apply them via: `make reload ENV=dev` </sub> 
+<sub> \* if you customize [docker-composev.yml](./docker-compose.yml) (eg. by choosing a specific <code>image: <del>g3wsuite/g3w-suite:dev</del> g3wsuite/g3w-suite:v3.7.x</code>) you then apply them via: `make reload ENV=dev` </sub> 
 
 </details>
 
@@ -290,16 +290,10 @@ G3WADMIN_LOCAL_MORE_APPS = [
 ]
 ```
 
-Start the containers: 
+Reload the containers: 
 
 ```bash
-    docker compose -f docker-compose.yml -f docker-compose-dev.yml up -d 
-```
-
-Stop the containers: 
-
-```bash
-    docker compose -f docker-compose.yml -f docker-compose-dev.yml down
+    make reload ENV=dev
 ```
 
 </details>
@@ -352,7 +346,7 @@ You should now be able to debug the suite with the common vscode tools.
 <details>
 <summary> 6. Connecting to a local DB (PostGIS) </summary>
 
-If you are working in a mixed setup (ie. a local [postgis](https://postgis.net/) instance + a [g3w-suite-docker](https://github.com/g3w-suite/g3w-suite-docker) container), you should add an `extra_hosts` directive within your `docker-compose-dev.yml` to make your local postgres databases accessible from both sides:
+If you are working in a mixed setup (ie. a local [postgis](https://postgis.net/) instance + a [g3w-suite-docker](https://github.com/g3w-suite/g3w-suite-docker) container), you should add an `extra_hosts` directive within your `docker-compose.yml` to make your local postgres databases accessible from both sides:
 
 ![Connecting to a local postgress DB](https://github.com/g3w-suite/g3w-admin/assets/9614886/ade856d2-99ec-4024-ab0d-7c631cfa67e8)
 

@@ -6,20 +6,22 @@
 figlet -t "G3W-SUITE" && echo -e "v`git tag --sort=v:refname | tail -1 | sed 's/^v//'`\n"
 
 echo -e "----------------------"
-echo -e "IS_DEV: $(mountpoint -q /code && echo "True" || echo "False")"
-echo -e "G3WSUITE_RUN_HUEY: ${G3WSUITE_RUN_HUEY}"
-echo -e "G3WSUITE_CONSUMER: ${G3WSUITE_CONSUMER}"
+echo -e "DEV_MODE: ${DEV_MODE}"
+echo -e "BATCH_PROCESSING: ${G3WSUITE_RUN_HUEY}"
 echo -e "----------------------\n"
 
 cd /code/g3w-admin
 
 # HUEY CONSUMER
 if [[ "${G3WSUITE_RUN_HUEY,,}" == "true" && "${G3WSUITE_CONSUMER}" == "0" ]]; then
-  echo -e "START G3WSUITE_CONSUMER"
+  echo -e "STARTING G3WSUITE_CONSUMER"
   # wait for main "g3w-suite" service
   wait-for-it -h g3w-suite -p 8000 -t 60
   # start the "g3w-suite-consumer" service
   /usr/bin/xvfb-run -a python3 manage.py run_huey
+  exit $?
+elif [[ "${G3WSUITE_CONSUMER}" == "0" ]]; then
+  echo -e "STOPPING G3WSUITE_CONSUMER"
   exit $?
 fi
 
@@ -27,7 +29,7 @@ fi
 rm -f /tmp/.X99-lock
 Xvfb ${DISPLAY:-:99} -screen 0 640x480x24 -nolisten tcp &
 
-# Activate the front end app settings
+# Activate FRONTEND_APP (local_settings.py)
 if [[ "${FRONTEND,,}" == "true" ]] ; then
   SETTINGS_LOCKFILE=/shared-volume/.settings.lockfile
   if [[ ! -f ${SETTINGS_LOCKFILE} ]]; then
@@ -38,9 +40,9 @@ if [[ "${FRONTEND,,}" == "true" ]] ; then
 fi
 
 # TODO: move this into a more appropriate location (eg. g3w-admin ?)
-if mountpoint -q /code || [ ! -f /shared-volume/gunicorn.conf.py ]; then
+if [[ "${DEV_MODE,,}" == "true" ]] || [ ! -f /shared-volume/gunicorn.conf.py ]; then
   # 1. install "debugpy"
-  python3 -c "import debugpy" 2>/dev/null || uv pip install debugpy
+  python3 -c "import debugpy" 2>/dev/null || pip3 install debugpy
   
   # 2. inject a custom "gunicorn.conf.py"
   cat > /shared-volume/gunicorn.conf.py << EOF
@@ -104,8 +106,8 @@ fi
 wait-for-it -h ${G3WSUITE_REDIS_HOST:-redis} -p ${G3WSUITE_REDIS_PORT:-6379} -t 30
 
 # DEV MODE: Check Python requirements  
-if  mountpoint -q /code && [[ ! -e "/shared-volume/setup_done" ]]; then
-  uv pip install -r /code/requirements.txt
+if  [[ "${DEV_MODE,,}" == "true" ]] && [[ ! -e "/shared-volume/setup_done" ]]; then
+  pip3 install -r /code/requirements.txt
 fi
 
 # Build the suite
@@ -114,7 +116,7 @@ fi
 /code/ci_scripts/setup_suite.sh
 
 # DEV MODE: cleanup django database 
-if mountpoint -q /code; then
+if [[ "${DEV_MODE,,}" == "true" ]]; then
   python3 /code/g3w-admin/manage.py check_features_locked
   python3 /code/g3w-admin/manage.py delete_unused_files
 fi

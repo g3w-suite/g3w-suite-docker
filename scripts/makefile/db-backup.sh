@@ -8,7 +8,7 @@ if [ -z $ENV ]; then
   exit 1
 fi
 
-DOCKER_COMPOSE="docker compose -f docker-compose.yml -f docker-compose-${ENV}.yml"
+DOCKER_COMPOSE="docker compose --env-file .env $([ -f .env.${ENV} ] && echo "--env-file .env.${ENV}") -f docker-compose.yml"
 
 source .env
 
