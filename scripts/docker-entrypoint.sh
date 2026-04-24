@@ -40,11 +40,8 @@ if [[ "${FRONTEND,,}" == "true" ]] ; then
 fi
 
 # TODO: move this into a more appropriate location (eg. g3w-admin ?)
-if [[ "${DEV_MODE,,}" == "true" ]] || [ ! -f /shared-volume/gunicorn.conf.py ]; then
-  # 1. install "debugpy"
-  python3 -c "import debugpy" 2>/dev/null || pip3 install debugpy
-  
-  # 2. inject a custom "gunicorn.conf.py"
+if [ ! -f /shared-volume/gunicorn.conf.py ]; then
+  # 1. inject a custom "gunicorn.conf.py"
   cat > /shared-volume/gunicorn.conf.py << EOF
 import os, debugpy
 
@@ -68,8 +65,13 @@ error_logfile = '-'
 log_level = 'debug' if DEBUG else 'info'
 reload = DEBUG
 EOF
+fi
 
-  # 3. inject a custom "G3W-SUITE-DOCKER: Debugger" within local ".vscode/launch.json"
+# TODO: move this into a more appropriate location (eg. g3w-admin ?)
+if [[ "${DEV_MODE,,}" == "true" ]]; then
+  # 1. install "debugpy"
+  python3 -c "import debugpy" 2>/dev/null || pip3 install debugpy
+  # 2. inject a custom "G3W-SUITE-DOCKER: Debugger" within local ".vscode/launch.json"
   python3 <<EOF
 import json, os
 path = "/code/.vscode/launch.json"
