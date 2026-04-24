@@ -97,9 +97,9 @@ services:
     expose:
       - 8000
     entrypoint: /bin/bash -c "G3WSUITE_CONSUMER=1 /scripts/docker-entrypoint.sh"
-    ports:
-    - "${DJANGO_PORT:-8000}"   # g3w-suite (dev mode)
-    - "${DEBUGPY_PORT:-5768}"  # debugpy (dev mode)
+    # ports:
+    # - "8000:8000"  # g3w-suite (dev mode)
+    # - "5768:5768"  # debugpy (dev mode)
     depends_on:
       - postgis
 
@@ -144,6 +144,8 @@ services:
     deploy:
       replicas: 1  # 0 = disable service
     image: nginx
+    environment:
+      - WEBGIS_PUBLIC_HOSTNAME
     ports:
       - "8080:8080"
       - "443:443"
@@ -162,14 +164,14 @@ services:
       internal:
 
   # Letsencrypt certs
-  
-  certbot:
-    deploy:
-      replicas: 1  # 0 = disable service
-    image: certbot/certbot
-    volumes:
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/certbot:/var/www/certbot
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt
+
+  # certbot:
+  #   deploy:
+  #     replicas: 1  # 0 = disable service
+  #   image: certbot/certbot
+  #   volumes:
+  #     - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/certbot:/var/www/certbot
+  #     - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt
 
 volumes:
   shared-volume:
