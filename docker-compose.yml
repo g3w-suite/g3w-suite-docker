@@ -6,7 +6,7 @@
 
 x-g3w-suite: &g3w-suite
   image: g3wsuite/g3w-suite:dev
-  restart: "${RESTART_POLICY:-always}"
+  restart: "${RESTART_POLICY:-on-failure}"
   environment:
     - BITBUCKET_TOKEN
     - DEV_MODE=${DEV_MODE:-False}
@@ -121,7 +121,7 @@ services:
     - 6379
     networks:
       internal:
-    restart: "${RESTART_POLICY:-always}"
+    restart: "${RESTART_POLICY:-on-failure}"
 
   elasticsearch:
     deploy:
@@ -157,7 +157,7 @@ services:
       - ./config/nginx:/etc/nginx/conf.d/:ro
       - ./config/nginx/html:/var/www/html:ro
     logging: *g3w-suite-logging
-    restart: "${RESTART_POLICY:-always}"
+    restart: "${RESTART_POLICY:-on-failure}"
     networks:
       internal:
 
