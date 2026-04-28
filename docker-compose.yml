@@ -141,7 +141,7 @@ services:
   # PROD SERVER: expose port 8000 (django) and 443 (django)
   nginx:
     deploy:
-      replicas: 1  # 0 = disable service
+      replicas: ${PROD_SERVER:-1}  # 0 = disable service
     image: nginx
     environment:
       - WEBGIS_PUBLIC_HOSTNAME
@@ -168,16 +168,16 @@ services:
       replicas: ${DEV_SERVER:-0}  # 0 = disable service
     image: nginx
     ports:
-      - "8000:8000"
+      - "8000:8080" # NB: 8000 (host) → 8080 (container)
       - "5768:5768"
     expose:
-      - 8000
+      - 8080
       - 5768
     command: >
       /bin/sh -c "printf 'events {}
       http {
         server {
-          listen 8000;
+          listen 8080;
           location / {
             proxy_pass http://g3w-suite:8000;
             proxy_set_header Host $$host;
