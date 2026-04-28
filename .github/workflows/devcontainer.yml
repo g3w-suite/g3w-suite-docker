@@ -32,8 +32,9 @@ jobs:
         with:
           imageName: ghcr.io/${{ github.repository }}/devcontainer
           # Tag with the sanitized branch name so each branch has its own image.
-          # devcontainer.json references the branch-specific tag.
           imageTag: ${{ github.ref_name }}
           # Reuse layers from the previously published image to speed up builds.
+          # On the very first build this image won't exist yet; devcontainers/ci
+          # handles that gracefully and proceeds without cache.
           cacheFrom: ghcr.io/${{ github.repository }}/devcontainer:${{ github.ref_name }}
           push: always

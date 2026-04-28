@@ -1,9 +1,11 @@
 {
   "name": "G3W-Suite Docker",
 
-  // Pre-built image published by the devcontainer-prebuild.yml workflow.
-  // Falls back to a generic base image on first build.
-  "image": "ghcr.io/g3w-suite/g3w-suite-docker/devcontainer:single-compose-file",
+  // Base image. The CI workflow (devcontainer.yml) builds on top of this,
+  // applies the features below, and pushes the result to ghcr.io so that
+  // GitHub Codespaces Prebuilds (Settings → Codespaces → Prebuilds) can
+  // reuse the cached image on subsequent opens.
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
 
   "features": {
     // Provides a fully functional Docker daemon inside the Codespace so that
