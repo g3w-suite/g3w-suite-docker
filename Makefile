@@ -1,11 +1,4 @@
-##
-# Force ENV to lowercase
-##
-override ENV := $(shell echo $(ENV) | tr '[:upper:]' '[:lower:]')
-
-ifeq ($(ENV),)
-  $(error ENV is not set)
-endif
+.DEFAULT_GOAL := help
 
 ##
 # Ensure: "Docker Desktop > Resources > WSL Integration"
@@ -15,11 +8,34 @@ ifeq ($(OS), Windows_NT)
 endif
 
 ##
+# Force ENV to lowercase
+##
+override ENV := $(shell echo $(ENV) | tr '[:upper:]' '[:lower:]')
+
+##
+# Check ENV (skipped for targets: "", "help", "docker-image") 
+##
+ifeq ($(and $(MAKECMDGOALS),$(filter-out help docker-image,$(MAKECMDGOALS)),$(if $(ENV),,1)),1)
+  $(error ENV is not set.)
+endif
+
+##
 # ENV = { dev | prod }
 ##
 DOCKER_COMPOSE := docker compose --env-file .env $(if $(wildcard .env.$(ENV)),--env-file .env.$(ENV)) -f docker-compose.yml
 
 G3W_SUITE:= docker compose exec g3w-suite
+
+
+##
+# Show available targets
+#
+# make help
+##
+help:
+	@echo "\nUsage: make [target] ENV={dev|prod}\n"
+	@echo "Available targets:\n"
+	@awk '/^##?[[:space:]]/{sub(/^##?[[:space:]]/,""); h=h $$0 "\n"; next} /^[a-zA-Z0-9%_-]+:/ && $$0 !~ /^[a-zA-Z0-9%_-]+:=/{if(h){t=$$1; sub(/:.*/,"",t); if(t!="help"){sub(/\n+$$/,"",h); gsub(/\n/,"\n                     ",h); printf "\033[36m%-20s\033[0m %s\n\n",t,h}}; h=""; next} /^\t/{h=""}' $(MAKEFILE_LIST)
 
 ##
 # Reload compose configuration
