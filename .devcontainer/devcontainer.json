@@ -1,0 +1,44 @@
+{
+  "name": "G3W-Suite Docker",
+
+  // Pre-built image published by the devcontainer-prebuild.yml workflow.
+  // Falls back to a generic base image on first build.
+  "image": "ghcr.io/g3w-suite/g3w-suite-docker/devcontainer:single-compose-file",
+
+  "features": {
+    // Provides a fully functional Docker daemon inside the Codespace so that
+    // `docker compose` works without needing a host Docker socket.
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "dockerDashComposeVersion": "v2"
+    }
+  },
+
+  // Clone g3w-admin (required by DEV mode) and start the full stack.
+  "postCreateCommand": "bash .devcontainer/postCreate.sh",
+
+  "forwardPorts": [8000, 8080, 5768],
+  "portsAttributes": {
+    "8000": {
+      "label": "G3W-Suite (dev-server)",
+      "onAutoForward": "openPreview"
+    },
+    "8080": {
+      "label": "G3W-Suite (nginx)",
+      "onAutoForward": "notify"
+    },
+    "5768": {
+      "label": "Debugpy",
+      "onAutoForward": "silent"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml",
+        "ms-python.python"
+      ]
+    }
+  }
+}
