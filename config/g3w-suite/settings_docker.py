@@ -203,3 +203,10 @@ if os.getenv('WEBGIS_PUBLIC_HOSTNAME', None):
         f"http://{os.getenv('WEBGIS_PUBLIC_HOSTNAME', None)}",
         f"http://{os.getenv('WEBGIS_PUBLIC_HOSTNAME', None)}:8080"
     ]
+
+# DEV MODE: trust "dev-server" port (8000)
+if os.getenv('DEV_MODE', 'False' ).lower() == 'true':
+    CSRF_TRUSTED_ORIGINS.extend([
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+    ])
