@@ -96,7 +96,7 @@ services:
       replicas: 1  # 0 = disable service
     expose:
       - 8000
-      - 5768
+      - 5678
     entrypoint: /bin/bash -c "G3WSUITE_CONSUMER=1 /scripts/docker-entrypoint.sh"
     depends_on:
       - postgis
@@ -162,33 +162,35 @@ services:
     networks:
       internal:
 
-  # DEV SERVER: expose port 8000 (django) and 5768 (debug.py)
+  # DEV SERVER: expose port 8000 (django) and 5678 (debug.py)
   dev-server:
     deploy:
       replicas: ${DEV_SERVER:-0}  # 0 = disable service
     image: nginx
     ports:
-      - "8000:8080" # NB: 8000 (host) → 8080 (container)
-      - "5768:5768"
+      - "8000:8000" # NB: 8000 (host) → 8000 (container)
+      - "5678:5678"
     expose:
       - 8080
-      - 5768
+      - 5678
     command: >
       /bin/sh -c "printf 'events {}
       http {
         server {
-          listen 8080;
+          listen 8000;
           location / {
             proxy_pass http://g3w-suite:8000;
             proxy_set_header Host $$host;
             proxy_set_header X-Real-IP $$remote_addr;
+            proxy_set_header X-Forwarded-For $$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $$scheme;
           }
         }
       }
       stream {
         server {
-          listen 5768;
-          proxy_pass g3w-suite:5768;
+          listen 5678;
+          proxy_pass g3w-suite:5678;
         }
       }' > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
     logging: *g3w-suite-logging
