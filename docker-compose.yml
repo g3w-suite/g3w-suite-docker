@@ -176,6 +176,8 @@ services:
     command: >
       /bin/sh -c "printf 'events {}
       http {
+        client_max_body_size 200M;
+        client_body_timeout  600;
         server {
           listen 8000;
           location / {
