@@ -26,6 +26,14 @@ DOCKER_COMPOSE := docker compose --env-file .env $(if $(wildcard .env.$(ENV)),--
 
 G3W_SUITE:= docker compose exec g3w-suite
 
+##
+# DEV MODE: symlink `G3WSUITE_LOCAL_CODE_PATH` → `./code`
+##
+ifeq ($(ENV),dev)
+  G3WSUITE_LOCAL_CODE_PATH := $(shell grep -E '^G3WSUITE_LOCAL_CODE_PATH=' .env.dev 2>/dev/null | cut -d'=' -f2- | tr -d '[:space:]')
+  $(shell rm -rf ./code)
+  $(info $(shell command -v wslpath >/dev/null && cmd.exe /c "mklink /J $$(wslpath -aw "./code") $$(wslpath -aw "$(G3WSUITE_LOCAL_CODE_PATH)")" || ln -s "$(G3WSUITE_LOCAL_CODE_PATH)" ./code))
+endif
 
 ##
 # Show available targets
