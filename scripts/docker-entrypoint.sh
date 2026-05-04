@@ -70,47 +70,15 @@ reload = DEBUG
 EOF
 fi
 
-# TODO: move this into a more appropriate location (eg. g3w-admin ?)
+# DEV MODE: install debugpy
 if [[ "${DEV_MODE,,}" == "true" ]]; then
-  # 1. install "debugpy"
   python3 -c "import debugpy" 2>/dev/null || pip3 install debugpy
-  # 2. inject a custom "G3W-SUITE-DOCKER: Debugger" within local ".vscode/launch.json"
-  python3 <<EOF
-import json, os
-path = "/code/.vscode/launch.json"
-
-os.makedirs(os.path.dirname(path), exist_ok=True)
-
-try:
-    data = json.load(open(path))
-except:
-    data = {"version": "0.2.0", "configurations": []}
-
-conf = {
-    "name": "G3W-SUITE-DOCKER: Debugger",
-    "type": "debugpy",
-    "request": "attach",
-    "connect": {"host": "localhost", "port": 5678},
-    "pathMappings": [
-        {
-            "localRoot": "\${workspaceFolder}/g3w-admin",
-            "remoteRoot": "/code/g3w-admin"
-        }
-    ],
-    "justMyCode": False,
-    "django": True
-}
-
-if not any(c.get("name") == conf["name"] for c in data["configurations"]):
-    data.setdefault("configurations", []).append(conf)
-    json.dump(data, open(path, "w"), indent=2)
-EOF
 fi
 
 # Check Redis is started
 wait-for-it -h ${G3WSUITE_REDIS_HOST:-redis} -p ${G3WSUITE_REDIS_PORT:-6379} -t 30
 
-# DEV MODE: Check Python requirements  
+# DEV MODE: check python requirements
 if  [[ "${DEV_MODE,,}" == "true" ]] && [[ ! -e "/shared-volume/setup_done" ]]; then
   pip3 install -r /code/requirements.txt
 fi
