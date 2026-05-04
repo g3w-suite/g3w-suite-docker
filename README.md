@@ -186,8 +186,9 @@ make db-restore ID=foo-backup ENV=prod
    * set `G3WSUITE_DEBUG=True`;
    * set `G3WSUITE_LOCAL_CODE_PATH=../g3w-admin` (path to your local G3W-ADMIN repository).
 
-2. Run `make reload ENV=dev`. \*
-   1. If all went well G3W-SUITE is running in development mode on http://127.0.0.1:8000
+2. Run `make reload ENV=dev`, if all went well: \*
+   * G3W-SUITE is running in development mode on http://127.0.0.1:8000
+   * G3W-ADMIN is available at [`./code`](./code)
 
 ---
 <sub> \* if necessary, comment out any missing installed modules from [G3WADMIN_LOCAL_MORE_APPS](./config/g3w-suite/settings_docker.py) list and then try again </sub>
