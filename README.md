@@ -301,40 +301,17 @@ Reload the containers:
 <details>
 <summary> 5. Attach the python debugger (vscode) </summary>
 
-You can suppress built-in server within `docker-entrypoint.sh`:
+1. Install the [Python Debugger](https://marketplace.visualstudio.com/items?itemName=ms-python.debugpy) extension.
+
+2. Start containers in development mode:
 
 ```bash
-- gunicorn base.wsgi:application -c /shared-volume/gunicorn.conf.py
-+ tail -f /dev/null
+    make reload ENV=dev # symlinks `G3WSUITE_LOCAL_CODE_PATH` → `./code` and enables live reload
 ```
 
-Attach to the container and start the server manually.
+3. Start the built-in debugger ([`Run and Debug > G3W-SUITE-DOCKER: Debugger`](.vscode\launch.json))
 
-Righ click on the running container and run **Attach Visual Studio Code**. 
-
-Once inside the container run the suite using a newly created `launch.json` file that looks like:
-
-```json
-    {
-        "version": "0.2.0",
-        "configurations": [
-            {
-                "name": "G3W-Suite dev debug",
-                "type": "debugpy",
-                "request": "launch",
-                "args": [
-                    "runserver",
-                    "0.0.0.0:8000"
-                ],
-                "django": true,
-                "autoStartBrowser": false,
-                "program": "${workspaceFolder}/manage.py"
-            }
-        ]
-    }
-```
-
-You should now be able to debug the suite with the common vscode tools.
+4. You should now be able to set breakpoints, step through code, inspect variables, ...
 
 **For more info:**
 
