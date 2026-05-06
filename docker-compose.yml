@@ -137,6 +137,8 @@ services:
       - "9300:9300"
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/esdata:/usr/share/elasticsearch/data
+    networks:
+      internal:
 
   # PROD SERVER: expose port 8000 (django) and 443 (django)
   nginx:
