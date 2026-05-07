@@ -130,8 +130,8 @@ _DOCKER_TAG_deps         := g3wsuite/g3w-suite-deps
 _DOCKER_TAG_deps-mssql   := g3wsuite/g3w-suite-deps
 _DOCKER_TAG_oracle       := g3wsuite/g3w-suite-qgis-oracle
 
-_DOCKER_ARGS_deps        := --build-arg QGIS_CHANNEL=ubuntu
-_DOCKER_ARGS_deps-mssql  := --build-arg INSTALL_MSSQL=true
+_DOCKER_ARGS_deps        := --build-arg QGIS_CHANNEL=ubuntu # ubuntu (latest) | ubuntu-ltr (LTR) 
+_DOCKER_ARGS_deps-mssql  := --build-arg INSTALL_MSSQL=true  # adds MS SQL ODBC driver ⚠  By using INSTALL_MSSQL=true you agree to the Microsoft END USER LICENSE AGREEMENT (ACCEPT_EULA=Y)
 _DOCKER_ARGS_oracle       = $(if $(QGIS_DEPS_TAG),--build-arg DOCKER_DEPS_TAG=$(QGIS_DEPS_TAG)) $(if $(QGIS_TAG),--build-arg QGIS_TAG=$(QGIS_TAG))
 
 t ?= suite

@@ -1,54 +1,13 @@
-##
-# Unified multi-stage Dockerfile for g3w-suite images.
+## HOW TO RUN ##
 #
-# ---------------------------------------------------------------------------
-# STAGE: deps
-# ---------------------------------------------------------------------------
-# Build args:
-#   QGIS_CHANNEL   ubuntu-ltr (default, LTR) | ubuntu (latest)
-#   INSTALL_MSSQL  false (default) | true  – adds MS SQL ODBC driver
-#                  ⚠  By using INSTALL_MSSQL=true you agree to the
-#                     Microsoft END USER LICENSE AGREEMENT (ACCEPT_EULA=Y)
+# Multi-stage Dockerfile for g3w-suite images:
 #
-# Build commands:
+#  make docker-image t=deps-ltr v=dev                                                 → g3wsuite/g3w-suite-deps-ltr:dev    (QGIS LTR)
+#  make docker-image t=deps v=dev                                                     → g3wsuite/g3w-suite-deps:dev        (QGIS latest)
+#  make docker-image t=deps-mssql v=ltr-mssql                                         → g3wsuite/g3w-suite-deps:ltr-mssql  (QGIS latest + Microsoft SQL Server)
+#  make docker-image t=suite v=dev                                                    → g3wsuite/g3w-suite:dev             (G3W-SUITE dev) 
+#  make docker-image t=oracle v=dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7  → qgis/qgis3-build-deps:release-3_22 (QGIS + Oracle support)
 #
-#   # g3wsuite/g3w-suite-deps-ltr:dev
-#   docker build --target deps -t g3wsuite/g3w-suite-deps-ltr:dev .
-#
-#   # g3wsuite/g3w-suite-deps:dev (QGIS latest)
-#   docker build --target deps --build-arg QGIS_CHANNEL=ubuntu -t g3wsuite/g3w-suite-deps:dev .
-#
-#   # g3wsuite/g3w-suite-deps:ltr-mssql
-#   docker build --target deps --build-arg INSTALL_MSSQL=true -t g3wsuite/g3w-suite-deps:ltr-mssql .
-#
-# ---------------------------------------------------------------------------
-# STAGE: suite
-# ---------------------------------------------------------------------------
-# Build args (in addition to those inherited from deps):
-#   G3W_SUITE_BRANCH  dev (default) – g3w-admin git branch to checkout
-#
-# Build command:
-#
-#   docker build --target suite -t g3wsuite/g3w-suite:dev .
-#
-# ---------------------------------------------------------------------------
-# STAGE: qgis-oracle
-# ---------------------------------------------------------------------------
-# NOTE: this stage has a completely different base image and is independent
-#       from the `deps` / `suite` stages above.
-#
-# Build args:
-#   DOCKER_DEPS_TAG  release-3_22 (default) – tag for qgis3-build-deps image
-#   QGIS_TAG         final-3_22_7 (default) – git tag from the QGIS repository
-#
-# Build command (via Makefile or directly):
-#
-#   docker build --target qgis-oracle \
-#     --build-arg DOCKER_DEPS_TAG=release-3_22 \
-#     --build-arg QGIS_TAG=final-3_22_7 \
-#     -t g3wsuite/g3w-suite-qgis-oracle:dev .
-##
-
 
 # ===========================================================================
 # STAGE: deps
