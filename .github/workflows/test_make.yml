@@ -1,0 +1,103 @@
+﻿name: G3W-SUITE-DOCKER Makefile tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      QGIS_DEPS_TAG:
+        description: "qgis3-build-deps image tag (e.g. release-3_22)"
+        default: "release-3_22"
+        required: true
+      QGIS_TAG:
+        description: "QGIS git tag (e.g. final-3_22_7)"
+        default: "final-3_22_7"
+        required: true
+
+jobs:
+
+  ##
+  # Verify the Makefile is parseable and all targets are listed correctly.
+  ##
+  validate-makefile:
+    name: "Validate Makefile (make help)"
+    runs-on: ubuntu-24.04
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: make help
+        run: make help
+
+  ##
+  # Verify docker-compose.yml interpolates without errors against .env.example.
+  ##
+  validate-compose:
+    name: "Validate docker-compose.yml syntax"
+    runs-on: ubuntu-24.04
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Create .env from .env.example
+        run: cp .env.example .env
+      -
+        name: "docker compose config (prod)"
+        run: docker compose --env-file .env -f docker-compose.yml config --quiet
+      -
+        name: "docker compose config (dev)"
+        run: docker compose --env-file .env --env-file .env.dev -f docker-compose.yml config --quiet
+
+  ##
+  # Build all docker-image-* targets via Makefile.
+  ##
+  build:
+    name: "make ${{ matrix.target }}"
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: "docker-image-deps-ltr v=ci"
+            description: "deps (QGIS LTR)"
+          - target: "docker-image-deps v=ci"
+            description: "deps (QGIS latest)"
+          - target: "docker-image-deps-mssql v=ci"
+            description: "deps (QGIS LTR + MS SQL)"
+          - target: "docker-image v=ci"
+            description: "suite (app layer, QGIS LTR)"
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: "Set up Docker Buildx"
+        uses: docker/setup-buildx-action@v3
+      -
+        name: "${{ matrix.description }}"
+        run: make ${{ matrix.target }}
+
+  ##
+  # Build QGIS Server with Oracle support.
+  # Only runs on manual trigger (workflow_dispatch) — compilation takes ~1-2 hours.
+  ##
+  build-oracle:
+    name: "make docker-image-oracle"
+    runs-on: ubuntu-24.04
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      -
+        name: "Build qgis-oracle (QGIS_TAG=${{ inputs.QGIS_TAG }})"
+        run: >
+          make docker-image-oracle
+          v=ci
+          QGIS_DEPS_TAG=${{ inputs.QGIS_DEPS_TAG }}
+          QGIS_TAG=${{ inputs.QGIS_TAG }}

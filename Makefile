@@ -108,7 +108,7 @@ renew-ssl:
 	$(DOCKER_COMPOSE) up -d nginx --force-recreate
 
 ##
-# Rebuild docker image
+# Rebuild docker image (suite stage: app layer on top of deps-ltr)
 #
 # make docker-image v=v3.8.x
 ##
@@ -116,4 +116,70 @@ docker-image:
 ifeq ($(v),)
 	$(error v is not set)
 endif
-	docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:$(v) --no-cache .
+	docker build --target suite -t g3wsuite/g3w-suite:$(v) --no-cache .
+
+##
+# Build deps image — QGIS LTR (default)
+#
+# make docker-image-deps-ltr v=dev
+##
+docker-image-deps-ltr:
+ifeq ($(v),)
+	$(error v is not set)
+endif
+	docker build --target deps -t g3wsuite/g3w-suite-deps-ltr:$(v) --no-cache .
+
+##
+# Build deps image — QGIS latest
+#
+# make docker-image-deps v=dev
+##
+docker-image-deps:
+ifeq ($(v),)
+	$(error v is not set)
+endif
+	docker build --target deps --build-arg QGIS_CHANNEL=ubuntu -t g3wsuite/g3w-suite-deps:$(v) --no-cache .
+
+##
+# Build deps image — QGIS LTR + MS SQL ODBC driver
+# ⚠  By running this target you accept the Microsoft EULA (ACCEPT_EULA=Y)
+#
+# make docker-image-deps-mssql v=ltr-mssql
+##
+docker-image-deps-mssql:
+ifeq ($(v),)
+	$(error v is not set)
+endif
+	docker build --target deps --build-arg INSTALL_MSSQL=true -t g3wsuite/g3w-suite-deps:$(v) --no-cache .
+
+##
+# Build QGIS Server with Oracle support (independent build chain)
+#
+# make docker-image-oracle v=dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7
+##
+docker-image-oracle:
+ifeq ($(v),)
+	$(error v is not set)
+endif
+	docker build --target qgis-oracle \
+		$(if $(QGIS_DEPS_TAG),--build-arg DOCKER_DEPS_TAG=$(QGIS_DEPS_TAG)) \
+		$(if $(QGIS_TAG),--build-arg QGIS_TAG=$(QGIS_TAG)) \
+		-t g3wsuite/g3w-suite-qgis-oracle:$(v) --no-cache .
+
+##
+# Run the QGIS Server with Oracle FCGI container
+#
+# make run-oracle QGIS_TAG=final-3_22_7
+# make run-oracle QGIS_TAG=final-3_22_7 QGIS_FCGI_PORT=9334
+##
+run-oracle:
+	docker run -d --init --rm --name qgis-server-oracle \
+		-p ${QGIS_FCGI_PORT:-9333}:9333 \
+		-e QGIS_PREFIX_PATH=/usr \
+		-e QGIS_SERVER_LOG_LEVEL=1 \
+		-e QGIS_SERVER_LOG_STDERR=1 \
+		-e QGIS_SERVER_PARALLEL_RENDERING=1 \
+		-e QGIS_SERVER_MAX_THREADS=2 \
+		-e QGIS_CUSTOM_CONFIG_PATH=/tmp \
+		-e QGIS_AUTH_DB_DIR_PATH=/tmp \
+		g3wsuite/g3w-suite-qgis-oracle:${QGIS_TAG:-final-3_22_7}

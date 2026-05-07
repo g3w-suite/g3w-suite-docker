@@ -1,0 +1,234 @@
+##
+# Unified multi-stage Dockerfile for g3w-suite images.
+#
+# ---------------------------------------------------------------------------
+# STAGE: deps
+# ---------------------------------------------------------------------------
+# Build args:
+#   QGIS_CHANNEL   ubuntu-ltr (default, LTR) | ubuntu (latest)
+#   INSTALL_MSSQL  false (default) | true  – adds MS SQL ODBC driver
+#                  ⚠  By using INSTALL_MSSQL=true you agree to the
+#                     Microsoft END USER LICENSE AGREEMENT (ACCEPT_EULA=Y)
+#
+# Build commands:
+#
+#   # g3wsuite/g3w-suite-deps-ltr:dev
+#   docker build --target deps -t g3wsuite/g3w-suite-deps-ltr:dev .
+#
+#   # g3wsuite/g3w-suite-deps:dev (QGIS latest)
+#   docker build --target deps --build-arg QGIS_CHANNEL=ubuntu -t g3wsuite/g3w-suite-deps:dev .
+#
+#   # g3wsuite/g3w-suite-deps:ltr-mssql
+#   docker build --target deps --build-arg INSTALL_MSSQL=true -t g3wsuite/g3w-suite-deps:ltr-mssql .
+#
+# ---------------------------------------------------------------------------
+# STAGE: suite
+# ---------------------------------------------------------------------------
+# Build args (in addition to those inherited from deps):
+#   G3W_SUITE_BRANCH  dev (default) – g3w-admin git branch to checkout
+#
+# Build command:
+#
+#   docker build --target suite -t g3wsuite/g3w-suite:dev .
+#
+# ---------------------------------------------------------------------------
+# STAGE: qgis-oracle
+# ---------------------------------------------------------------------------
+# NOTE: this stage has a completely different base image and is independent
+#       from the `deps` / `suite` stages above.
+#
+# Build args:
+#   DOCKER_DEPS_TAG  release-3_22 (default) – tag for qgis3-build-deps image
+#   QGIS_TAG         final-3_22_7 (default) – git tag from the QGIS repository
+#
+# Build command (via Makefile or directly):
+#
+#   docker build --target qgis-oracle \
+#     --build-arg DOCKER_DEPS_TAG=release-3_22 \
+#     --build-arg QGIS_TAG=final-3_22_7 \
+#     -t g3wsuite/g3w-suite-qgis-oracle:dev .
+##
+
+
+# ===========================================================================
+# STAGE: deps
+# ===========================================================================
+
+# Global ARGs (available in all FROM instructions)
+ARG QGIS_CHANNEL=ubuntu-ltr
+ARG INSTALL_MSSQL=false
+ARG DOCKER_DEPS_TAG=release-3_22
+
+FROM ubuntu:noble AS deps
+
+ARG QGIS_CHANNEL
+ARG INSTALL_MSSQL
+
+LABEL maintainer="Gis3w" \
+      Description="Image used to prepare build requirements for g3w-suite docker images" \
+      Vendor="Gis3w" \
+      Version="dev"
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN chown root:root /tmp && chmod ugo+rwXt /tmp
+
+# Base system packages
+RUN apt-get update && apt-get install -y \
+    libxml2-dev \
+    libxslt-dev \
+    libgdal-dev \
+    python3-dev \
+    libgdal34t64 \
+    python3-gdal \
+    python3-pip \
+    curl \
+    wait-for-it \
+    gdal-bin \
+    libsqlite3-mod-spatialite \
+    dirmngr \
+    xvfb \
+    postgresql-client
+
+# PyQGIS – channel is controlled by QGIS_CHANNEL build arg:
+#   ubuntu-ltr  → https://qgis.org/ubuntu-ltr  (LTR, default)
+#   ubuntu      → https://qgis.org/ubuntu       (latest)
+RUN curl -L -sS https://download.qgis.org/downloads/qgis-archive-keyring.gpg \
+        > /etc/apt/keyrings/qgis-archive-keyring.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/${QGIS_CHANNEL} noble main" | \
+    tee /etc/apt/sources.list.d/qgis.list && \
+    apt-get update && apt-get install -y python3-qgis qgis-server
+
+# MS SQL ODBC driver (optional – only when INSTALL_MSSQL=true)
+# ⚠  By enabling this you accept the Microsoft EULA (ACCEPT_EULA=Y)
+RUN if [ "${INSTALL_MSSQL}" = "true" ]; then \
+      apt-get install -y tdsodbc libqt5sql5-tds && \
+      curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add && \
+      echo "deb https://packages.microsoft.com/ubuntu/24.04/prod noble main" \
+          >> /etc/apt/sources.list && \
+      apt-get update && ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18; \
+    fi
+
+# Yarn
+RUN curl -L -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | \
+    tee /etc/apt/sources.list.d/yarn.list && \
+    apt-get update && apt-get install -y yarn && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir /code
+
+WORKDIR /code
+
+
+# ===========================================================================
+# STAGE: suite
+# ===========================================================================
+
+FROM deps AS suite
+
+##
+# Based on main CI Docker from g3w-suite, checkout code + caching,
+# custom settings file
+##
+RUN apt-get update && apt-get install -y git figlet && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+##
+# uv package manager
+##
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+##
+# G3W-ADMIN git branch to checkout.
+# Defaults to `dev` but can be set to another branch name to build
+# a particular suite version.
+##
+ARG G3W_SUITE_BRANCH
+
+# Override settings
+ADD requirements_rl.txt /requirements_rl.txt
+
+ADD scripts /scripts
+
+RUN chmod +x /scripts/*.sh
+
+RUN /scripts/setup.sh
+
+CMD ["echo", "Base image for g3w-suite-dev", "&&", "tail", "-f", "/dev/null"]
+
+ENTRYPOINT ["/scripts/docker-entrypoint.sh"]
+
+
+# ===========================================================================
+# STAGE: qgis-oracle
+# ===========================================================================
+# NOTE: this stage is completely independent from `deps` / `suite`.
+#       It compiles QGIS from source with Oracle (OCI) support.
+#       QGIS server binary is /usr/bin/qgis_mapserv.fcgi
+# ===========================================================================
+
+FROM qgis/qgis3-build-deps:${DOCKER_DEPS_TAG} AS qgis-oracle
+
+LABEL maintainer="Alessandro Pasotti <elpaso@itopen.it>" \
+      Description="Docker container with QGIS Server and Oracle support" \
+      Vendor="Gis3W" \
+      Version="3.4.x"
+
+ARG QGIS_TAG=final-3_22_7
+
+ENV LANG=C.UTF-8
+
+# Clone tagged release
+RUN cd / && git clone --depth 1 --branch ${QGIS_TAG} https://github.com/qgis/QGIS.git
+
+# Build server with Oracle support
+RUN cd /QGIS && mkdir build && cd build && \
+    cmake \
+      -GNinja \
+      -DUSE_CCACHE=OFF \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DOCI_INCLUDE_DIR=/instantclient_19_9/sdk/include \
+      -DOCI_LIBRARY=/instantclient_19_9/libclntsh.so \
+      -DWITH_DESKTOP=OFF \
+      -DWITH_ANALYSIS=ON \
+      -DWITH_SERVER=ON \
+      -DWITH_3D=OFF \
+      -DWITH_BINDINGS=ON \
+      -DWITH_CUSTOM_WIDGETS=OFF \
+      -DBINDINGS_GLOBAL_INSTALL=ON \
+      -DWITH_STAGED_PLUGINS=ON \
+      -DWITH_GRASS=OFF \
+      -DWITH_ORACLE=ON \
+      -DSUPPRESS_QT_WARNINGS=ON \
+      -DDISABLE_DEPRECATED=ON \
+      -DENABLE_TESTS=OFF \
+      -DWITH_QSPATIALITE=ON \
+      -DWITH_APIDOC=OFF \
+      -DWITH_ASTYLE=OFF \
+      -DCMAKE_PREFIX_PATH=.. \
+      .. \
+    && ninja install \
+    && cd \
+    && rm -rf /QGIS
+
+# Additional run-time dependencies
+RUN pip3 install jinja2 pygments
+
+# Python paths
+ENV PYTHONPATH=/usr/share/qgis/python/:/usr/share/qgis/python/plugins:/usr/lib/python3/dist-packages/qgis:/usr/share/qgis/python/qgis
+
+# Unprivileged user
+USER www-data
+
+CMD ["/usr/bin/xvfb-run", \
+     "-s", "-ac -screen 0 1280x1024x16 +extension GLX +render -noreset", \
+     "/usr/bin/spawn-fcgi", \
+       "-u", "www-data", \
+       "-g", "www-data", \
+       "-d", "/usr/lib/qgis/", \
+       "-n", \
+       "-p", "9333", \
+       "--", \
+       "/usr/bin/qgis_mapserv.fcgi"]

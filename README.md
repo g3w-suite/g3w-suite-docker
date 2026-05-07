@@ -119,23 +119,54 @@ To enable https with LetsEncrypt::
 
 ## 📦 Docker image
 
-Docker compose will usually download images from: https://hub.docker.com/u/g3wsuite 
+Docker compose will usually download images from: https://hub.docker.com/u/g3wsuite
 
-A custom (local) docker image for the suite can be created with:
+All images are built from the single unified [Dockerfile](./Dockerfile) using **multi-stage builds** controlled by `--target` and build args.
+
+### Suite image (default — QGIS LTR)
 
 ```bash
-docker build -f Dockerfile.g3wsuite.dockerfile -t g3wsuite/g3w-suite:dev --no-cache .
+# via Makefile (recommended)
+make docker-image v=dev
 
-# OPTIONAL:
-# docker build -f Dockerfile.g3wsuite-deps.ltr.dockerfile -t g3wsuite/g3w-suite-deps-ltr:dev --no-cache .
+# or directly
+docker build --target suite -t g3wsuite/g3w-suite:dev --no-cache .
 ```
 
-The image is build on latest Ubuntu and QGIS LTR, following this execution order:
+The image is built on Ubuntu Noble and QGIS LTR, following this execution order:
 
-1. [Dockerfile.g3wsuite-deps.ltr.dockerfile](./Dockerfile.g3wsuite-deps.ltr.dockerfile) ← installs Ubuntu and QGIS LTR
-2. [Dockerfile.g3wsuite.dockerfile](./Dockerfile.g3wsuite.dockerfile)  ← run "setup.sh" and "docker-entrypoint.sh"
-3. [scripts/setup.sh](./scripts/setup.sh) ← install g3w-admin and some other python plugins
-4. [scripts/docker-entrypoint.sh](./scripts/docker-entrypoint.sh) ← start gunicorn
+1. [`Dockerfile` — stage `deps`](./Dockerfile) ← installs Ubuntu and QGIS LTR
+2. [`Dockerfile` — stage `suite`](./Dockerfile) ← runs `setup.sh` and sets `docker-entrypoint.sh`
+3. [`scripts/setup.sh`](./scripts/setup.sh) ← installs g3w-admin and Python plugins
+4. [`scripts/docker-entrypoint.sh`](./scripts/docker-entrypoint.sh) ← starts gunicorn
+
+### Other available build targets
+
+| Target | Makefile shortcut | Description |
+|---|---|---|
+| `deps` | `make docker-image-deps-ltr v=dev` | Ubuntu + QGIS LTR (base layer only) |
+| `deps` + `QGIS_CHANNEL=ubuntu` | `make docker-image-deps v=dev` | Ubuntu + QGIS latest |
+| `deps` + `INSTALL_MSSQL=true` | `make docker-image-deps-mssql v=ltr-mssql` | Ubuntu + QGIS LTR + MS SQL ODBC driver ⚠️ |
+| `qgis-oracle` | `make docker-image-oracle v=dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7` | QGIS Server compiled from source with Oracle support |
+
+> ⚠️ The `INSTALL_MSSQL=true` flag installs the Microsoft ODBC driver. By using it you accept the [Microsoft EULA](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server) (`ACCEPT_EULA=Y`).
+
+### Running the Oracle QGIS Server container
+
+After building the `qgis-oracle` image, start it with:
+
+```sh
+make run-oracle QGIS_TAG=final-3_22_7
+
+# Custom FCGI port:
+# make run-oracle QGIS_TAG=final-3_22_7 QGIS_FCGI_PORT=9334
+```
+
+To verify the server is listening:
+
+```sh
+cgi-fcgi -bind -connect 127.0.0.1:9333
+```
 
 ## 🎨 Style customization
 
@@ -193,7 +224,7 @@ make db-restore ID=foo-backup ENV=prod
 ---
 <sub> \* if necessary, comment out any missing installed modules from [G3WADMIN_LOCAL_MORE_APPS](./config/g3w-suite/settings_docker.py) list and then try again </sub>
 
-<sub> \* if you customize [docker-composev.yml](./docker-compose.yml) (eg. by choosing a specific <code>image: <del>g3wsuite/g3w-suite:dev</del> g3wsuite/g3w-suite:v3.7.x</code>) you then apply them via: `make reload ENV=dev` </sub> 
+<sub> \* if you customize [docker-compose.yml](./docker-compose.yml) (eg. by choosing a specific <code>image: <del>g3wsuite/g3w-suite:dev</del> g3wsuite/g3w-suite:v3.7.x</code>) you then apply them via: `make reload ENV=dev` </sub> 
 
 </details>
 
