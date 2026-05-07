@@ -216,7 +216,6 @@ services:
 
 volumes:
   shared-volume:
-  g3wsuite-pg-data:
   void: # fallback for production (dev mounts)
 
 networks:
