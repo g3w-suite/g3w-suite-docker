@@ -60,11 +60,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: "docker-image-deps-ltr v=ci"
+          - target: "docker-image t=deps-ltr v=ci"
             description: "deps (QGIS LTR)"
-          - target: "docker-image-deps v=ci"
+          - target: "docker-image t=deps v=ci"
             description: "deps (QGIS latest)"
-          - target: "docker-image-deps-mssql v=ci"
+          - target: "docker-image t=deps-mssql v=ci"
             description: "deps (QGIS LTR + MS SQL)"
           - target: "docker-image v=ci"
             description: "suite (app layer, QGIS LTR)"
@@ -84,7 +84,7 @@ jobs:
   # Only runs on manual trigger (workflow_dispatch) — compilation takes ~1-2 hours.
   ##
   build-oracle:
-    name: "make docker-image-oracle"
+    name: "make docker-image t=oracle"
     runs-on: ubuntu-24.04
     if: github.event_name == 'workflow_dispatch'
     steps:
@@ -96,8 +96,9 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: "Build qgis-oracle (QGIS_TAG=${{ inputs.QGIS_TAG }})"
-        run: >
-          make docker-image-oracle
+        run: 
+          make docker-image
+          t=oracle
           v=ci
           QGIS_DEPS_TAG=${{ inputs.QGIS_DEPS_TAG }}
           QGIS_TAG=${{ inputs.QGIS_TAG }}

@@ -108,63 +108,41 @@ renew-ssl:
 	$(DOCKER_COMPOSE) up -d nginx --force-recreate
 
 ##
-# Rebuild docker image (suite stage: app layer on top of deps-ltr)
+# Build a Docker image
+#
+# t = suite (default) | deps | deps-ltr | deps-mssql | oracle
 #
 # make docker-image v=v3.8.x
+# make docker-image t=deps v=dev
+# make docker-image t=deps-ltr v=dev
+# make docker-image t=deps-mssql v=ltr-mssql
+# make docker-image t=oracle v=dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7
 ##
+_DOCKER_STAGE_suite      := suite
+_DOCKER_STAGE_deps-ltr   := deps
+_DOCKER_STAGE_deps       := deps
+_DOCKER_STAGE_deps-mssql := deps
+_DOCKER_STAGE_oracle     := qgis-oracle
+
+_DOCKER_TAG_suite        := g3wsuite/g3w-suite
+_DOCKER_TAG_deps-ltr     := g3wsuite/g3w-suite-deps-ltr
+_DOCKER_TAG_deps         := g3wsuite/g3w-suite-deps
+_DOCKER_TAG_deps-mssql   := g3wsuite/g3w-suite-deps
+_DOCKER_TAG_oracle       := g3wsuite/g3w-suite-qgis-oracle
+
+_DOCKER_ARGS_deps        := --build-arg QGIS_CHANNEL=ubuntu
+_DOCKER_ARGS_deps-mssql  := --build-arg INSTALL_MSSQL=true
+_DOCKER_ARGS_oracle       = $(if $(QGIS_DEPS_TAG),--build-arg DOCKER_DEPS_TAG=$(QGIS_DEPS_TAG)) $(if $(QGIS_TAG),--build-arg QGIS_TAG=$(QGIS_TAG))
+
+t ?= suite
+
 docker-image:
 ifeq ($(v),)
 	$(error v is not set)
 endif
-	docker build --target suite -t g3wsuite/g3w-suite:$(v) --no-cache .
-
-##
-# Build deps image — QGIS LTR (default)
-#
-# make docker-image-deps-ltr v=dev
-##
-docker-image-deps-ltr:
-ifeq ($(v),)
-	$(error v is not set)
-endif
-	docker build --target deps -t g3wsuite/g3w-suite-deps-ltr:$(v) --no-cache .
-
-##
-# Build deps image — QGIS latest
-#
-# make docker-image-deps v=dev
-##
-docker-image-deps:
-ifeq ($(v),)
-	$(error v is not set)
-endif
-	docker build --target deps --build-arg QGIS_CHANNEL=ubuntu -t g3wsuite/g3w-suite-deps:$(v) --no-cache .
-
-##
-# Build deps image — QGIS LTR + MS SQL ODBC driver
-# ⚠  By running this target you accept the Microsoft EULA (ACCEPT_EULA=Y)
-#
-# make docker-image-deps-mssql v=ltr-mssql
-##
-docker-image-deps-mssql:
-ifeq ($(v),)
-	$(error v is not set)
-endif
-	docker build --target deps --build-arg INSTALL_MSSQL=true -t g3wsuite/g3w-suite-deps:$(v) --no-cache .
-
-##
-# Build QGIS Server with Oracle support (independent build chain)
-#
-# make docker-image-oracle v=dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7
-##
-docker-image-oracle:
-ifeq ($(v),)
-	$(error v is not set)
-endif
-	docker build --target qgis-oracle \
-		$(if $(QGIS_DEPS_TAG),--build-arg DOCKER_DEPS_TAG=$(QGIS_DEPS_TAG)) \
-		$(if $(QGIS_TAG),--build-arg QGIS_TAG=$(QGIS_TAG)) \
-		-t g3wsuite/g3w-suite-qgis-oracle:$(v) --no-cache .
+	docker build --target $(_DOCKER_STAGE_$(t)) \
+		$(_DOCKER_ARGS_$(t)) \
+		-t $(_DOCKER_TAG_$(t)):$(v) --no-cache .
 
 ##
 # Run the QGIS Server with Oracle FCGI container

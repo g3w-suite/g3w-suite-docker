@@ -1,7 +1,6 @@
 # G3W-SUITE-DOCKER
 
-[![Build G3W-SUITE image](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push_main_image.yml/badge.svg)](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push_main_image.yml)
-[![Build G3W-SUITE LTR dependencies](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push_deps_ltr.yml/badge.svg)](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push_deps_ltr.yml)
+[![Build G3W-SUITE images](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push.yml/badge.svg)](https://github.com/g3w-suite/g3w-suite-docker/actions/workflows/build_and_push.yml)
 
 Run a self hosted web-gis application with Docker Compose
 
@@ -144,10 +143,10 @@ The image is built on Ubuntu Noble and QGIS LTR, following this execution order:
 
 | Target | Makefile shortcut | Description |
 |---|---|---|
-| `deps` | `make docker-image-deps-ltr v=dev` | Ubuntu + QGIS LTR (base layer only) |
-| `deps` + `QGIS_CHANNEL=ubuntu` | `make docker-image-deps v=dev` | Ubuntu + QGIS latest |
-| `deps` + `INSTALL_MSSQL=true` | `make docker-image-deps-mssql v=ltr-mssql` | Ubuntu + QGIS LTR + MS SQL ODBC driver ⚠️ |
-| `qgis-oracle` | `make docker-image-oracle v=dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7` | QGIS Server compiled from source with Oracle support |
+| `deps` | `make docker-image t=deps-ltr v=dev` | Ubuntu + QGIS LTR (base layer only) |
+| `deps` + `QGIS_CHANNEL=ubuntu` | `make docker-image t=deps v=dev` | Ubuntu + QGIS latest |
+| `deps` + `INSTALL_MSSQL=true` | `make docker-image t=deps-mssql v=ltr-mssql` | Ubuntu + QGIS LTR + MS SQL ODBC driver ⚠️ |
+| `qgis-oracle` | `make docker-image t=oracle v=dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7` | QGIS Server compiled from source with Oracle support |
 
 > ⚠️ The `INSTALL_MSSQL=true` flag installs the Microsoft ODBC driver. By using it you accept the [Microsoft EULA](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server) (`ACCEPT_EULA=Y`).
 
