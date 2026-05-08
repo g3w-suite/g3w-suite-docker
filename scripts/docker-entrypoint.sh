@@ -62,26 +62,28 @@ fi
 
 # DEV MODE: install debugpy
 if [[ "${DEV_MODE,,}" == "true" ]]; then
-  python3 -c "import debugpy" 2>/dev/null || pip3 install debugpy
+  pip3 install debugpy
 fi
-
-# Check Redis is started
-wait-for-it -h ${G3WSUITE_REDIS_HOST:-redis} -p ${G3WSUITE_REDIS_PORT:-6379} -t 30
 
 # DEV MODE: check python requirements
 if  [[ "${DEV_MODE,,}" == "true" ]] && [[ ! -e "/shared-volume/setup_done" ]]; then
   pip3 install -r /code/requirements.txt
 fi
 
-# Build the suite
-/code/ci_scripts/build_suite.sh
-# Setup once
-/code/ci_scripts/setup_suite.sh
+# wait for "redis" container
+wait-for-it -h ${G3WSUITE_REDIS_HOST:-redis} -p ${G3WSUITE_REDIS_PORT:-6379} -t 30  
 
-# DEV MODE: cleanup django database 
+# emit → /shared-volume/build_done
+/code/ci_scripts/build_suite.sh 
+
+# emit → /shared-volume/setup_done
+/code/ci_scripts/setup_suite.sh 
+
+# DEV MODE: cleanup django database
 if [[ "${DEV_MODE,,}" == "true" ]]; then
   python3 /code/g3w-admin/manage.py check_features_locked
   python3 /code/g3w-admin/manage.py delete_unused_files
 fi
 
+# start django app
 gunicorn base.wsgi:application -c /shared-volume/gunicorn.conf.py

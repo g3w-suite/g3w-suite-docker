@@ -1,7 +1,7 @@
 # Override settings for G3W-SUITE docker
 # Destination: /code/g3w-admin/base/settings/local_settings.py
 # Read connection parameters from environment
-import os, sys
+import os, sys, importlib
 from django.conf import settings
 from base import __version__ as version
 
@@ -215,3 +215,20 @@ if os.getenv('DEV_MODE', 'False' ).lower() == 'true':
         "http://localhost:8000",
         "http://127.0.0.1:8000",
     ])
+
+# DEV MODE: pip install --user -e (editable apps)
+if os.getenv('DEV_MODE', 'False').lower() == 'true':
+    for installed_plugins in [os.popen('pip list').read()]:
+        print(f"INSTALLED PLUGINS\n{installed_plugins}")
+        for pip_package in [f for f in os.listdir("/shared-volume/plugins")]:
+            if not pip_package.startswith('.') and not pip_package in installed_plugins:
+                print(f"\n{pip_package}")
+                os.system(f"git config --global --add safe.directory /shared-volume/plugins/{pip_package}")
+                os.system(f"pip install --user -e -v /shared-volume/plugins/{pip_package}")
+
+# DEV MODE: filter only the installed apps
+if os.getenv('DEV_MODE', 'False' ).lower() == 'true':
+    G3WADMIN_LOCAL_MORE_APPS = [app for app, is_installed in {
+        app: importlib.util.find_spec(app) is not None
+        for app in G3WADMIN_LOCAL_MORE_APPS
+    }.items() if is_installed]
