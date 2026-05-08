@@ -29,16 +29,6 @@ fi
 rm -f /tmp/.X99-lock
 Xvfb ${DISPLAY:-:99} -screen 0 640x480x24 -nolisten tcp &
 
-# Activate FRONTEND_APP (local_settings.py)
-if [[ "${FRONTEND,,}" == "true" ]] ; then
-  SETTINGS_LOCKFILE=/shared-volume/.settings.lockfile
-  if [[ ! -f ${SETTINGS_LOCKFILE} ]]; then
-    echo "FRONTEND = True"  >> /code/g3w-admin/base/settings/local_settings.py
-    echo "FRONTEND_APP = 'frontend'" >> /code/g3w-admin/base/settings/local_settings.py
-    touch ${SETTINGS_LOCKFILE}
-  fi
-fi
-
 # TODO: move this into a more appropriate location (eg. g3w-admin ?)
 if [ ! -f /shared-volume/gunicorn.conf.py ] || [[ "${DEV_MODE,,}" == "true" ]]; then
   # 1. inject a custom "gunicorn.conf.py"

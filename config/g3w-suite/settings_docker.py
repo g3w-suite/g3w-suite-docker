@@ -204,6 +204,11 @@ if os.getenv('WEBGIS_PUBLIC_HOSTNAME', None):
         f"http://{os.getenv('WEBGIS_PUBLIC_HOSTNAME', None)}:8080"
     ]
 
+
+# Fallback for: FRONTEND_APP
+FRONTEND = locals().get('FRONTEND', os.getenv('FRONTEND', 'False').lower() == 'true')
+FRONTEND_APP = locals().get('FRONTEND_APP', 'frontend')
+
 # DEV MODE: trust "dev-server" port (8000)
 if os.getenv('DEV_MODE', 'False' ).lower() == 'true':
     CSRF_TRUSTED_ORIGINS.extend([
