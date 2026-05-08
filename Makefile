@@ -32,6 +32,7 @@ G3W_SUITE:= docker compose exec g3w-suite
 ifeq ($(ENV),dev)
   G3WSUITE_LOCAL_CODE_PATH := $(shell grep -E '^G3WSUITE_LOCAL_CODE_PATH=' .env.dev 2>/dev/null | cut -d'=' -f2- | tr -d '[:space:]')
   WEBGIS_DOCKER_SHARED_VOLUME := $(shell grep -E '^WEBGIS_DOCKER_SHARED_VOLUME=' .env.dev 2>/dev/null | cut -d'=' -f2- | tr -d '[:space:]')
+  $(shell rm ./code/plugins)
   $(shell rm -rf ./code)
   $(info $(shell command -v wslpath >/dev/null && cmd.exe /c "mklink /J $$(wslpath -aw "./code") $$(wslpath -aw "$(G3WSUITE_LOCAL_CODE_PATH)")" || ln -s "$(G3WSUITE_LOCAL_CODE_PATH)" ./code))
   $(info $(shell command -v wslpath >/dev/null && cmd.exe /c "mklink /J $$(wslpath -aw "./code/plugins") $$(wslpath -aw "$(WEBGIS_DOCKER_SHARED_VOLUME)/plugins")" || ln -s "$(WEBGIS_DOCKER_SHARED_VOLUME)/plugins" ./code/plugins))
