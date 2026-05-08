@@ -49,15 +49,6 @@ help:
 	@awk '/^##?[[:space:]]/{sub(/^##?[[:space:]]/,""); h=h $$0 "\n"; next} /^[a-zA-Z0-9%_-]+:/ && $$0 !~ /^[a-zA-Z0-9%_-]+:=/{if(h){t=$$1; sub(/:.*/,"",t); if(t!="help"){sub(/\n+$$/,"",h); gsub(/\n/,"\n                     ",h); printf "\033[36m%-20s\033[0m %s\n\n",t,h}}; h=""; next} /^\t/{h=""}' $(MAKEFILE_LIST)
 
 ##
-# ▶️  Start containers
-#
-# make serve ENV=prod
-# make serve ENV=dev
-##
-serve:
-	$(DOCKER_COMPOSE) up -d
-
-##
 # 🔄 Reload compose configuration (force recreation)
 #
 # make reload ENV=prod
