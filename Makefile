@@ -20,6 +20,11 @@ ifeq ($(and $(MAKECMDGOALS),$(filter-out help docker-image,$(MAKECMDGOALS)),$(if
 endif
 
 ##
+# Delegate builds to buildx (for better performance)
+##
+export COMPOSE_BAKE=true
+
+##
 # ENV = { dev | prod }
 ##
 DOCKER_COMPOSE := docker compose --env-file .env $(if $(wildcard .env.$(ENV)),--env-file .env.$(ENV)) -f docker-compose.yml
@@ -55,7 +60,7 @@ help:
 # make reload ENV=dev
 ##
 reload:
-	$(DOCKER_COMPOSE) up -d --force-recreate --remove-orphans
+	$(DOCKER_COMPOSE) up -d --force-recreate --remove-orphans $(if $(filter dev,$(ENV)),--build)
 
 ##
 # 🔑 SSH login

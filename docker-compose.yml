@@ -1,11 +1,14 @@
 ## HOW TO RUN: ##
 #
-# make reload ENV=dev   (for development)
-# make reload ENV=prod  (for production)
+# make reload ENV=dev   (for development → `g3wsuite/g3w-suite:next`)
+# make reload ENV=prod  (for production  → `g3wsuite/g3w-suite:<current_branch>`)
 #
 
 x-g3w-suite: &g3w-suite
-  image: g3wsuite/g3w-suite:dev
+  build:
+    context: ./
+    target: suite
+  image: g3wsuite/g3w-suite:${DEV_IMAGE:-dev}
   restart: "${RESTART_POLICY:-on-failure}"
   environment:
     - BITBUCKET_TOKEN
