@@ -39,7 +39,7 @@ ifeq ($(ENV),dev)
 endif
 
 ##
-# Show available targets
+# 💡 Show available targets
 #
 # make help
 ##
@@ -49,7 +49,16 @@ help:
 	@awk '/^##?[[:space:]]/{sub(/^##?[[:space:]]/,""); h=h $$0 "\n"; next} /^[a-zA-Z0-9%_-]+:/ && $$0 !~ /^[a-zA-Z0-9%_-]+:=/{if(h){t=$$1; sub(/:.*/,"",t); if(t!="help"){sub(/\n+$$/,"",h); gsub(/\n/,"\n                     ",h); printf "\033[36m%-20s\033[0m %s\n\n",t,h}}; h=""; next} /^\t/{h=""}' $(MAKEFILE_LIST)
 
 ##
-# Reload compose configuration
+# ▶️  Start containers
+#
+# make serve ENV=prod
+# make serve ENV=dev
+##
+serve:
+	$(DOCKER_COMPOSE) up -d
+
+##
+# 🔄 Reload compose configuration (force recreation)
 #
 # make reload ENV=prod
 # make reload ENV=dev
@@ -58,7 +67,7 @@ reload:
 	$(DOCKER_COMPOSE) up -d --force-recreate --remove-orphans
 
 ##
-# SSH login
+# 🔑 SSH login
 #
 # make run-g3wsuite ENV=dev
 # make run-postgis ENV=dev
@@ -68,9 +77,9 @@ run-%:
 	docker exec -it $$(docker ps | grep $* | head -1 | awk '{print $$1}') bash
 
 ##
-# Recreate g3w-suite containers
+# 🚨 Nukes your database and reloads demo data
 #
-# make db-reset ENV=dev
+# make deb-reset ENV=dev
 ##
 db-reset:
 	$(DOCKER_COMPOSE) up -d
@@ -83,7 +92,7 @@ db-reset:
 	ENV=$(ENV) ID=demo ./scripts/makefile/db-restore.sh
 
 ##
-# Backup databases
+# 📥 Backup database
 #
 # make db-backup ID=name ENV=dev 
 ##
@@ -91,7 +100,7 @@ db-backup:
 	ENV=$(ENV) ./scripts/makefile/db-backup.sh
 
 ##
-# Restore databases
+# 📤 Restore database
 #
 # make db-restore ID=name ENV=dev 
 ##
@@ -100,7 +109,7 @@ db-restore:
 	ENV=$(ENV) ./scripts/makefile/db-restore.sh
 
 ##
-# Run certbot
+# 🔐 Run certbot
 #
 # make renew-ssl ENV=dev
 ##
@@ -109,7 +118,7 @@ renew-ssl:
 	$(DOCKER_COMPOSE) up -d nginx --force-recreate
 
 ##
-# Build a Docker image
+# 🏗️  Build a docker image
 #
 # t = suite (default) | deps | deps-ltr | deps-mssql | oracle
 #
@@ -146,7 +155,7 @@ endif
 		-t $(_DOCKER_TAG_$(t)):$(v) --no-cache .
 
 ##
-# Run the QGIS Server with Oracle FCGI container
+# 🗺️  Run QGIS Server with Oracle FCGI
 #
 # make run-oracle QGIS_TAG=final-3_22_7
 # make run-oracle QGIS_TAG=final-3_22_7 QGIS_FCGI_PORT=9334
