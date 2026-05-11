@@ -224,7 +224,7 @@ if os.getenv('DEV_MODE', 'False').lower() == 'true':
             if not pip_package.startswith('.') and not pip_package in installed_plugins:
                 print(f"\n{pip_package}")
                 os.system(f"git config --global --add safe.directory /shared-volume/plugins/{pip_package}")
-                os.system(f"pip install --user -e -v /shared-volume/plugins/{pip_package}")
+                os.system(f"uv pip install --user -e -v /shared-volume/plugins/{pip_package}")
 
 # DEV MODE: filter only the installed apps
 if os.getenv('DEV_MODE', 'False' ).lower() == 'true':

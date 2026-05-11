@@ -1,4 +1,10 @@
-# Include base docker requirements from g3w-suite clone
--r requirements_docker.txt
+# DOCKER
+-r /code/requirements_docker.txt
+-r /code/requirements_huey.txt
+
+# PLUGINS
+-r /code/g3w-admin/caching/requirements.txt
+-r /code/g3w-admin/filemanager/requirements.txt
+-r /code/g3w-admin/qplotly/requirements.txt
 
 gunicorn

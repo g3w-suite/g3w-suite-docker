@@ -62,12 +62,12 @@ fi
 
 # DEV MODE: install debugpy
 if [[ "${DEV_MODE,,}" == "true" ]]; then
-  pip3 install debugpy
+  uv pip install --user debugpy
 fi
 
 # DEV MODE: check python requirements
 if  [[ "${DEV_MODE,,}" == "true" ]] && [[ ! -e "/shared-volume/setup_done" ]]; then
-  pip3 install -r /code/requirements.txt
+  uv pip install -r /code/requirements.txt
 fi
 
 # wait for "redis" container
