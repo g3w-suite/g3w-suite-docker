@@ -61,6 +61,9 @@ help:
 ##
 reload:
 	$(DOCKER_COMPOSE) up -d --force-recreate --remove-orphans $(if $(filter dev,$(ENV)),--build)
+ifeq ($(ENV),dev)
+	docker image prune -f
+endif
 
 ##
 # 🔑 SSH login

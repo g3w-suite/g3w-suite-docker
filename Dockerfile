@@ -84,36 +84,34 @@ RUN mkdir /code
 
 WORKDIR /code
 
-
 # ===========================================================================
 # STAGE: suite
 # ===========================================================================
 
 FROM deps AS suite
 
-##
-# Based on main CI Docker from g3w-suite, checkout code + caching,
-# custom settings file
-##
-RUN apt-get update && apt-get install -y git figlet && apt-get clean && rm -rf /var/lib/apt/lists/*
+# G3W-ADMIN branch to checkout.
+ARG G3W_SUITE_BRANCH=dev
 
-##
-# G3W-ADMIN git branch to checkout.
-# Defaults to `dev` but can be set to another branch name to build
-# a particular suite version.
-##
-ARG G3W_SUITE_BRANCH
+COPY requirements_rl.txt /requirements_rl.txt
+COPY scripts/ /scripts/
 
-# Override settings
-ADD requirements_rl.txt /requirements_rl.txt
-
-ADD scripts /scripts
+# update system packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    figlet \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN chmod +x /scripts/*.sh
 
-RUN /scripts/setup.sh
+RUN git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --depth 1 --branch ${G3W_SUITE_BRANCH} .
 
-CMD ["echo", "Base image for g3w-suite-dev", "&&", "tail", "-f", "/dev/null"]
+RUN git submodule add -f https://github.com/g3w-suite/g3w-admin-frontend.git g3w-admin/frontend 
+
+RUN --mount=type=cache,target=/root/.cache/pip pip install --break-system-packages --root-user-action=ignore -r /requirements_rl.txt
+
+CMD ["sh", "-c", "figlet G3W-SUITE && tail -f /dev/null"]
 
 ENTRYPOINT ["/scripts/docker-entrypoint.sh"]
 
