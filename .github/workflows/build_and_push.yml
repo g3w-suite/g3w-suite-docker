@@ -94,6 +94,8 @@ jobs:
           target: suite
           push: true
           tags: g3wsuite/g3w-suite:${{ env.BRANCH_NAME }}
+          build-args: |
+            G3W_SUITE_BRANCH=${{ env.BRANCH_NAME }}
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
