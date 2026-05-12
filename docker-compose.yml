@@ -153,8 +153,6 @@ services:
     ports:
       - "8080:8080"
       - "443:443"
-    expose:
-      - 8080
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known:/var/www/.well-known
@@ -186,16 +184,6 @@ services:
       - g3w-suite
     networks:
       internal:
-
-  # Letsencrypt certs
-
-  # certbot:
-  #   deploy:
-  #     replicas: 1  # 0 = disable service
-  #   image: certbot/certbot
-  #   volumes:
-  #     - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/certbot:/var/www/certbot
-  #     - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt
 
 volumes:
   shared-volume:
