@@ -75,6 +75,11 @@ RUN curl -L -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     apt-get update && apt-get install -y yarn && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+##
+# uv package manager
+##
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
 RUN mkdir /code
 
 WORKDIR /code
@@ -90,13 +95,7 @@ FROM deps AS suite
 # Based on main CI Docker from g3w-suite, checkout code + caching,
 # custom settings file
 ##
-RUN apt-get update && apt-get install -y git figlet && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-##
-# uv package manager
-##
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+RUN apt-get update && apt-get install -y git figlet && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ##
 # G3W-ADMIN git branch to checkout.
