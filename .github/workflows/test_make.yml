@@ -51,7 +51,7 @@ jobs:
         run: docker compose --env-file .env --env-file .env.dev -f docker-compose.yml config --quiet
 
   ##
-  # Build all docker-image-* targets via Makefile.
+  # Build all docker-image targets via Makefile.
   ##
   build:
     name: "make ${{ matrix.target }}"
@@ -60,13 +60,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: "docker-image t=deps-ltr v=ci"
+          - target: "docker-image v=deps-ltr:ci"
             description: "deps (QGIS LTR)"
-          - target: "docker-image t=deps v=ci"
+          - target: "docker-image v=deps:ci"
             description: "deps (QGIS latest)"
-          - target: "docker-image t=deps-mssql v=ci"
+          - target: "docker-image v=deps-mssql:ci"
             description: "deps (QGIS LTR + MS SQL)"
-          - target: "docker-image v=ci"
+          - target: "docker-image v=suite:ci"
             description: "suite (app layer, QGIS LTR)"
     steps:
       -
@@ -84,7 +84,7 @@ jobs:
   # Only runs on manual trigger (workflow_dispatch) — compilation takes ~1-2 hours.
   ##
   build-oracle:
-    name: "make docker-image t=oracle"
+    name: "make docker-image v=oracle:ci"
     runs-on: ubuntu-24.04
     if: github.event_name == 'workflow_dispatch'
     steps:
@@ -98,7 +98,6 @@ jobs:
         name: "Build qgis-oracle (QGIS_TAG=${{ inputs.QGIS_TAG }})"
         run: >
           make docker-image
-          t=oracle
-          v=ci
+          v=oracle:ci
           QGIS_DEPS_TAG=${{ inputs.QGIS_DEPS_TAG }}
           QGIS_TAG=${{ inputs.QGIS_TAG }}

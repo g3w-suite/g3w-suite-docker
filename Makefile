@@ -119,13 +119,18 @@ renew-ssl:
 ##
 # 🏗️  Build a docker image
 #
-# t = suite (default) | deps | deps-ltr | deps-mssql | oracle
+#   make docker-image [v=<stage>:<tag>] [ENV_VARIABLES=value]
 #
-# make docker-image v=v3.8.x
-# make docker-image t=deps v=dev
-# make docker-image t=deps-ltr v=dev
-# make docker-image t=deps-mssql v=ltr-mssql
-# make docker-image t=oracle v=dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7
+# Valid Stages (v):
+#   suite (default), deps, deps-ltr, deps-mssql, oracle
+#
+# Examples:
+#   make docker-image                             # Default (suite:dev)
+#   make docker-image v=suite:v3.8.x              # Specific suite tag
+#   make docker-image v=deps:dev                  # Dev dependencies
+#   make docker-image v=deps-ltr:dev              # LTR dev dependencies
+#   make docker-image v=deps-mssql:ltr-mssql      # MS SQL dependencies
+#   make docker-image v=oracle:dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7
 ##
 _DOCKER_STAGE_suite      := suite
 _DOCKER_STAGE_deps-ltr   := deps
@@ -143,15 +148,14 @@ _DOCKER_ARGS_deps        := --build-arg QGIS_CHANNEL=ubuntu # ubuntu (latest) | 
 _DOCKER_ARGS_deps-mssql  := --build-arg INSTALL_MSSQL=true  # adds MS SQL ODBC driver ⚠  By using INSTALL_MSSQL=true you agree to the Microsoft END USER LICENSE AGREEMENT (ACCEPT_EULA=Y)
 _DOCKER_ARGS_oracle       = $(if $(QGIS_DEPS_TAG),--build-arg DOCKER_DEPS_TAG=$(QGIS_DEPS_TAG)) $(if $(QGIS_TAG),--build-arg QGIS_TAG=$(QGIS_TAG))
 
-t ?= suite
+v     ?= suite
+stage := $(word 1,$(subst :, ,$(v)))
+tag   := $(if $(findstring :,$(v)),$(word 2,$(subst :, ,$(v))),dev)
 
 docker-image:
-ifeq ($(v),)
-	$(error v is not set)
-endif
-	docker build --target $(_DOCKER_STAGE_$(t)) \
-		$(_DOCKER_ARGS_$(t)) \
-		-t $(_DOCKER_TAG_$(t)):$(v) --no-cache .
+	docker build --target $(_DOCKER_STAGE_$(stage)) \
+		$(_DOCKER_ARGS_$(stage)) \
+		-t $(_DOCKER_TAG_$(stage)):$(tag) --no-cache .
 
 ##
 # 🗺️  Run QGIS Server with Oracle FCGI
