@@ -13,7 +13,6 @@ x-g3w-suite: &g3w-suite
   environment:
     - BITBUCKET_TOKEN
     - DEV_MODE=${DEV_MODE:-False}
-    - DISPLAY=:99
     - FRONTEND
     - G3WSUITE_ADMIN_USERNAME
     - G3WSUITE_ADMIN_PASSWORD
@@ -27,23 +26,13 @@ x-g3w-suite: &g3w-suite
     - G3WSUITE_POSTGRES_PASS
     - G3WSUITE_POSTGRES_HOST
     - G3WSUITE_POSTGRES_PORT
+    - G3WSUITE_RUN_HUEY
     - G3WSUITE_TILECACHE_PATH
     - PGSERVICEFILE
-    - G3WSUITE_RUN_HUEY
-    - QGIS_OPTIONS_PATH=/shared-volume/
-    - QGIS_SERVER_LOG_FILE
-    - QGIS_SERVER_LOG_LEVEL
-    - QGIS_SERVER_PARALLEL_RENDERING=1
     - TILESTACHE_CACHE_BUFFER_SIZE
     - TILESTACHE_CACHE_TOKEN
     - WEBGIS_PUBLIC_HOSTNAME=${WEBGIS_PUBLIC_HOSTNAME:-localhost}
     - WEBGIS_ADMIN_EMAIL=${WEBGIS_ADMIN_EMAIL:-info@gis3w.it}
-    - UV_BREAK_SYSTEM_PACKAGES=1
-    - UV_SYSTEM_PYTHON=1
-    - PIP_BREAK_SYSTEM_PACKAGES=1
-    - PIP_ROOT_USER_ACTION=ignore
-    - DEB_PYTHON_INSTALL_LAYOUT=deb_system
-    - GIT_CONFIG_PARAMETERS='safe.directory=/code' 'safe.directory=/shared-volume/plugins/*'
   volumes:
     - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
     - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules

@@ -30,9 +30,29 @@ LABEL maintainer="Gis3w" \
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# hotfix for Python 11: https://stackoverflow.com/a/76469774
+ENV UV_BREAK_SYSTEM_PACKAGES=1
+ENV UV_SYSTEM_PYTHON=1
+ENV PIP_BREAK_SYSTEM_PACKAGES=1
+ENV PIP_ROOT_USER_ACTION=ignore
+ENV DEB_PYTHON_INSTALL_LAYOUT=deb_system
+
+# cache for local plugins
+ENV PYTHONUSERBASE=/code/plugins/.cache
+ENV PATH="/code/plugins/.cache/bin:${PATH}"
+ENV GIT_CONFIG_PARAMETERS="'safe.directory=/code' 'safe.directory=/code/plugins/*'"
+
+# 🗺️ [QGIS Server](https://docs.qgis.org/3.40/en/docs/server_manual/config.html#environment-variables)
+ENV QGIS_OPTIONS_PATH=/shared-volume/
+ENV QGIS_SERVER_LOG_FILE=/shared-volume/QGIS/error.log
+ENV QGIS_SERVER_LOG_LEVEL=2
+ENV QGIS_SERVER_PARALLEL_RENDERING=1
+
+ENV DISPLAY=:99
+
 RUN chown root:root /tmp && chmod ugo+rwXt /tmp
 
-# Base system packages
+# update system packages
 RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libxslt-dev \
@@ -47,7 +67,9 @@ RUN apt-get update && apt-get install -y \
     libsqlite3-mod-spatialite \
     dirmngr \
     xvfb \
-    postgresql-client
+    postgresql-client \
+    git \
+    figlet
 
 # PyQGIS – channel is controlled by QGIS_CHANNEL build arg:
 #   ubuntu-ltr  → https://qgis.org/ubuntu-ltr  (LTR, default)
@@ -68,16 +90,14 @@ RUN if [ "${INSTALL_MSSQL}" = "true" ]; then \
       apt-get update && ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18; \
     fi
 
-# Yarn
+# yarn (package manager)
 RUN curl -L -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | \
     tee /etc/apt/sources.list.d/yarn.list && \
     apt-get update && apt-get install -y yarn && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-##
-# uv package manager
-##
+# uv (package manager)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 RUN mkdir /code
@@ -93,23 +113,22 @@ FROM deps AS suite
 # G3W-ADMIN branch to checkout.
 ARG G3W_SUITE_BRANCH=dev
 
-COPY requirements_rl.txt /requirements_rl.txt
-COPY scripts/ /scripts/
-
 # update system packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git \
-    figlet \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN chmod +x /scripts/*.sh
-
+# import g3w-admin
 RUN git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --depth 1 --branch ${G3W_SUITE_BRANCH} .
+RUN git submodule add -f https://github.com/g3w-suite/g3w-admin-frontend.git g3w-admin/frontend
 
-RUN git submodule add -f https://github.com/g3w-suite/g3w-admin-frontend.git g3w-admin/frontend 
+# update python packages
+COPY requirements_rl.txt /requirements_rl.txt
+RUN --mount=type=cache,target=/root/.cache/pip pip install -r /requirements_rl.txt
 
-RUN --mount=type=cache,target=/root/.cache/pip pip install --break-system-packages --root-user-action=ignore -r /requirements_rl.txt
+# import scripts
+COPY scripts/ /scripts/
+RUN chmod +x /scripts/*.sh
 
 CMD ["sh", "-c", "figlet G3W-SUITE && tail -f /dev/null"]
 
