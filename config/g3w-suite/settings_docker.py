@@ -210,24 +210,14 @@ FRONTEND = locals().get('FRONTEND', os.getenv('FRONTEND', 'False').lower() == 't
 FRONTEND_APP = locals().get('FRONTEND_APP', 'frontend')
 
 # DEV MODE: trust "dev-server" port (8000)
-if os.getenv('DEV_MODE', 'False' ).lower() == 'true':
+if os.getenv('DEV_MODE', 'False').lower() == 'true':
     CSRF_TRUSTED_ORIGINS.extend([
         "http://localhost:8000",
         "http://127.0.0.1:8000",
     ])
 
-# DEV MODE: pip install --user -e (editable apps)
-if os.getenv('DEV_MODE', 'False').lower() == 'true':
-    for installed_plugins in [os.popen('pip list').read()]:
-        print(f"INSTALLED PLUGINS\n{installed_plugins}")
-        for pip_package in [f for f in os.listdir("/shared-volume/plugins")]:
-            if not pip_package.startswith('.') and not pip_package in installed_plugins:
-                print(f"\n{pip_package}")
-                os.system(f"git config --global --add safe.directory /shared-volume/plugins/{pip_package}")
-                os.system(f"uv pip install --user -e -v /shared-volume/plugins/{pip_package}")
-
 # DEV MODE: filter only the installed apps
-if os.getenv('DEV_MODE', 'False' ).lower() == 'true':
+if os.getenv('DEV_MODE', 'False').lower() == 'true':
     G3WADMIN_LOCAL_MORE_APPS = [app for app, is_installed in {
         app: importlib.util.find_spec(app) is not None
         for app in G3WADMIN_LOCAL_MORE_APPS

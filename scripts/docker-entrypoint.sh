@@ -62,12 +62,18 @@ fi
 
 # DEV MODE: install debugpy
 if [[ "${DEV_MODE,,}" == "true" ]]; then
-  uv pip install --user debugpy
+  uv pip install debugpy
 fi
 
 # DEV MODE: check python requirements
 if  [[ "${DEV_MODE,,}" == "true" ]] && [[ ! -e "/shared-volume/setup_done" ]]; then
   uv pip install -r /code/requirements.txt
+  uv pip install --user -v -r <(
+    find -L /code/plugins -maxdepth 1 -mindepth 1 -not -path '*/.*' -type d | while read -r path; do
+      git config --global --add safe.directory "$path"
+      echo "-e $path"
+    done
+  )
 fi
 
 # wait for "redis" container
