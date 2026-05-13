@@ -10,6 +10,8 @@ x-g3w-suite: &g3w-suite
     target: suite
   image: g3wsuite/g3w-suite:${DEV_IMAGE:-dev}
   restart: "${RESTART_POLICY:-on-failure}"
+  cap_add:
+    - ${SYS_PTRACE:-NET_BIND_SERVICE} # DEV MODE: allow "sys_ptrace" 
   environment:
     - BITBUCKET_TOKEN
     - DEV_MODE=${DEV_MODE:-False}

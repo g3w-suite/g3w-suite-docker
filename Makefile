@@ -108,6 +108,22 @@ db-restore:
 	ENV=$(ENV) ./scripts/makefile/db-restore.sh
 
 ##
+# 🧠 Memory profiling with memray (live attach to running gunicorn worker)
+#
+# make memray ENV=dev
+##
+memray:
+	docker compose exec -it g3w-suite bash -c "\
+		mkdir -p /shared-volume/memray && \
+		MASTER_PID=\$$(ps -ef | grep gunicorn | grep -v grep | awk '{print \$$3, \$$2}' | sort -n | head -n1 | awk '{print \$$2}') && \
+		WORKER_PID=\$$(ps -ef | grep gunicorn | grep -v grep | awk -v master=\$$MASTER_PID '\$$3 == master {print \$$2}' | head -n1) && \
+		echo -e \"\nAttaching Worker with PID: \$$WORKER_PID for 10s \" && \
+		memray attach \$$WORKER_PID --output /shared-volume/memray/live.bin  --duration 10 --force && \
+		sleep 10 && \
+		memray summary /shared-volume/memray/live.bin && \
+		rm -f /shared-volume/memray/live.bin"
+
+##
 # 🔐 Run certbot
 #
 # make renew-ssl ENV=dev
