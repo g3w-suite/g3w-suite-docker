@@ -60,20 +60,22 @@ reload = DEBUG
 EOF
 fi
 
-# DEV MODE: install debugpy
-if [[ "${DEV_MODE,,}" == "true" ]]; then
-  uv pip install debugpy
-fi
-
 # DEV MODE: check python requirements
-if  [[ "${DEV_MODE,,}" == "true" ]] && [[ ! -e "/shared-volume/setup_done" ]]; then
-  uv pip install -r /code/requirements.txt
-  uv pip install --user -v -r <(
-    find -L /code/plugins -maxdepth 1 -mindepth 1 -not -path '*/.*' -type d | while read -r path; do
+if  [[ "${DEV_MODE,,}" == "true" ]]; then
+  pkgs=("-r" "/code/requirements.txt")
+  # local plugins (editable install)
+  for path in /shared-volume/plugins/*; do
+    [[ -e "$path" && ! "$path" =~ /\.[^/]*$ ]] || continue
+    if [[ -d "$path" ]]; then
       git config --global --add safe.directory "$path"
-      echo "-e $path"
-    done
-  )
+      # HOTFIX: for invalid specifier
+      if [[ -f "$path/pyproject.toml" ]]; then
+        sed -i 's/Development Status :: 3 - Beta/Development Status :: 4 - Beta/g' "$path/pyproject.toml"
+      fi
+      pkgs+=("-e" "$path")
+    fi
+  done
+  uv pip install -v "${pkgs[@]}"
 fi
 
 # wait for "redis" container

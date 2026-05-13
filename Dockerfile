@@ -2,11 +2,11 @@
 #
 # Multi-stage Dockerfile for g3w-suite images:
 #
-#  make docker-image t=deps-ltr v=dev                                                 → g3wsuite/g3w-suite-deps-ltr:dev    (QGIS LTR)
-#  make docker-image t=deps v=dev                                                     → g3wsuite/g3w-suite-deps:dev        (QGIS latest)
-#  make docker-image t=deps-mssql v=ltr-mssql                                         → g3wsuite/g3w-suite-deps:ltr-mssql  (QGIS latest + Microsoft SQL Server)
-#  make docker-image t=suite v=dev                                                    → g3wsuite/g3w-suite:dev             (G3W-SUITE dev) 
-#  make docker-image t=oracle v=dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7  → qgis/qgis3-build-deps:release-3_22 (QGIS + Oracle support)
+#  make docker-image v=deps-ltr:dev                                                 → g3wsuite/g3w-suite-deps-ltr:dev    (QGIS LTR)
+#  make docker-image v=deps:dev                                                     → g3wsuite/g3w-suite-deps:dev        (QGIS latest)
+#  make docker-image v=deps-mssql:ltr-mssql                                         → g3wsuite/g3w-suite-deps:ltr-mssql  (QGIS latest + Microsoft SQL Server)
+#  make docker-image v=suite:dev                                                    → g3wsuite/g3w-suite:dev             (G3W-SUITE dev) 
+#  make docker-image v=oracle:dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7  → qgis/qgis3-build-deps:release-3_22 (QGIS + Oracle support)
 #
 
 # ===========================================================================
@@ -33,13 +33,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 # hotfix for Python 11: https://stackoverflow.com/a/76469774
 ENV UV_BREAK_SYSTEM_PACKAGES=1
 ENV UV_SYSTEM_PYTHON=1
+ENV UV_OVERRIDE=/requirements_uv.txt
+ENV UV_NO_BUILD_ISOLATION=1
 ENV PIP_BREAK_SYSTEM_PACKAGES=1
 ENV PIP_ROOT_USER_ACTION=ignore
 ENV DEB_PYTHON_INSTALL_LAYOUT=deb_system
 
-# cache for local plugins
-ENV PYTHONUSERBASE=/code/plugins/.cache
-ENV PATH="/code/plugins/.cache/bin:${PATH}"
 ENV GIT_CONFIG_PARAMETERS="'safe.directory=/code' 'safe.directory=/code/plugins/*'"
 
 # 🗺️ [QGIS Server](https://docs.qgis.org/3.40/en/docs/server_manual/config.html#environment-variables)
@@ -124,7 +123,9 @@ RUN git submodule add -f https://github.com/g3w-suite/g3w-admin-frontend.git g3w
 
 # update python packages
 COPY requirements_rl.txt /requirements_rl.txt
-RUN --mount=type=cache,target=/root/.cache/pip pip install -r /requirements_rl.txt
+COPY requirements_uv.txt /requirements_uv.txt
+RUN --mount=type=cache,target=/root/.cache/uv uv pip install setuptools poetry        # for legacy packages ("tilestache" and "django-huey-monitor")
+RUN --mount=type=cache,target=/root/.cache/uv uv pip install -r /requirements_rl.txt
 
 # import scripts
 COPY scripts/ /scripts/

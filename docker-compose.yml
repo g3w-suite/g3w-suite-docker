@@ -43,6 +43,7 @@ x-g3w-suite: &g3w-suite
     - ./config/qgis/QGIS3.ini:/shared-volume/QGIS/QGIS3.ini
     - "${SCRIPTS_VOLUME:-void:/void}" # DEV MODE: hot reload for "/scripts" folder
     - "${CODE_VOLUME:-void:/void}"    # DEV MODE: hot reload for "/code" folder
+    - uv_cache:/root/.cache/uv
   logging: &g3w-suite-logging
     driver: "json-file"
     options:
@@ -176,6 +177,7 @@ services:
 
 volumes:
   shared-volume:
+  uv_cache:
   void: # fallback for production (dev mounts)
 
 networks:

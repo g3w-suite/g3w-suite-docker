@@ -8,3 +8,7 @@
 -r /code/g3w-admin/qplotly/requirements.txt
 
 gunicorn
+
+# DEBUG
+debugpy
+memray
