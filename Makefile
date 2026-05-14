@@ -108,22 +108,6 @@ db-restore:
 	ENV=$(ENV) ./scripts/makefile/db-restore.sh
 
 ##
-# 🧠 Memory profiling with memray (live attach to running gunicorn worker)
-#
-# make memray ENV=dev
-##
-memray:
-	docker compose exec -it g3w-suite bash -c "\
-		mkdir -p /shared-volume/memray && \
-		MASTER_PID=\$$(ps -ef | grep gunicorn | grep -v grep | awk '{print \$$3, \$$2}' | sort -n | head -n1 | awk '{print \$$2}') && \
-		WORKER_PID=\$$(ps -ef | grep gunicorn | grep -v grep | awk -v master=\$$MASTER_PID '\$$3 == master {print \$$2}' | head -n1) && \
-		echo -e \"\nAttaching Worker with PID: \$$WORKER_PID for 10s \" && \
-		memray attach \$$WORKER_PID --output /shared-volume/memray/live.bin  --duration 10 --force && \
-		sleep 10 && \
-		memray summary /shared-volume/memray/live.bin && \
-		rm -f /shared-volume/memray/live.bin"
-
-##
 # 🔐 Run certbot
 #
 # make renew-ssl ENV=dev
@@ -131,6 +115,23 @@ memray:
 renew-ssl:
 	ENV=$(ENV) ./scripts/makefile/renew-ssl.sh
 	$(DOCKER_COMPOSE) up -d nginx --force-recreate
+
+##
+# 🧠 Memory profiling with memray (live attach to running gunicorn worker)
+#
+# make memray ENV=dev
+##
+memray:
+	docker compose exec -it g3w-suite bash -c "/scripts/makefile/memray.sh"
+
+##
+# 🚀 Stress test with oha (2 simultaneous connections, 200 total requests)
+#
+# make stress ENV=dev
+##
+stress:
+	@echo "Running stress test with Oha (2 simultaneous connections, 200 total requests)..."
+	docker run --rm -it --network=g3w-suite-docker_internal ghcr.io/hatoo/oha -c 2 -n 200 http://g3w-suite:8000/
 
 ##
 # 🏗️  Build a docker image
