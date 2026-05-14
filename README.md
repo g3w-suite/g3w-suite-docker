@@ -11,22 +11,18 @@ Run a self hosted web-gis application with Docker Compose
 To upgrade your containers (eg. `v3.10.x` → `v3.11.x`):
 
 ```sh
-# NB:
-# • (ENV = dev)      → .env + .env.dev
-# • (ENV = prod)     → .env
-
 ### BACKUP (v3.10.x) ###
 
-make reload ENV=prod
+make prod reload
 
 git fetch
 git checkout v3.11.x
 
-make db-backup ID=310 ENV=prod
+make db-backup ID=310
 
 ### RESTORE (v3.11.x) ###
 
-make db-restore ID=310 ENV=prod
+make db-restore ID=310
 
 ### OPTIONAL (delete old DB) ###
 
@@ -64,7 +60,7 @@ Create a `.env` file starting from [`.env.example`](./.env.example) and tailor i
 And then start containers:
 
 ```sh
-docker-compose up -d
+make prod reload
 ```
 
 **NB:** at the very first start, have a lot of patience 😴 → the system must finalize the installation. \*
@@ -79,7 +75,7 @@ After some time the suite will be available at:
 
 ```sh
 # 🚨 deletes all data
-make db-reset ENV=prod
+make db-reset
 ```
 
 ## 💻 How to access into a container 
@@ -87,11 +83,11 @@ make db-reset ENV=prod
 1. login into a service
 
 ```sh
-$ make run-postgis ENV=prod
+$ make run-postgis
 
-# make run-g3w-suite ENV=prod
-# make run-nginx ENV=prod
-# make run-redis ENV=prod
+# make run-g3w-suite
+# make run-nginx
+# make run-redis
 ```
 
 2. perform your administrative tasks (eg. connect to postgis as "postgres" user):
@@ -118,52 +114,47 @@ To enable https with LetsEncrypt::
 
 ## 📦 Docker image
 
-Docker compose will usually download images from: https://hub.docker.com/u/g3wsuite
-
-All images are built from the single unified [Dockerfile](./Dockerfile) using **multi-stage builds** controlled by `--target` and build args.
-
-### Suite image (default — QGIS LTR)
+Docker images are built using a **multi-stage** [Dockerfile](./Dockerfile):
 
 ```bash
 # via Makefile (recommended)
-make docker-image v=dev
+make docker-image v=suite:dev
 
 # or directly
 docker build --target suite -t g3wsuite/g3w-suite:dev --no-cache .
+
+# Available build targets
+#
+#   make docker-image                             # Default image (suite:dev)
+#   make docker-image v=suite:v3.8.x              # Custom image (<stage>:<tag>)
+#   make docker-image v=deps:dev                  # Ubuntu + QGIS latest
+#   make docker-image v=deps-ltr:dev              # Ubuntu + QGIS LTR
+#   make docker-image v=deps-mssql:ltr-mssql      # Ubuntu + QGIS LTR + MS SQL ODBC driver ⚠️
+#   make docker-image v=oracle:dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7 # QGIS Server compiled from source with Oracle support
 ```
 
-The image is built on Ubuntu Noble and QGIS LTR, following this execution order:
+### Running the MS SQL ODBC container
 
-1. [`Dockerfile` — stage `deps`](./Dockerfile) ← installs Ubuntu and QGIS LTR
-2. [`Dockerfile` — stage `suite`](./Dockerfile) ← runs `setup.sh` and sets `docker-entrypoint.sh`
-3. [`scripts/setup.sh`](./scripts/setup.sh) ← installs g3w-admin and Python plugins
-4. [`scripts/docker-entrypoint.sh`](./scripts/docker-entrypoint.sh) ← starts gunicorn
+⚠️ By using it you accept the [Microsoft EULA](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server).
 
-### Other available build targets
+```sh
+# build image
+make docker-image v=deps-mssql:ltr-mssql
 
-| Target | Makefile shortcut | Description |
-|---|---|---|
-| `deps` | `make docker-image t=deps-ltr v=dev` | Ubuntu + QGIS LTR (base layer only) |
-| `deps` + `QGIS_CHANNEL=ubuntu` | `make docker-image t=deps v=dev` | Ubuntu + QGIS latest |
-| `deps` + `INSTALL_MSSQL=true` | `make docker-image t=deps-mssql v=ltr-mssql` | Ubuntu + QGIS LTR + MS SQL ODBC driver ⚠️ |
-| `qgis-oracle` | `make docker-image t=oracle v=dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7` | QGIS Server compiled from source with Oracle support |
-
-> ⚠️ The `INSTALL_MSSQL=true` flag installs the Microsoft ODBC driver. By using it you accept the [Microsoft EULA](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server) (`ACCEPT_EULA=Y`).
+# start server
+make reload
+```
 
 ### Running the Oracle QGIS Server container
 
-After building the `qgis-oracle` image, start it with:
-
 ```sh
-make run-oracle QGIS_TAG=final-3_22_7
+# build image
+make docker-image v=oracle:dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7
 
-# Custom FCGI port:
-# make run-oracle QGIS_TAG=final-3_22_7 QGIS_FCGI_PORT=9334
-```
+# start server
+make run-oracle QGIS_TAG=final-3_22_7 QGIS_FCGI_PORT=9333
 
-To verify the server is listening:
-
-```sh
+# check fcgi-server
 cgi-fcgi -bind -connect 127.0.0.1:9333
 ```
 
@@ -196,14 +187,10 @@ Plese refer to the [Add new stack](https://docs.portainer.io/user/docker/stacks/
 ## ♻️ Database backup / restore
 
 ```sh
-# NB:
-# • (ENV = dev)      → .env + .env.dev
-# • (ENV = prod)     → .env
+make prod reload
 
-make reload ENV=prod
-
-make db-backup ID=foo-backup ENV=prod
-make db-restore ID=foo-backup ENV=prod
+make db-backup ID=foo-backup
+make db-restore ID=foo-backup
 ```
 
 ## 🛠️ Developers
@@ -216,14 +203,14 @@ make db-restore ID=foo-backup ENV=prod
    * set `G3WSUITE_DEBUG=True`;
    * set `G3WSUITE_LOCAL_CODE_PATH=../g3w-admin` (path to your local G3W-ADMIN repository).
 
-2. Run `make reload ENV=dev`, if all went well: \*
+2. Run `make dev reload`, if all went well: \*
    * G3W-SUITE is running in development mode on http://127.0.0.1:8000
    * G3W-ADMIN is available at [`./code`](./code)
 
 ---
 <sub> \* if necessary, comment out any missing installed modules from [G3WADMIN_LOCAL_MORE_APPS](./config/g3w-suite/settings_docker.py) list and then try again </sub>
 
-<sub> \* if you customize [docker-compose.yml](./docker-compose.yml) (eg. by choosing a specific <code>image: <del>g3wsuite/g3w-suite:dev</del> g3wsuite/g3w-suite:v3.7.x</code>) you then apply them via: `make reload ENV=dev` </sub> 
+<sub> \* if you customize [docker-compose.yml](./docker-compose.yml) (eg. by choosing a specific <code>image: <del>g3wsuite/g3w-suite:dev</del> g3wsuite/g3w-suite:v3.7.x</code>) you then apply them via: `make reload` </sub> 
 
 </details>
 
@@ -232,14 +219,14 @@ make db-restore ID=foo-backup ENV=prod
 
 ```
 # 🚨 deletes all data
-make db-restore ID=demo ENV=dev
+make db-restore ID=demo
 
 # or (a custom backup):
 
-# make db-backup  ID=foo-backup ENV=dev
-# make db-restore ID=demo       ENV=dev
+# make db-backup  ID=foo-backup
+# make db-restore ID=demo
 # ...
-# make db-restore ID=foo-backup ENV=dev
+# make db-restore ID=foo-backup
 ```
 
 </details>
@@ -256,7 +243,7 @@ Below you can find some sample plugins from which to take inspiration:
 For example, installing a plugin within the docker container (editable mode):
 
 ```
-make run-g3w-suite ENV=dev
+make run-g3w-suite
 mkdir -p /shared-volume/plugins
 git clone https://github.com/g3w-suite/g3w-admin-ps-timeseries
 pip3 install -v -e /shared-volume/plugins/qps_timeseries
@@ -324,7 +311,7 @@ G3WADMIN_LOCAL_MORE_APPS = [
 Reload the containers: 
 
 ```bash
-    make reload ENV=dev
+    make dev reload
 ```
 
 </details>
@@ -337,7 +324,7 @@ Reload the containers:
 2. Start containers in development mode:
 
 ```bash
-    make reload ENV=dev # symlinks `G3WSUITE_LOCAL_CODE_PATH` → `./code` and enables live reload
+    make dev reload # symlinks `G3WSUITE_LOCAL_CODE_PATH` → `./code` and enables live reload
 ```
 
 3. Start the built-in debugger ([`Run and Debug > G3W-SUITE-DOCKER: Debugger`](.vscode\launch.json))

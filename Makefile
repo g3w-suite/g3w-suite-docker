@@ -1,3 +1,5 @@
+-include Makefile.env
+
 .DEFAULT_GOAL := help
 
 ##
@@ -5,6 +7,20 @@
 ##
 ifeq ($(OS), Windows_NT)
   $(error make.exe not supported, please try again within a WSL shell: https://docs.docker.com/desktop/wsl/#enabling-docker-support-in-wsl-2-distros)
+endif
+
+ENV ?= dev
+
+##
+# Update Makefile.env (when running: "make prod", "make dev") 
+##
+# Extract ENV from 1. Se l'utente ha digitato dev o prod, estrai il valore e aggiorna ENV
+ifneq ($(filter dev prod,$(MAKECMDGOALS)),)
+  ENV := $(firstword $(filter dev prod,$(MAKECMDGOALS)))
+  $(info )
+  $(info $(if $(filter dev,$(ENV)),[33m🛠️  DEV,[31m🚀 PROD)[0m environment)
+  $(info )
+  $(shell echo "ENV=$(ENV)" > Makefile.env)
 endif
 
 ##
@@ -54,10 +70,27 @@ help:
 	@awk '/^##?[[:space:]]/{sub(/^##?[[:space:]]/,""); h=h $$0 "\n"; next} /^[a-zA-Z0-9%_-]+:/ && $$0 !~ /^[a-zA-Z0-9%_-]+:=/{if(h){t=$$1; sub(/:.*/,"",t); if(t!="help"){sub(/\n+$$/,"",h); gsub(/\n/,"\n                     ",h); printf "\033[36m%-20s\033[0m %s\n\n",t,h}}; h=""; next} /^\t/{h=""}' $(MAKEFILE_LIST)
 
 ##
+# 🌐 Switch to DEV environment
+#
+# make dev
+##
+dev:
+	@:
+
+##
+# 🌐 Switch to PROD environment
+#
+# make prod
+##
+prod:
+	@:
+
+##
 # 🔄 Reload compose configuration (force recreation)
 #
-# make reload ENV=prod
-# make reload ENV=dev
+# make      reload
+# make dev  reload
+# make prod reload
 ##
 reload:
 	$(DOCKER_COMPOSE) up -d --force-recreate --remove-orphans $(if $(filter dev,$(ENV)),--build)
@@ -68,8 +101,8 @@ endif
 ##
 # 🔑 SSH login
 #
-# make run-g3wsuite ENV=dev
-# make run-postgis ENV=dev
+# make run-g3wsuite
+# make run-postgis
 ##
 run-%:
 	$(DOCKER_COMPOSE) start $*
@@ -78,7 +111,7 @@ run-%:
 ##
 # 🚨 Nukes your database and reloads demo data
 #
-# make deb-reset ENV=dev
+# make db-reset
 ##
 db-reset:
 	$(DOCKER_COMPOSE) up -d
@@ -93,7 +126,7 @@ db-reset:
 ##
 # 📥 Backup database
 #
-# make db-backup ID=name ENV=dev 
+# make db-backup ID=name
 ##
 db-backup:
 	ENV=$(ENV) ./scripts/makefile/db-backup.sh
@@ -101,7 +134,7 @@ db-backup:
 ##
 # 📤 Restore database
 #
-# make db-restore ID=name ENV=dev 
+# make db-restore ID=name
 ##
 db-restore:
 	$(DOCKER_COMPOSE) up -d --force-recreate
@@ -110,7 +143,7 @@ db-restore:
 ##
 # 🔐 Run certbot
 #
-# make renew-ssl ENV=dev
+# make renew-ssl
 ##
 renew-ssl:
 	ENV=$(ENV) ./scripts/makefile/renew-ssl.sh
@@ -119,7 +152,7 @@ renew-ssl:
 ##
 # 🧠 Memory profiling with memray (live attach to running gunicorn worker)
 #
-# make memray ENV=dev
+# make memray
 ##
 memray:
 	docker compose exec -it g3w-suite bash -c "/scripts/makefile/memray.sh"
@@ -127,7 +160,7 @@ memray:
 ##
 # 🚀 Stress test with oha (2 simultaneous connections, 200 total requests)
 #
-# make stress ENV=dev
+# make stress
 ##
 stress:
 	@echo "Running stress test with Oha (2 simultaneous connections, 200 total requests)..."

@@ -33,10 +33,10 @@ memray detach $WORKER_PID
 if [ -f "$OUTPUT_BIN" ]; then
   echo -e "\n=== ALLOCATION TREE (Peak Memory) ==="
   memray tree $OUTPUT_BIN
-  
+
   echo -e "\nPress ENTER to display the full summary table..."
   read -r
-  
+
   memray summary $OUTPUT_BIN
   rm -f $OUTPUT_BIN
 else

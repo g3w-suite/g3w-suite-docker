@@ -1,7 +1,7 @@
 ## HOW TO RUN: ##
 #
-# make reload ENV=dev   (for development → `g3wsuite/g3w-suite:next`)
-# make reload ENV=prod  (for production  → `g3wsuite/g3w-suite:<current_branch>`)
+# make dev  reload  (for development → `g3wsuite/g3w-suite:next`)
+# make prod reload  (for production  → `g3wsuite/g3w-suite:<current_branch>`)
 #
 
 x-g3w-suite: &g3w-suite
