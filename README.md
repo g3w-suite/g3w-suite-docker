@@ -117,11 +117,7 @@ To enable https with LetsEncrypt::
 Docker images are built using a **multi-stage** [Dockerfile](./Dockerfile):
 
 ```bash
-# via Makefile (recommended)
 make docker-image v=suite:dev
-
-# or directly
-docker build --target suite -t g3wsuite/g3w-suite:dev --no-cache .
 
 # Available build targets
 #
