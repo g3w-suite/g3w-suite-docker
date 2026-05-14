@@ -175,12 +175,12 @@ stress:
 #   suite (default), deps, deps-ltr, deps-mssql, oracle
 #
 # Examples:
-#   make docker-image                             # Default (suite:dev)
-#   make docker-image v=suite:v3.8.x              # Specific suite tag
-#   make docker-image v=deps:dev                  # Dev dependencies
-#   make docker-image v=deps-ltr:dev              # LTR dev dependencies
-#   make docker-image v=deps-mssql:ltr-mssql      # MS SQL dependencies
-#   make docker-image v=oracle:dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7
+#   make docker-image                             # Default image (suite:dev)
+#   make docker-image v=suite:v3.8.x              # Custom image (<stage>:<tag>)
+#   make docker-image v=deps:dev                  # Ubuntu + QGIS latest
+#   make docker-image v=deps-ltr:dev              # Ubuntu + QGIS LTR
+#   make docker-image v=deps-mssql:ltr-mssql      # Ubuntu + QGIS LTR + MS SQL ODBC driver ⚠️
+#   make docker-image v=oracle:dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7 # QGIS Server compiled from source with Oracle support
 ##
 _DOCKER_STAGE_suite      := suite
 _DOCKER_STAGE_deps-ltr   := deps
