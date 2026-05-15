@@ -52,9 +52,69 @@ prompt_yn() {
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
+# NON-INTERACTIVE mode: called with $1 = <stage>:<tag>
+# ─────────────────────────────────────────────────────────────────────────────
+if [ -n "$1" ]; then
+  stage="${1%%:*}"
+  tag="${1#*:}"
+
+  case "$stage" in
+    suite|deps|deps-ltr|deps-mssql|oracle) ;;
+    *)
+      echo "$(red "❌ Unknown stage: ${stage}")  Valid: suite, deps, deps-ltr, deps-mssql, oracle"
+      exit 1
+      ;;
+  esac
+
+  # Resolve docker target and image name
+  case "$stage" in
+    suite)      docker_target="suite"        image="g3wsuite/g3w-suite"             ;;
+    deps)       docker_target="deps"         image="g3wsuite/g3w-suite-deps"        ;;
+    deps-ltr)   docker_target="deps"         image="g3wsuite/g3w-suite-deps-ltr"    ;;
+    deps-mssql) docker_target="deps"         image="g3wsuite/g3w-suite-deps"        ;;
+    oracle)     docker_target="qgis-oracle"  image="g3wsuite/g3w-suite-qgis-oracle" ;;
+  esac
+
+  extra_args=""
+  case "$stage" in
+    deps-mssql) extra_args="--build-arg INSTALL_MSSQL=true" ;;
+    oracle)
+      qgis_deps_tag="${QGIS_DEPS_TAG:-release-3_22}"
+      qgis_tag="${QGIS_TAG:-final-3_22_7}"
+      extra_args="--build-arg DOCKER_DEPS_TAG=${qgis_deps_tag} --build-arg QGIS_TAG=${qgis_tag}"
+      ;;
+  esac
+
+  full_image="${image}:${tag}"
+
+  echo ""
+  echo "  $(bold '🏗️  G3W-SUITE — Docker image builder')  $(cyan '[non-interactive]')"
+  echo ""
+  echo "  $(bold 'Image name :') ${full_image}"
+  echo "  $(bold 'Stage      :') ${docker_target}"
+  [ -n "$extra_args" ] && echo "  $(bold 'Extra args :') ${extra_args}"
+  echo ""
+  echo "$(bold '🚀 Building image…')"
+  echo ""
+
+  # shellcheck disable=SC2086
+  docker build --target "${docker_target}" \
+    ${extra_args} \
+    -t "${full_image}" \
+    --no-cache \
+    .
+
+  echo ""
+  echo "$(green '✅ Image built successfully:') $(bold "${full_image}")"
+  echo ""
+  exit 0
+fi
+
+# ─────────────────────────────────────────────────────────────────────────────
 # HEADER
 # ─────────────────────────────────────────────────────────────────────────────
 clear
+clear 2>/dev/null || true
 echo ""
 echo "  $(bold '🏗️  G3W-SUITE — Docker image builder')"
 echo ""
