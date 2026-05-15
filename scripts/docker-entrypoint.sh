@@ -29,36 +29,6 @@ fi
 rm -f /tmp/.X99-lock
 Xvfb ${DISPLAY:-:99} -screen 0 640x480x24 -nolisten tcp &
 
-# TODO: move this into a more appropriate location (eg. g3w-admin ?)
-if [ ! -f /shared-volume/gunicorn.conf.py ] || [[ "${DEV_MODE,,}" == "true" ]]; then
-  # 1. inject a custom "gunicorn.conf.py"
-  cat > /shared-volume/gunicorn.conf.py << EOF
-import os
-
-DEBUG = os.getenv('G3WSUITE_DEBUG', 'False') == 'True' # os.path.ismount('/code')
-
-if DEBUG:
-    try:
-        import debugpy
-        debugpy.listen(("0.0.0.0", 5678))
-        print("--- Debugger listening on port 5678 ---")
-    except ImportError:
-        print("--- Debug.py not installed: skipping ---")
-    except Exception as e:
-        print(f"Debugger error: {e}")
-
-# gunicorn config
-bind = '0.0.0.0:8000'
-workers = os.getenv('G3WSUITE_GUNICORN_NUM_WORKERS', 8)
-timeout = os.getenv('G3WSUITE_GUNICORN_TIMEOUT', 120)
-max_requests = os.getenv('G3WSUITE_GUNICORN_MAX_REQUESTS', 200)
-
-limit_request_fields = 0
-error_logfile = '-'
-log_level = 'debug' if DEBUG else 'info'
-reload = DEBUG
-EOF
-fi
 
 # DEV MODE: check python requirements
 if  [[ "${DEV_MODE,,}" == "true" ]]; then
@@ -94,4 +64,22 @@ if [[ "${DEV_MODE,,}" == "true" ]]; then
 fi
 
 # start django app
-gunicorn base.wsgi:application -c /shared-volume/gunicorn.conf.py
+if [[ "${G3WSUITE_WEBSERVER,,}" == "granian" ]]; then
+  granian base.wsgi_docker:application \
+    --interface wsgi
+    --host 0.0.0.0 \
+    --port 8000 \
+    --workers "${G3WSUITE_GUNICORN_NUM_WORKERS:-8}" \
+    --log-level "$( [[ "${G3WSUITE_DEBUG,,}" == "true" ]] && echo debug || echo info )" \
+    $( [[ "${G3WSUITE_DEBUG,,}" == "true" ]] && echo "--reload" )
+else
+  gunicorn base.wsgi_docker:application \
+    --bind=0.0.0.0:8000 \
+    --workers="${G3WSUITE_GUNICORN_NUM_WORKERS:-8}" \
+    --timeout="${G3WSUITE_GUNICORN_TIMEOUT:-120}" \
+    --max-requests="${G3WSUITE_GUNICORN_MAX_REQUESTS:-200}" \
+    --limit-request-fields=0 \
+    --error-logfile=- \
+    --log-level="$( [[ "${G3WSUITE_DEBUG,,}" == "true" ]] && echo debug || echo info )" \
+    $( [[ "${G3WSUITE_DEBUG,,}" == "true" ]] && echo "--reload" )
+fi
