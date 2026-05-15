@@ -15,6 +15,7 @@
 #      switches nginx.conf to the SSL config and reloads the server.
 #      Optionally installs a daily cron job for automatic renewal.
 #
+
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
