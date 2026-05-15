@@ -51,11 +51,8 @@ fi
 # wait for "redis" container
 wait-for-it -h ${G3WSUITE_REDIS_HOST:-redis} -p ${G3WSUITE_REDIS_PORT:-6379} -t 30  
 
-# emit → /shared-volume/build_done
-/code/ci_scripts/build_suite.sh 
-
 # emit → /shared-volume/setup_done
-/code/ci_scripts/setup_suite.sh 
+/code/ci_scripts/setup_suite.sh
 
 # DEV MODE: cleanup django database
 if [[ "${DEV_MODE,,}" == "true" ]]; then

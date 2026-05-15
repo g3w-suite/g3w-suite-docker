@@ -121,6 +121,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --depth 1 --branch ${G3W_SUITE_BRANCH} .
 RUN git submodule add -f https://github.com/g3w-suite/g3w-admin-frontend.git g3w-admin/frontend
 
+# compile static assets (g3w-admin)
+RUN yarn --ignore-engines --ignore-scripts --prod && \
+    mkdir -p /code/g3w-admin/core/static && \
+    rm -rf /code/g3w-admin/core/static/bower_components && \
+    ln -s "../../../node_modules/@bower_components" /code/g3w-admin/core/static/bower_components
+
 # update python packages
 COPY requirements_rl.txt /requirements_rl.txt
 COPY requirements_uv.txt /requirements_uv.txt

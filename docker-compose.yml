@@ -37,7 +37,6 @@ x-g3w-suite: &g3w-suite
     - WEBGIS_ADMIN_EMAIL=${WEBGIS_ADMIN_EMAIL:-info@gis3w.it}
   volumes:
     - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
-    - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
     - ./config/g3w-suite/overrides/static:/code/static:ro
     - ./config/g3w-suite/overrides/templates:/code/templates:ro
     - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
@@ -47,6 +46,7 @@ x-g3w-suite: &g3w-suite
     - "${SCRIPTS_VOLUME:-void:/void}" # DEV MODE: hot reload for "/scripts" folder
     - "${CODE_VOLUME:-void:/void}"    # DEV MODE: hot reload for "/code" folder
     - uv_cache:/root/.cache/uv
+    - node_modules:/code/node_modules
   logging: &g3w-suite-logging
     driver: "json-file"
     options:
@@ -181,6 +181,7 @@ services:
 volumes:
   shared-volume:
   uv_cache:
+  node_modules:
   void: # fallback for production (dev mounts)
 
 networks:
