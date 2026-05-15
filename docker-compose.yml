@@ -1,7 +1,7 @@
 ## HOW TO RUN: ##
 #
-# make dev  reload  (for development → `g3wsuite/g3w-suite:next`)
-# make prod reload  (for production  → `g3wsuite/g3w-suite:<current_branch>`)
+# make prod reload     (for production  → `g3wsuite/g3w-suite:<current_branch>`)
+# make dev  reload     (for development → `g3wsuite/g3w-suite:next`)
 #
 
 x-g3w-suite: &g3w-suite
@@ -9,6 +9,8 @@ x-g3w-suite: &g3w-suite
     context: ./
     target: suite
   image: g3wsuite/g3w-suite:${DEV_IMAGE:-dev}
+  labels:
+    - "com.g3wsuite.env_mode=${ENV_MODE:-prod}"
   restart: "${RESTART_POLICY:-on-failure}"
   cap_add:
     - ${SYS_PTRACE:-NET_BIND_SERVICE} # DEV MODE: allow "sys_ptrace" 

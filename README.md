@@ -13,7 +13,7 @@ To upgrade your containers (eg. `v3.10.x` → `v3.11.x`):
 ```sh
 ### BACKUP (v3.10.x) ###
 
-make prod reload
+make reload
 
 git fetch
 git checkout v3.11.x
@@ -39,7 +39,7 @@ docker compose exec g3w-suite bash -c 'rm -r /shared-volume/backup/310'
 
 ## 🌍 Deploying your webgis app
 
-Install [docker compose](https://docs.docker.com/compose/install/).
+Install [make](https://www.gnu.org/software/make/) and [docker compose](https://docs.docker.com/compose/install/).
 
 Clone this repository:
 
@@ -48,19 +48,10 @@ git clone https://github.com/g3w-suite/g3w-suite-docker/
 cd g3w-suite-docker
 ```
 
-Create a `.env` file starting from [`.env.example`](./.env.example) and tailor it to your needs:
-
-```diff
-# CHANGE ME: PostGIS DB password
-
-- G3WSUITE_POSTGRES_PASS='89#kL8y3D'
-+ G3WSUITE_POSTGRES_PASS=<your__password>
-```
-
 And then start containers:
 
 ```sh
-make prod reload
+make deploy
 ```
 
 **NB:** at the very first start, have a lot of patience 😴 → the system must finalize the installation. \*
@@ -104,29 +95,20 @@ postgres=#
 
 ## 🔒 HTTPS
 
-To enable https with LetsEncrypt::
+Run depoly script again to enable LetsEncrypt Certbot:
 
-- uncomment ssl section within `config/nginx/nginx.conf`
-- update `WEBGIS_PUBLIC_HOSTNAME` environment variable within the `.env` and `config/nginx/nginx.conf` files
-- launch `sudo make renew-ssl`
-- make sure the certs are renewed by adding a cron job with `sudo crontab -e` and add the following line:
-  `0 3 * * * /<path_to_your_docker_files>/run_certbot.sh`
+```sh
+make deploy
+```
 
 ## 📦 Docker image
 
-Docker images are built using a **multi-stage** [Dockerfile](./Dockerfile):
+Docker images are built using a **multi-stage** [Dockerfile](./Dockerfile).
+
+Run the interactive wizard to get guided through every option:
 
 ```bash
-make docker-image v=suite:dev
-
-# Available build targets
-#
-#   make docker-image                             # Default image (suite:dev)
-#   make docker-image v=suite:v3.8.x              # Custom image (<stage>:<tag>)
-#   make docker-image v=deps:dev                  # Ubuntu + QGIS latest
-#   make docker-image v=deps-ltr:dev              # Ubuntu + QGIS LTR
-#   make docker-image v=deps-mssql:ltr-mssql      # Ubuntu + QGIS LTR + MS SQL ODBC driver ⚠️
-#   make docker-image v=oracle:dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7 # QGIS Server compiled from source with Oracle support
+make docker-image
 ```
 
 ### Running the MS SQL ODBC container
@@ -134,8 +116,8 @@ make docker-image v=suite:dev
 ⚠️ By using it you accept the [Microsoft EULA](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server).
 
 ```sh
-# build image
-make docker-image v=deps-mssql:ltr-mssql
+# run the interactive wizard (choose: "deps-mssql")
+make docker-image
 
 # start server
 make reload
@@ -144,8 +126,8 @@ make reload
 ### Running the Oracle QGIS Server container
 
 ```sh
-# build image
-make docker-image v=oracle:dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7
+# run the interactive wizard (choose: "oracle")
+make docker-image
 
 # start server
 make run-oracle QGIS_TAG=final-3_22_7 QGIS_FCGI_PORT=9333
@@ -183,7 +165,7 @@ Plese refer to the [Add new stack](https://docs.portainer.io/user/docker/stacks/
 ## ♻️ Database backup / restore
 
 ```sh
-make prod reload
+make reload
 
 make db-backup ID=foo-backup
 make db-restore ID=foo-backup
@@ -195,18 +177,16 @@ make db-restore ID=foo-backup
 <summary> 1. How to Develop </summary>
 
 1. Copy `.env.example` file into `.env` and edit it: 
-   * set `WEBGIS_DOCKER_SHARED_VOLUME=./shared-volume` (path to your local data folder);
-   * set `G3WSUITE_DEBUG=True`;
    * set `G3WSUITE_LOCAL_CODE_PATH=../g3w-admin` (path to your local G3W-ADMIN repository).
 
-2. Run `make dev reload`, if all went well: \*
+2. Run `make dev`, if all went well: \*
    * G3W-SUITE is running in development mode on http://127.0.0.1:8000
    * G3W-ADMIN is available at [`./code`](./code)
 
 ---
 <sub> \* if necessary, comment out any missing installed modules from [G3WADMIN_LOCAL_MORE_APPS](./config/g3w-suite/settings_docker.py) list and then try again </sub>
 
-<sub> \* if you customize [docker-compose.yml](./docker-compose.yml) (eg. by choosing a specific <code>image: <del>g3wsuite/g3w-suite:dev</del> g3wsuite/g3w-suite:v3.7.x</code>) you then apply them via: `make reload` </sub> 
+<sub> \* if you customize [docker-compose.yml](./docker-compose.yml) (eg. by choosing a specific <code>image: <del>g3wsuite/g3w-suite:dev</del> g3wsuite/g3w-suite:v3.7.x</code>) you then apply them via: `make dev` </sub> 
 
 </details>
 
@@ -307,7 +287,7 @@ G3WADMIN_LOCAL_MORE_APPS = [
 Reload the containers: 
 
 ```bash
-    make dev reload
+    make dev
 ```
 
 </details>
@@ -320,7 +300,7 @@ Reload the containers:
 2. Start containers in development mode:
 
 ```bash
-    make dev reload # symlinks `G3WSUITE_LOCAL_CODE_PATH` → `./code` and enables live reload
+    make dev # symlinks `G3WSUITE_LOCAL_CODE_PATH` → `./code` and enables live reload
 ```
 
 3. Start the built-in debugger ([`Run and Debug > G3W-SUITE-DOCKER: Debugger`](.vscode\launch.json))

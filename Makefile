@@ -1,5 +1,3 @@
--include Makefile.env
-
 .DEFAULT_GOAL := help
 
 ##
@@ -9,31 +7,43 @@ ifeq ($(OS), Windows_NT)
   $(error make.exe not supported, please try again within a WSL shell: https://docs.docker.com/desktop/wsl/#enabling-docker-support-in-wsl-2-distros)
 endif
 
-ENV ?= dev
 
 ##
-# Update Makefile.env (when running: "make prod", "make dev") 
+# Set ENV when running: "make dev" or "make prod"
 ##
-# Extract ENV from 1. Se l'utente ha digitato dev o prod, estrai il valore e aggiorna ENV
 ifneq ($(filter dev prod,$(MAKECMDGOALS)),)
   ENV := $(firstword $(filter dev prod,$(MAKECMDGOALS)))
-  $(info )
-  $(info $(if $(filter dev,$(ENV)),[33m🛠️  DEV,[31m🚀 PROD)[0m environment)
-  $(info )
-  $(shell echo "ENV=$(ENV)" > Makefile.env)
+endif
+
+##
+# Read ENV from running container label: "com.g3wsuite.env_mode"
+##
+ifeq ($(ENV),)
+  ENV := $(shell docker ps --filter "label=com.docker.compose.service=g3w-suite" --format '{{.Label "com.g3wsuite.env_mode"}}' 2>/dev/null | head -1)
 endif
 
 ##
 # Force ENV to lowercase
 ##
-override ENV := $(shell echo $(ENV) | tr '[:upper:]' '[:lower:]')
+ENV := $(shell echo $(ENV) | tr '[:upper:]' '[:lower:]')
 
 ##
-# Check ENV (skipped for targets: "", "help", "docker-image") 
+# Fallback to "prod" ("make reload")
 ##
-ifeq ($(and $(MAKECMDGOALS),$(filter-out help docker-image,$(MAKECMDGOALS)),$(if $(ENV),,1)),1)
+ifeq ($(and $(filter reload,$(MAKECMDGOALS)),$(if $(ENV),,1)),1)
+  ENV := prod
+endif
+
+##
+# Check ENV (skipped for targets: "", "help", "docker-image", "deploy") 
+##
+ifeq ($(and $(MAKECMDGOALS),$(filter-out help docker-image deploy,$(MAKECMDGOALS)),$(if $(ENV),,1)),1)
   $(error ENV is not set.)
 endif
+
+$(info )
+$(info $(if $(filter dev,$(ENV)),[33m🛠️  DEV,[31m🚀 PROD)[0m environment)
+$(info )
 
 ##
 # Delegate builds to buildx (for better performance)
@@ -70,27 +80,33 @@ help:
 	@awk '/^##?[[:space:]]/{sub(/^##?[[:space:]]/,""); h=h $$0 "\n"; next} /^[a-zA-Z0-9%_-]+:/ && $$0 !~ /^[a-zA-Z0-9%_-]+:=/{if(h){t=$$1; sub(/:.*/,"",t); if(t!="help"){sub(/\n+$$/,"",h); gsub(/\n/,"\n                     ",h); printf "\033[36m%-20s\033[0m %s\n\n",t,h}}; h=""; next} /^\t/{h=""}' $(MAKEFILE_LIST)
 
 ##
-# 🌐 Switch to DEV environment
+# 🧙 Interactive setup wizard (copies .env.example → .env, configures variables, starts containers)
+#
+# make deploy
+##
+deploy:
+	@bash ./scripts/makefile/deploy.sh
+
+##
+# 🔄 Recreate containers (DEV environment)
 #
 # make dev
+# make dev reload
 ##
-dev:
-	@:
+dev: reload
 
 ##
-# 🌐 Switch to PROD environment
+# 🔄 Recreate containers (PROD environment)
 #
 # make prod
+# make prod reload
 ##
-prod:
-	@:
+prod: reload
 
 ##
-# 🔄 Reload compose configuration (force recreation)
+# 🔄 Recreate containers
 #
-# make      reload
-# make dev  reload
-# make prod reload
+# make reload
 ##
 reload:
 	$(DOCKER_COMPOSE) up -d --force-recreate --remove-orphans $(if $(filter dev,$(ENV)),--build)
@@ -169,43 +185,22 @@ stress:
 ##
 # 🏗️  Build a docker image
 #
-#   make docker-image [v=<stage>:<tag>] [ENV_VARIABLES=value]
+# make docker-image                                                           # interactive wizard
+# make docker-image v=<stage>:<tag> [QGIS_DEPS_TAG=x QGIS_TAG=y]              # non-interactive
 #
 # Valid Stages (v):
 #   suite (default), deps, deps-ltr, deps-mssql, oracle
 #
 # Examples:
-#   make docker-image                             # Default image (suite:dev)
-#   make docker-image v=suite:v3.8.x              # Custom image (<stage>:<tag>)
-#   make docker-image v=deps:dev                  # Ubuntu + QGIS latest
-#   make docker-image v=deps-ltr:dev              # Ubuntu + QGIS LTR
-#   make docker-image v=deps-mssql:ltr-mssql      # Ubuntu + QGIS LTR + MS SQL ODBC driver ⚠️
-#   make docker-image v=oracle:dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7 # QGIS Server compiled from source with Oracle support
+#   make docker-image                                                         # wizard
+#   make docker-image v=suite:v3.8.x                                          # custom tag
+#   make docker-image v=deps:dev                                              # Ubuntu + QGIS latest
+#   make docker-image v=deps-ltr:dev                                          # Ubuntu + QGIS LTR
+#   make docker-image v=deps-mssql:ltr-mssql                                  # QGIS LTR + MS SQL ODBC driver ⚠️
+#   make docker-image v=oracle:dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7
 ##
-_DOCKER_STAGE_suite      := suite
-_DOCKER_STAGE_deps-ltr   := deps
-_DOCKER_STAGE_deps       := deps
-_DOCKER_STAGE_deps-mssql := deps
-_DOCKER_STAGE_oracle     := qgis-oracle
-
-_DOCKER_TAG_suite        := g3wsuite/g3w-suite
-_DOCKER_TAG_deps-ltr     := g3wsuite/g3w-suite-deps-ltr
-_DOCKER_TAG_deps         := g3wsuite/g3w-suite-deps
-_DOCKER_TAG_deps-mssql   := g3wsuite/g3w-suite-deps
-_DOCKER_TAG_oracle       := g3wsuite/g3w-suite-qgis-oracle
-
-_DOCKER_ARGS_deps        := --build-arg QGIS_CHANNEL=ubuntu # ubuntu (latest) | ubuntu-ltr (LTR) 
-_DOCKER_ARGS_deps-mssql  := --build-arg INSTALL_MSSQL=true  # adds MS SQL ODBC driver ⚠  By using INSTALL_MSSQL=true you agree to the Microsoft END USER LICENSE AGREEMENT (ACCEPT_EULA=Y)
-_DOCKER_ARGS_oracle       = $(if $(QGIS_DEPS_TAG),--build-arg DOCKER_DEPS_TAG=$(QGIS_DEPS_TAG)) $(if $(QGIS_TAG),--build-arg QGIS_TAG=$(QGIS_TAG))
-
-v     ?= suite
-stage := $(word 1,$(subst :, ,$(v)))
-tag   := $(if $(findstring :,$(v)),$(word 2,$(subst :, ,$(v))),dev)
-
 docker-image:
-	docker build --target $(_DOCKER_STAGE_$(stage)) \
-		$(_DOCKER_ARGS_$(stage)) \
-		-t $(_DOCKER_TAG_$(stage)):$(tag) --no-cache .
+	./scripts/makefile/docker-image.sh $(if $(filter command line,$(origin v)),$(v))
 
 ##
 # 🗺️  Run QGIS Server with Oracle FCGI
