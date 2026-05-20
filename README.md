@@ -36,6 +36,10 @@ docker compose exec g3w-suite bash -c 'rm -r /shared-volume/backup/310'
 
 ![Docker structure](docs/img/docker.png)
 
+## ✨ AI Assistant
+
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/g3w-suite/g3w-suite-docker)
+
 
 ## 🌍 Deploying your webgis app
 
