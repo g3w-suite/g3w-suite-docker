@@ -9,7 +9,7 @@ figlet -t "G3W-SUITE Docker by Gis3w"
 if [[  -f /tmp/.X99-lock ]]; then
   rm /tmp/.X99-lock
 fi
-Xvfb :99 -screen 0 640x480x24 -nolisten tcp &
+Xvfb :99 -screen 0 640x480x24 -nolisten tcp 2>/dev/null &
 export DISPLAY=:99
 export QGIS_SERVER_PARALLEL_RENDERING=1
 # Start
