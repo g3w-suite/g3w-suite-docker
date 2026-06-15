@@ -52,7 +52,9 @@ ENV DISPLAY=:99
 RUN chown root:root /tmp && chmod ugo+rwXt /tmp
 
 # update system packages
-RUN apt-get update && apt-get install -y \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
+    apt-get update && apt-get install -y \
     libxml2-dev \
     libxslt-dev \
     libgdal-dev \
@@ -113,7 +115,9 @@ FROM deps AS suite
 ARG G3W_SUITE_BRANCH=dev
 
 # update system packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
+    apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -130,8 +134,8 @@ RUN yarn --ignore-engines --ignore-scripts --prod && \
 # update python packages
 COPY requirements_rl.txt /requirements_rl.txt
 COPY requirements_uv.txt /requirements_uv.txt
-RUN --mount=type=cache,target=/root/.cache/uv uv pip install setuptools poetry        # for legacy packages ("tilestache" and "django-huey-monitor")
-RUN --mount=type=cache,target=/root/.cache/uv uv pip install -r /requirements_rl.txt
+RUN --mount=type=cache,target=/root/.cache/uv,sharing=locked uv pip install setuptools poetry        # for legacy packages ("tilestache" and "django-huey-monitor")
+RUN --mount=type=cache,target=/root/.cache/uv,sharing=locked uv pip install -r /requirements_rl.txt
 
 # import scripts
 COPY scripts/ /scripts/
