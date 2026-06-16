@@ -117,12 +117,12 @@ endif
 ##
 # 🔑 SSH login
 #
-# make run-g3wsuite
+# make run-g3w-suite
 # make run-postgis
 ##
 run-%:
 	$(DOCKER_COMPOSE) start $*
-	docker exec -it $$(docker ps | grep $* | head -1 | awk '{print $$1}') bash
+	$(DOCKER_COMPOSE) exec $* bash
 
 ##
 # 🚨 Nukes your database and reloads demo data
