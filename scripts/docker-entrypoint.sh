@@ -9,7 +9,10 @@ figlet -t "G3W-SUITE Docker by Gis3w"
 if [[  -f /tmp/.X99-lock ]]; then
   rm /tmp/.X99-lock
 fi
-Xvfb :99 -screen 0 640x480x24 -nolisten tcp 2>/dev/null &
+Xvfb :99 -screen 0 640x480x24 -nolisten tcp \
+  # HOTFIX for Ubuntu 24.04
+  2> >(sed '/The XKEYBOARD keymap compiler (xkbcomp) reports:/d;/Could not resolve keysym XF86/d;/Errors from xkbcomp are not fatal to the X server/d' >&2) \
+  &
 export DISPLAY=:99
 export QGIS_SERVER_PARALLEL_RENDERING=1
 # Start
