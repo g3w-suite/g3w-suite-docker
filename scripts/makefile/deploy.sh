@@ -12,7 +12,7 @@
 #      and starts all Docker containers via `make prod|dev`
 #   5. If HTTPS was requested: obtains the TLS certificate while nginx
 #      is still running in HTTP mode (certbot webroot challenge), then
-#      switches nginx.conf to the SSL config and reloads the server.
+#      switches WEBGIS_SSL in .env to enable HTTPS and reloads the server.
 #      Optionally installs a daily cron job for automatic renewal.
 #
 
@@ -23,6 +23,15 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 cd "$ROOT_DIR"
 
+set_env_value() {
+  local safe_val=$(printf '%s' "$2" | sed 's/[&/\\]/\\&/g')
+  if grep -q "^$1=" .env; then
+    sed -i "s|^$1=.*|$1=${safe_val}|" .env
+  else
+    echo "$1=$2" >> .env
+  fi
+}
+
 # ─────────────────────────────────────────────────────────────────────────────
 # STEP 1 — Ensure .env exists
 #
@@ -31,19 +40,15 @@ cd "$ROOT_DIR"
 # If .env already exists we ask whether the user wants to reconfigure it,
 # making re-runs of `make deploy` safe (answer "N" to just restart).
 # ─────────────────────────────────────────────────────────────────────────────
-configure_vars=true
 
 if [ ! -f .env ]; then
   echo "📋 .env file not found, copying from .env.example..."
   cp .env.example .env
+  init_env="y"  # always configure on first run
 else
   echo "✅ .env file already exists."
   echo ""
-  printf "🔄 Re-initialize setup and reconfigure variables? (y/N): "
-  read -r reinit </dev/tty
-  if [[ ! "$reinit" =~ ^[Yy]$ ]]; then
-    configure_vars=false
-  fi
+  read -p "🔄 Re-initialize setup and reconfigure variables? (y/N): " init_env
 fi
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -58,7 +63,7 @@ fi
 # Inline comments on the same line as a variable (e.g. KEY=val # hint) are
 # stripped before extracting the key name.
 # ─────────────────────────────────────────────────────────────────────────────
-if [ "$configure_vars" = true ]; then
+if [ "${init_env,,}" == "y" ]; then
 
   echo ""
   echo "📝 Configure your environment variables (press Enter to keep the current value):"
@@ -78,6 +83,9 @@ if [ "$configure_vars" = true ]; then
     key=$(echo "$stripped" | cut -d'=' -f1 | tr -d '[:space:]')
     [ -z "$key" ] && continue
 
+    # WEBGIS_SSL is managed explicitly in Step 3.
+    [ "$key" = "WEBGIS_SSL" ] && continue
+
     # read the value currently saved in .env so we can show it as the default;
     # fall back to empty string if the key does not exist yet
     current=$(grep -E "^${key}=" .env 2>/dev/null | head -1 | cut -d'=' -f2- || true)
@@ -86,44 +94,39 @@ if [ "$configure_vars" = true ]; then
     read -r value </dev/tty
 
     # only update .env when the user actually typed something
-    if [ -n "$value" ]; then
-      # escape characters that have special meaning in sed's replacement string
-      escaped_value=$(printf '%s' "$value" | sed 's/[&/\]/\\&/g')
-      sed -i "s|^${key}=.*|${key}=${escaped_value}|" .env
-    fi
+    [ -n "$value" ] && set_env_value "$key" "$value"
 
   done < .env.example
 
-fi # configure_vars
+fi # init_env
+
+# Read .env once after the interactive variable configuration.
+set -a
+source .env
+set +a
 
 # ─────────────────────────────────────────────────────────────────────────────
-# STEP 3 — Ask about HTTPS
+# STEP 3 — Ask about HTTPS and sync .env values
 #
-# When the user opts in we collect the admin e-mail address required by
-# certbot for LetsEncrypt notifications and account registration.
-# We do NOT touch nginx.conf or run certbot here yet — that happens in
-# Step 5, after the containers are already up (certbot needs a running
-# nginx to serve the ACME webroot challenge).
+# SSL mode is controlled only through `.env`:
+#   WEBGIS_SSL=""     -> HTTP config (`conf/django`)
+#   WEBGIS_SSL="_ssl" -> HTTPS config (`conf/django_ssl`)
+#
+# WEBGIS_SSL is not asked in Step 2; we ask it once here.
+# If enabled, we keep WEBGIS_SSL empty for first setup, obtain the
+# certificate in HTTP mode, then switch WEBGIS_SSL to `_ssl` and reload.
 # ─────────────────────────────────────────────────────────────────────────────
-enable_https=false
-admin_email=""
 
 echo ""
-printf "🔒 Enable HTTPS with LetsEncrypt? (y/N): "
-read -r https_choice </dev/tty
+read -p "🔒 Enable HTTPS with LetsEncrypt? (y/N): " https_choice
 
-if [[ "$https_choice" =~ ^[Yy]$ ]]; then
-  enable_https=true
+ssl_cert="${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt/live/${WEBGIS_PUBLIC_HOSTNAME}/fullchain.pem"
+init_https=$([[ "${https_choice,,}" == "y" && ! -f "$ssl_cert" ]] && echo true || echo false)
+# Bootstrap certbot in HTTP mode, then switch to SSL later.
+# If cert already exists (re-run), start directly in SSL mode; if not yet obtained, keep HTTP mode.
+# If HTTPS was not requested at all, stay in HTTP mode.
+set_env_value "WEBGIS_SSL" "$([[ "${https_choice,,}" == "y" && -f "$ssl_cert" ]] && echo "_ssl" || echo "")"
 
-  # pull the email that is currently set as the nginx $WEBGIS_ADMIN_EMAIL default
-  current_email=$(grep -E "^\s+default.*@.*;" config/nginx/nginx.conf \
-    | sed "s/.*default \(.*\);.*/\1/" | tr -d ' ' | head -1)
-  current_email="${current_email:-info@gis3w.it}"
-
-  printf "  %-45s [%s]: " "WEBGIS_ADMIN_EMAIL (LetsEncrypt)" "$current_email"
-  read -r admin_email </dev/tty
-  admin_email="${admin_email:-$current_email}"
-fi
 
 # ─────────────────────────────────────────────────────────────────────────────
 # STEP 4 — Choose startup mode and start all containers
@@ -136,103 +139,39 @@ fi
 #   docker compose up -d --force-recreate --remove-orphans
 # ─────────────────────────────────────────────────────────────────────────────
 echo ""
-printf "🚀 Start as (prod/dev) [prod]: "
-read -r mode </dev/tty
-mode="${mode:-prod}"
-
-if [[ "$mode" != "prod" && "$mode" != "dev" ]]; then
-  echo "⚠️  Invalid mode '$mode', defaulting to prod."
-  mode=prod
-fi
+read -p "🚀 Start as (prod/dev) [prod]: " mode
+[[ "$mode" == "dev" ]] || mode="prod"
 
 echo ""
 echo "▶️  Running: make $mode"
 make -C "$ROOT_DIR" "$mode"
 
 # ─────────────────────────────────────────────────────────────────────────────
-# STEP 5 — HTTPS certificate + nginx switch  (only when HTTPS was requested)
+# STEP 5 — HTTPS certificate + env switch  (only when HTTPS was requested)
 #
-# Why this order matters (the chicken-and-egg problem):
-#   • nginx's SSL config references certificate files that do not exist yet
-#     on a fresh install → nginx would refuse to start if we switched to
-#     the HTTPS config before obtaining the certs.
-#   • certbot's webroot challenge requires nginx to be serving HTTP traffic
-#     on port 8080 so it can answer /.well-known/acme-challenge/ requests.
-#
-# Solution — four sub-steps (+ optional cron job):
-#   A) While nginx is still running with the plain HTTP config, update
-#      nginx.conf with the correct hostname / e-mail and run certbot.
-#      certbot downloads the TLS parameters and writes the certificate
-#      files into shared-volume/certs/letsencrypt/.
-#   B) Edit nginx.conf to replace the HTTP include with the HTTPS include
-#      (django_ssl).  The HTTPS config keeps an HTTP→HTTPS redirect server
-#      block that still serves the ACME challenge path, so future renewals
-#      will keep working.
-#   C) Switch nginx.conf from the plain HTTP include to the SSL include.
-#   D) Call `make renew-ssl` a second time — certbot will renew if needed
-#      (harmless if the cert was just issued) and the `docker compose up`
-#      at the end of that target restarts nginx so it picks up the new
-#      SSL config with the valid certificates.
-#   E) Optionally install a daily cron job (`make renew-ssl`) so the
-#      certificate is renewed automatically before it expires.
+# No nginx config files are edited here.
+# Flow: HTTP bootstrap -> certbot -> WEBGIS_SSL=_ssl -> reload.
 # ─────────────────────────────────────────────────────────────────────────────
-if [ "$enable_https" = true ]; then
+if [ "$init_https" = true ]; then
   echo ""
   echo "🔐 Setting up HTTPS..."
 
-  # read the public hostname that the user configured in .env
-  hostname=$(grep -E "^WEBGIS_PUBLIC_HOSTNAME=" .env | head -1 | cut -d'=' -f2- | tr -d " '\"")
-
-  # ── A: patch nginx.conf with correct hostname and email ──────────────────
-
-  # find the current hostname default (non-email line)
-  current_hostname=$(grep -E "^\s+default.*;" config/nginx/nginx.conf \
-    | grep -v '@' | sed "s/.*default \(.*\);.*/\1/" | tr -d ' ' | head -1)
-  current_hostname="${current_hostname:-dev.g3wsuite.it}"
-  sed -i "s|  default ${current_hostname};|  default ${hostname};|" config/nginx/nginx.conf
-
-  # find the current email default (line that contains '@')
-  current_email_in_conf=$(grep -E "^\s+default.*@.*;" config/nginx/nginx.conf \
-    | sed "s/.*default \(.*\);.*/\1/" | tr -d ' ' | head -1)
-  current_email_in_conf="${current_email_in_conf:-info@gis3w.it}"
-  sed -i "s|  default ${current_email_in_conf};|  default ${admin_email};|" config/nginx/nginx.conf
-
-  echo "🔧 nginx.conf updated (hostname: $hostname, email: $admin_email)"
-
-  # ── B: obtain TLS certificate while nginx is in HTTP mode ────────────────
-  #
-  # `make renew-ssl` runs scripts/makefile/renew-ssl.sh (downloads recommended
-  # TLS parameters from certbot's GitHub, then runs the certbot Docker image
-  # using the webroot method) and afterwards restarts nginx via docker compose.
+  # A) Obtain certificates while nginx is in HTTP mode.
   echo "📜 Requesting LetsEncrypt certificate (nginx still in HTTP mode)..."
   ENV=$mode make -C "$ROOT_DIR" renew-ssl
 
-  # ── C: switch nginx.conf from HTTP-only to HTTPS ─────────────────────────
-  #
-  # Comment out the plain HTTP include and enable the SSL include.
-  # The SSL config (config/nginx/django_ssl) listens on 443 for HTTPS and
-  # keeps a redirect server on 8080 so that future certbot renewals can still
-  # reach the ACME challenge endpoint.
-  sed -i 's|^include /etc/nginx/conf.d/django;|# include /etc/nginx/conf.d/django;             # Remove this line if you want activate https|' config/nginx/nginx.conf
-  sed -i 's|^# include /etc/nginx/conf.d/django_ssl;|include /etc/nginx/conf.d/django_ssl;|' config/nginx/nginx.conf
-  echo "🔧 nginx.conf switched to HTTPS (django_ssl)."
-
-  # ── D: reload nginx so it picks up the SSL config + valid certificates ───
-  echo "🔄 Reloading nginx with HTTPS configuration..."
-  ENV=$mode make -C "$ROOT_DIR" renew-ssl
+  # B) Switch to HTTPS profile and reload.
+  set_env_value "WEBGIS_SSL" "_ssl"
+  echo "🔄 Reloading containers with WEBGIS_SSL=_ssl ..."
+  make -C "$ROOT_DIR" "$mode"
 
   echo ""
-  echo "✅ HTTPS is active at https://$hostname"
+  echo "✅ HTTPS is active at https://$WEBGIS_PUBLIC_HOSTNAME"
 
-  # ── E: offer to install a cron job for automatic certificate renewal ─────
-  #
-  # We only attempt this when crontab is available on the system.
-  # The job runs `make renew-ssl` every night at 03:00; certbot is a no-op
-  # when the certificate is still valid (> 30 days), so running daily is safe.
+  # C) Optionally install daily renew cron.
   if command -v crontab &>/dev/null; then
     echo ""
-    printf "   ⏰ Add a daily cron job to auto-renew the certificate? (y/N): "
-    read -r add_cron </dev/tty
+    read -p "   ⏰ Add a daily cron job to auto-renew the certificate? (y/N): " add_cron
     if [[ "$add_cron" =~ ^[Yy]$ ]]; then
       cron_cmd="0 3 * * * make -C \"$ROOT_DIR\" renew-ssl >> \"$ROOT_DIR/shared-volume/var/renew-ssl.log\" 2>&1"
       # append only if the exact line is not already present

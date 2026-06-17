@@ -145,6 +145,10 @@ services:
     image: nginx
     environment:
       - WEBGIS_PUBLIC_HOSTNAME
+      - WEBGIS_ADMIN_EMAIL
+      - WEBGIS_SSL=${WEBGIS_SSL:+_ssl}
+      - NGINX_ENVSUBST_TEMPLATE_SUFFIX=.template
+      - NGINX_ENVSUBST_TEMPLATE_DIR=/etc/nginx/conf.d
     ports:
       - "8080:8080"
       - "443:443"
@@ -153,7 +157,8 @@ services:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known:/var/www/.well-known
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt:ro
       - ./config/g3w-suite/overrides/static:/shared-volume/static/overrides:ro
-      - ./config/nginx:/etc/nginx/conf.d/:ro
+      - ./config/nginx:/etc/nginx/conf.d/
+      - ./config/nginx/conf:/etc/nginx/conf.d/conf/:ro
       - ./config/nginx/html:/var/www/html:ro
     logging: *g3w-suite-logging
     restart: "${RESTART_POLICY:-on-failure}"

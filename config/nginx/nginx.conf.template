@@ -11,12 +11,12 @@ upstream g3w_suite {
 # Ref: docker-nginx/entrypoint/20-envsubst-on-templates.sh
 
 map "" $NGINX_SERVER_NAME {
-  default localhost;                       # ENVSUBST
+  default $WEBGIS_PUBLIC_HOSTNAME;                       # ENVSUBST
 }
 
 map "" $NGINX_ADMIN_EMAIL {
-  default info@gis3w.it;                           # ENVSUBST
+  default $WEBGIS_ADMIN_EMAIL;                           # ENVSUBST
 }
 
 # HTTP(S) server
-include /etc/nginx/conf.d/conf/django;        # ENVSUBST
+include /etc/nginx/conf.d/conf/django$WEBGIS_SSL;        # ENVSUBST

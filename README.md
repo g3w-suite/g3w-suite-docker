@@ -99,7 +99,7 @@ postgres=#
 
 ## 🔒 HTTPS
 
-Run depoly wizard again and when prompted enable the LetsEncrypt Certbot:
+Run deploy wizard again and enable the LetsEncrypt Certbot when prompted.
 
 ```sh
 make deploy
