@@ -5,6 +5,6 @@ projects
 .idea
 code
 
-config/nginx/nginx.conf
+# config/nginx/nginx.conf
 
 shared-volume
