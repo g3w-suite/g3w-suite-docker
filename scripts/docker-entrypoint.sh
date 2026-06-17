@@ -27,10 +27,7 @@ fi
 
 # Start XVfb
 rm -f /tmp/.X99-lock
-Xvfb ${DISPLAY:-:99} -screen 0 640x480x24 -nolisten tcp \
-  # HOTFIX for Ubuntu 24.04
-  2> >(sed '/The XKEYBOARD keymap compiler (xkbcomp) reports:/d;/Could not resolve keysym XF86/d;/Errors from xkbcomp are not fatal to the X server/d' >&2) \
-  &
+Xvfb ${DISPLAY:-:99} -screen 0 640x480x24 -nolisten tcp &
 
 
 # DEV MODE: check python requirements
