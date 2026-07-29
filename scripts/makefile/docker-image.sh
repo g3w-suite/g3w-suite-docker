@@ -5,7 +5,7 @@
 # Called by: make docker-image              ← interactive wizard
 #            make docker-image v=suite:dev  ← non-interactive
 #
-# Non-interactive usage (mirrors old make docker-image-advanced):
+# Non-interactive usage:
 #   $1  = v=<stage>:<tag>  (e.g. suite:dev, deps-ltr:dev, oracle:dev)
 #   env = QGIS_DEPS_TAG, QGIS_TAG  (oracle stage only)
 #
