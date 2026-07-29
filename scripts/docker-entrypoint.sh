@@ -63,7 +63,7 @@ fi
 # start django app
 if [[ "${G3WSUITE_WEBSERVER,,}" == "granian" ]]; then
   granian base.wsgi_docker:application \
-    --interface wsgi
+    --interface wsgi \
     --host 0.0.0.0 \
     --port 8000 \
     --workers "${G3WSUITE_GUNICORN_NUM_WORKERS:-8}" \
