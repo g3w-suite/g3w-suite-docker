@@ -22,7 +22,7 @@ if [[ "${G3WSUITE_RUN_HUEY,,}" == "true" && "${G3WSUITE_CONSUMER}" == "0" ]]; th
   exit $?
 elif [[ "${G3WSUITE_CONSUMER}" == "0" ]]; then
   echo -e "STOPPING G3WSUITE_CONSUMER"
-  exit $?
+  exit 0
 fi
 
 # Start XVfb
