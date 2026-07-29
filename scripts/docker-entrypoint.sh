@@ -34,8 +34,10 @@ wait-for-it -h ${G3WSUITE_REDIS_HOST:-redis} -p ${G3WSUITE_REDIS_PORT:-6379} -t 
 # Setup once
 /code/ci_scripts/setup_suite.sh
 
-if [ ! -f /shared-volume/gunicorn.conf.py ]; then
-  cat > /shared-volume/gunicorn.conf.py << EOF
+if [[ "${G3WSUITE_WEBSERVER:-gunicorn}" = gunicorn ]]; then
+
+  if [ ! -f /shared-volume/gunicorn.conf.py ]; then
+    cat > /shared-volume/gunicorn.conf.py << EOF
 import os
 limit_request_fields = 0
 error_logfile        = '-'
@@ -48,5 +50,19 @@ reload               = False # os.path.ismount('/code')
 EOF
 fi
 
-# Start Django server
-gunicorn base.wsgi:application -c /shared-volume/gunicorn.conf.py
+  # Start Django server
+  gunicorn base.wsgi:application -c /shared-volume/gunicorn.conf.py
+
+else
+
+  # !!EXPERIMENTAL!!
+  # A Rust HTTP server for Python applications.
+  # https://github.com/emmett-framework/granian
+  granian --interface wsgi \
+      --workers ${G3WSUITE_WEBSERVER_NUM_WORKERS:-8} \
+      --host 0.0.0.0 \
+      --port 8000 \
+      base.wsgi:application
+
+fi
+
