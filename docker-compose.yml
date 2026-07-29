@@ -95,7 +95,7 @@ services:
     expose:
       - 8000
       - 5678
-    entrypoint: /bin/bash -c "G3WSUITE_CONSUMER=1 /scripts/docker-entrypoint.sh"
+    entrypoint: /bin/bash -c "export G3WSUITE_CONSUMER=1; exec /scripts/docker-entrypoint.sh"
     depends_on:
       - postgis
 
@@ -104,7 +104,7 @@ services:
     <<: *g3w-suite
     deploy:
       replicas: 1  # 0 = disable service
-    entrypoint: /bin/bash -c "G3WSUITE_CONSUMER=0 /scripts/docker-entrypoint.sh"
+    entrypoint: /bin/bash -c "export G3WSUITE_CONSUMER=0; exec /scripts/docker-entrypoint.sh"
     depends_on:
       - g3w-suite
       - redis
