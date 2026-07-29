@@ -38,7 +38,7 @@ hr() { printf '\n%s\n\n' "──────────────────
 prompt() {
   # prompt <label> <default>
   local label="$1" default="$2"
-  printf "  %-45s [%s]: " "$label" "$default"
+  printf "  %-45s [%s]: " "$label" "$default" >/dev/tty
   read -r _answer </dev/tty
   printf '%s' "${_answer:-$default}"
 }
