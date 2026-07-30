@@ -193,8 +193,8 @@ case "$stage" in
     echo ""
     echo "  Choose the QGIS apt channel:"
     echo ""
-    printf "    $(cyan '1')  ubuntu      Latest QGIS release  $(green '← recommended')\n"
-    printf "    $(cyan '2')  ubuntu-ltr  Long-Term Release (LTR)\n"
+    printf "    $(cyan '1')  ubuntu      Latest QGIS release\n"
+    printf "    $(cyan '2')  ubuntu-ltr  Long-Term Release (LTR) $(green '← recommended')\n"
     echo ""
     printf "  Choice [1]: "
     read -r qgis_choice </dev/tty
