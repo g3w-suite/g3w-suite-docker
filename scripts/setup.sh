@@ -28,3 +28,6 @@ pip3 install -r /code/g3w-admin/filemanager/requirements.txt
 # Qplotly
 pip3 install -r /code/g3w-admin/qplotly/requirements.txt
 
+# Build the suite
+mkdir /shared-volume
+/code/ci_scripts/build_suite.sh
