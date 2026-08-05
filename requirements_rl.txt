@@ -9,6 +9,7 @@
 
 gunicorn
 granian[reload]
+legacy-cgi                           # HOTFIX: cgi module removed in Python 3.13, needed by TileStache
 
 # DEBUG
 debugpy

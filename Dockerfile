@@ -18,7 +18,7 @@ ARG QGIS_CHANNEL=ubuntu-ltr
 ARG INSTALL_MSSQL=false
 ARG DOCKER_DEPS_TAG=release-3_22
 
-FROM ubuntu:noble AS deps
+FROM ubuntu:resolute AS deps
 
 ARG QGIS_CHANNEL
 ARG INSTALL_MSSQL
@@ -59,7 +59,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     libxslt-dev \
     libgdal-dev \
     python3-dev \
-    libgdal34t64 \
+    python3-pkg-resources \
+    libgdal38 \
+    libaio1t64 \
     python3-gdal \
     python3-pip \
     curl \
@@ -75,26 +77,22 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 # PyQGIS – channel is controlled by QGIS_CHANNEL build arg:
 #   ubuntu-ltr  → https://qgis.org/ubuntu-ltr  (LTR, default)
 #   ubuntu      → https://qgis.org/ubuntu       (latest)
-RUN curl -L -sS https://download.qgis.org/downloads/qgis-archive-keyring.gpg \
-        > /etc/apt/keyrings/qgis-archive-keyring.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/${QGIS_CHANNEL} noble main" | \
-    tee /etc/apt/sources.list.d/qgis.list && \
+RUN curl -sSL https://download.qgis.org/downloads/qgis-archive-keyring.gpg > /etc/apt/keyrings/qgis-archive-keyring.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/${QGIS_CHANNEL} resolute main" > /etc/apt/sources.list.d/qgis.list && \
     apt-get update && apt-get install -y python3-qgis qgis-server
 
 # MS SQL ODBC driver (optional – only when INSTALL_MSSQL=true)
 # ⚠  By enabling this you accept the Microsoft EULA (ACCEPT_EULA=Y)
 RUN if [ "${INSTALL_MSSQL}" = "true" ]; then \
       apt-get install -y tdsodbc libqt5sql5-tds && \
-      curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add && \
-      echo "deb https://packages.microsoft.com/ubuntu/24.04/prod noble main" \
-          >> /etc/apt/sources.list && \
+      curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /etc/apt/keyrings/microsoft.gpg && \
+      echo "deb [signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/24.04/prod noble main" >> /etc/apt/sources.list.d/mssql.list && \
       apt-get update && ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18; \
     fi
 
 # yarn (package manager)
-RUN curl -L -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | \
-    tee /etc/apt/sources.list.d/yarn.list && \
+RUN curl -sSL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor -o /etc/apt/keyrings/yarn.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/yarn.gpg] https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list && \
     apt-get update && apt-get install -y yarn && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
