@@ -45,7 +45,7 @@ ENV QGIS_SERVER_LOG_FILE=/shared-volume/QGIS/error.log
 ENV QGIS_SERVER_LOG_LEVEL=2
 ENV QGIS_SERVER_PARALLEL_RENDERING=1
 
-# 📦 [Oracle Database](https://www.oracle.com/database/technologies/instant-client/downloads.html)
+# 📦 [Oracle DB](https://www.oracle.com/database/technologies/instant-client/downloads.html)
 ENV LD_LIBRARY_PATH=/instantclient_21_16
 
 ENV DISPLAY=:99
