@@ -1,27 +1,24 @@
 ## HOW TO RUN ##
 #
-# Multi-stage Dockerfile for g3w-suite images:
+# # https://docs.docker.com/build/bake/
 #
-#  make docker-image v=deps-ltr:dev                                                 → g3wsuite/g3w-suite-deps-ltr:dev    (QGIS LTR)
-#  make docker-image v=deps:dev                                                     → g3wsuite/g3w-suite-deps:dev        (QGIS latest)
-#  make docker-image v=deps-mssql:ltr-mssql                                         → g3wsuite/g3w-suite-deps:ltr-mssql  (QGIS latest + Microsoft SQL Server)
-#  make docker-image v=suite:dev                                                    → g3wsuite/g3w-suite:dev             (G3W-SUITE dev) 
-#  make docker-image v=oracle:dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7  → qgis/qgis3-build-deps:release-3_22 (QGIS + Oracle support)
-#
+
+# Global ARGs (available in all FROM instructions)
+ARG QGIS_CHANNEL=ubuntu-ltr
+ARG INSTALL_MSSQL=false
+ARG INSTALL_ORACLE=false
+ARG QGIS_TAG=final-4_2_1
 
 # ===========================================================================
 # STAGE: deps
 # ===========================================================================
 
-# Global ARGs (available in all FROM instructions)
-ARG QGIS_CHANNEL=ubuntu-ltr
-ARG INSTALL_MSSQL=false
-ARG DOCKER_DEPS_TAG=release-3_22
-
 FROM ubuntu:resolute AS deps
 
 ARG QGIS_CHANNEL
 ARG INSTALL_MSSQL
+ARG INSTALL_ORACLE
+ARG QGIS_TAG
 
 LABEL maintainer="Gis3w" \
       Description="Image used to prepare build requirements for g3w-suite docker images" \
@@ -29,6 +26,7 @@ LABEL maintainer="Gis3w" \
       Version="dev"
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV LANG=C.UTF-8
 
 # hotfix for Python 11: https://stackoverflow.com/a/76469774
 ENV UV_BREAK_SYSTEM_PACKAGES=1
@@ -46,6 +44,9 @@ ENV QGIS_OPTIONS_PATH=/shared-volume/
 ENV QGIS_SERVER_LOG_FILE=/shared-volume/QGIS/error.log
 ENV QGIS_SERVER_LOG_LEVEL=2
 ENV QGIS_SERVER_PARALLEL_RENDERING=1
+
+# 📦 [Oracle Database](https://www.oracle.com/database/technologies/instant-client/downloads.html)
+ENV LD_LIBRARY_PATH=/instantclient_21_16
 
 ENV DISPLAY=:99
 
@@ -72,14 +73,151 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     xvfb \
     postgresql-client \
     git \
-    figlet
+    figlet && \
+    if [ "${INSTALL_ORACLE}" = "true" ]; then \
+        apt-get update && apt-get install -y --no-install-recommends \
+            bison \
+            build-essential \
+            ca-certificates \
+            ccache \
+            clang \
+            cmake \
+            curl \
+            flex \
+            git \
+            libaio1t64 \
+            libdraco-dev \
+            libexiv2-dev \
+            libexpat1-dev \
+            libfcgi-dev \
+            libgdal-dev \
+            libgeos-dev \
+            libgeographiclib-dev \
+            libgsl-dev \
+            libpq-dev \
+            libproj-dev \
+            libprotobuf-dev \
+            libqca-qt6-dev \
+            libqscintilla2-qt6-dev \
+            libqt6opengl6-dev \
+            libqt6svg6-dev \
+            libsfcgal-dev \
+            libspatialindex-dev \
+            libspatialite-dev \
+            libsqlite3-dev \
+            libsqlite3-mod-spatialite \
+            libzip-dev \
+            libzstd-dev \
+            mold \
+            ninja-build \
+            ocl-icd-opencl-dev \
+            opencl-headers \
+            protobuf-compiler \
+            pyqt6.qsci-dev \
+            python3-all-dev \
+            python3-gdal \
+            python3-pip \
+            python3-pyqt6 \
+            python3-pyqt6.qsci \
+            python3-pyqt6.qtpositioning \
+            python3-pyqt6.qtsvg \
+            python3-pyqt6.sip \
+            python3-pyqtbuild \
+            python3-sipbuild \
+            qt6-3d-dev \
+            qt6-5compat-dev \
+            qt6-base-dev \
+            qt6-base-private-dev \
+            qt6-declarative-dev-tools \
+            qt6-multimedia-dev \
+            qt6-pdf-dev \
+            qt6-positioning-dev \
+            qt6-serialport-dev \
+            qt6-tools-dev \
+            qt6-tools-dev-tools \
+            qt6-webengine-dev \
+            qtkeychain-qt6-dev \
+            qmake6 \
+            sip-tools \
+            spawn-fcgi \
+            txt2tags \
+            unzip \
+            xvfb; \
+    fi
+
+# install Oracle Instant Client
+RUN if [ "${INSTALL_ORACLE}" = "true" ]; then \
+        mkdir -p /opt/oracle && \
+        cd /opt/oracle && \
+        curl -sSL -o instantclient-basic.zip https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-basic-linux.x64-21.16.0.0.0dbru.zip && \
+        curl -sSL -o instantclient-sdk.zip https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-sdk-linux.x64-21.16.0.0.0dbru.zip && \
+        unzip -n instantclient-basic.zip && \
+        unzip -n instantclient-sdk.zip && \
+        rm -f *.zip && \
+        mv instantclient_21_16 /instantclient_21_16 && \
+        echo "/instantclient_21_16" > /etc/ld.so.conf.d/oracle-instantclient.conf && \
+        ldconfig && \
+        ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1; \
+    fi
+
+# clone and build QGIS from source (with Qt6 + Oracle support)
+RUN if [ "${INSTALL_ORACLE}" = "true" ]; then \
+        git clone --depth 1 --branch ${QGIS_TAG} https://github.com/qgis/QGIS.git QGIS; \
+    fi
+
+# based on: https://github.com/qgis/QGIS/blob/final-4_2_1/.docker/docker-qgis-build.sh
+RUN --mount=type=cache,target=/root/.cache/ccache \
+    if [ "${INSTALL_ORACLE}" = "true" ]; then \
+        cd /QGIS && mkdir build && cd build && \
+        cmake \
+        -GNinja \
+        -DUSE_CCACHE=ON \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_C_COMPILER=clang \
+        -DCMAKE_CXX_COMPILER=clang++ \
+        -DGDAL_LIBRARY=/usr/lib/x86_64-linux-gnu/libgdal.so \
+        -DOCI_INCLUDE_DIR=/instantclient_21_16/sdk/include \
+        -DOCI_LIBRARY=/instantclient_21_16/libclntsh.so \
+        -DWITH_QT6=ON \
+        -DWITH_DESKTOP=OFF \
+        -DWITH_ANALYSIS=ON \
+        -DWITH_SERVER=ON \
+        -DWITH_PDAL=OFF \
+        -DWITH_3D=OFF \
+        -DWITH_BINDINGS=ON \
+        -DWITH_CUSTOM_WIDGETS=OFF \
+        -DBINDINGS_GLOBAL_INSTALL=ON \
+        -DWITH_STAGED_PLUGINS=ON \
+        -DWITH_GRASS=OFF \
+        -DWITH_ORACLE=ON \
+        -DSUPPRESS_QT_WARNINGS=ON \
+        -DDISABLE_DEPRECATED=ON \
+        -DENABLE_TESTS=OFF \
+        -DWITH_QSPATIALITE=ON \
+        -DWITH_INTERNAL_SPATIALINDEX=ON \
+        -DWITH_APIDOC=OFF \
+        -DWITH_ASTYLE=OFF \
+        -DCMAKE_PREFIX_PATH=.. \
+        .. \
+        && ninja install \
+        && cd / \
+        && rm -rf /QGIS; \
+    fi
+
+# 4. Final configuration & runtime setup
+RUN if [ "${INSTALL_ORACLE}" = "true" ]; then \
+        pip3 install --break-system-packages jinja2 pygments; \
+    fi
 
 # PyQGIS – channel is controlled by QGIS_CHANNEL build arg:
 #   ubuntu-ltr  → https://qgis.org/ubuntu-ltr  (LTR, default)
 #   ubuntu      → https://qgis.org/ubuntu       (latest)
-RUN curl -sSL https://download.qgis.org/downloads/qgis-archive-keyring.gpg > /etc/apt/keyrings/qgis-archive-keyring.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/${QGIS_CHANNEL} resolute main" > /etc/apt/sources.list.d/qgis.list && \
-    apt-get update && apt-get install -y python3-qgis qgis-server
+RUN if [ "${INSTALL_ORACLE}" = "false" ]; then \
+        curl -sSL https://download.qgis.org/downloads/qgis-archive-keyring.gpg > /etc/apt/keyrings/qgis-archive-keyring.gpg && \
+        echo "deb [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/${QGIS_CHANNEL} resolute main" > /etc/apt/sources.list.d/qgis.list && \
+        apt-get update && apt-get install -y python3-qgis qgis-server; \
+    fi
 
 # MS SQL ODBC driver (optional – only when INSTALL_MSSQL=true)
 # ⚠  By enabling this you accept the Microsoft EULA (ACCEPT_EULA=Y)
@@ -98,6 +236,22 @@ RUN curl -sSL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor -o /etc/a
 
 # uv (package manager)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+# ENV PYTHONPATH=/usr/share/qgis/python/:/usr/share/qgis/python/plugins:/usr/lib/python3/dist-packages/qgis:/usr/share/qgis/python/qgis
+
+# # Fix www-data permissions for runtime requirements
+# RUN mkdir -p /var/www/.local /var/www/.config && chown -R www-data:www-data /var/www
+
+# USER www-data
+
+# CMD ["/usr/bin/xvfb-run", \
+#      "-s", "-ac -screen 0 1280x1024x16 +extension GLX +render -noreset", \
+#      "/usr/bin/spawn-fcgi", \
+#        "-d", "/usr/lib/qgis/", \
+#        "-n", \
+#        "-p", "9333", \
+#        "--", \
+#        "/usr/bin/qgis_mapserv.fcgi"]
 
 RUN mkdir /code
 
@@ -142,77 +296,3 @@ RUN chmod +x /scripts/*.sh
 CMD ["sh", "-c", "figlet G3W-SUITE && tail -f /dev/null"]
 
 ENTRYPOINT ["/scripts/docker-entrypoint.sh"]
-
-
-# ===========================================================================
-# STAGE: qgis-oracle
-# ===========================================================================
-# NOTE: this stage is completely independent from `deps` / `suite`.
-#       It compiles QGIS from source with Oracle (OCI) support.
-#       QGIS server binary is /usr/bin/qgis_mapserv.fcgi
-# ===========================================================================
-
-FROM qgis/qgis3-build-deps:${DOCKER_DEPS_TAG} AS qgis-oracle
-
-LABEL maintainer="Alessandro Pasotti <elpaso@itopen.it>" \
-      Description="Docker container with QGIS Server and Oracle support" \
-      Vendor="Gis3W" \
-      Version="3.4.x"
-
-ARG QGIS_TAG=final-3_22_7
-
-ENV LANG=C.UTF-8
-
-# Clone tagged release
-RUN cd / && git clone --depth 1 --branch ${QGIS_TAG} https://github.com/qgis/QGIS.git
-
-# Build server with Oracle support
-RUN cd /QGIS && mkdir build && cd build && \
-    cmake \
-      -GNinja \
-      -DUSE_CCACHE=OFF \
-      -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_INSTALL_PREFIX=/usr \
-      -DOCI_INCLUDE_DIR=/instantclient_19_9/sdk/include \
-      -DOCI_LIBRARY=/instantclient_19_9/libclntsh.so \
-      -DWITH_DESKTOP=OFF \
-      -DWITH_ANALYSIS=ON \
-      -DWITH_SERVER=ON \
-      -DWITH_3D=OFF \
-      -DWITH_BINDINGS=ON \
-      -DWITH_CUSTOM_WIDGETS=OFF \
-      -DBINDINGS_GLOBAL_INSTALL=ON \
-      -DWITH_STAGED_PLUGINS=ON \
-      -DWITH_GRASS=OFF \
-      -DWITH_ORACLE=ON \
-      -DSUPPRESS_QT_WARNINGS=ON \
-      -DDISABLE_DEPRECATED=ON \
-      -DENABLE_TESTS=OFF \
-      -DWITH_QSPATIALITE=ON \
-      -DWITH_APIDOC=OFF \
-      -DWITH_ASTYLE=OFF \
-      -DCMAKE_PREFIX_PATH=.. \
-      .. \
-    && ninja install \
-    && cd \
-    && rm -rf /QGIS
-
-# Additional run-time dependencies
-RUN pip3 install jinja2 pygments
-
-# Python paths
-ENV PYTHONPATH=/usr/share/qgis/python/:/usr/share/qgis/python/plugins:/usr/lib/python3/dist-packages/qgis:/usr/share/qgis/python/qgis
-
-# Unprivileged user
-USER www-data
-
-CMD ["/usr/bin/xvfb-run", \
-     "-s", "-ac -screen 0 1280x1024x16 +extension GLX +render -noreset", \
-     "/usr/bin/spawn-fcgi", \
-       "-u", "www-data", \
-       "-g", "www-data", \
-       "-d", "/usr/lib/qgis/", \
-       "-n", \
-       "-p", "9333", \
-       "--", \
-       "/usr/bin/qgis_mapserv.fcgi"]

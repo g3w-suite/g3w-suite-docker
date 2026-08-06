@@ -105,39 +105,36 @@ Run deploy wizard again and enable the LetsEncrypt Certbot when prompted.
 make deploy
 ```
 
-## 📦 Docker image
+## 📦 Docker images
 
-Docker images are built using a **multi-stage** [Dockerfile](./Dockerfile).
-
-Run the interactive wizard to get guided through every option:
+Docker images are built using a **multi-stage** [Dockerfile](./Dockerfile) + [docker-bake.hcl](./docker-bake.hcl).
 
 ```bash
-make docker-image
+docker buildx bake --list targets # show available targets
 ```
 
-### Running the MS SQL ODBC container
+### Running with MSSQL
 
 ⚠️ By using it you accept the [Microsoft EULA](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server).
 
 ```sh
-# run the interactive wizard (choose: "deps-mssql")
-make docker-image
+# build deps image with MSSQL ODBC driver
+docker buildx bake ci-deps-mssql ci-deps-ltr-mssql
 
 # start server
 make reload
 ```
 
-### Running the Oracle QGIS Server container
+### Running with Oracle
+
+⚠️ By using it you need to compile QGIS from source, it takes ~1-2 hours.
 
 ```sh
-# run the interactive wizard (choose: "oracle")
-make docker-image
+# build deps image with Oracle OIC driver
+docker buildx bake oracle
 
 # start server
-make run-oracle QGIS_TAG=final-3_22_7 QGIS_FCGI_PORT=9333
-
-# check fcgi-server
-cgi-fcgi -bind -connect 127.0.0.1:9333
+make reload
 ```
 
 ## 🎨 Style customization

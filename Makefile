@@ -183,26 +183,6 @@ stress:
 	docker run --rm -it --network=g3w-suite-docker_internal ghcr.io/hatoo/oha -c 2 -n 200 http://g3w-suite:8000/
 
 ##
-# 🏗️  Build a docker image
-#
-# make docker-image                                                           # interactive wizard
-# make docker-image v=<stage>:<tag> [QGIS_DEPS_TAG=x QGIS_TAG=y]              # non-interactive
-#
-# Valid Stages (v):
-#   suite (default), deps, deps-ltr, deps-mssql, oracle
-#
-# Examples:
-#   make docker-image                                                         # wizard
-#   make docker-image v=suite:v3.8.x                                          # custom tag
-#   make docker-image v=deps:dev                                              # Ubuntu + QGIS latest
-#   make docker-image v=deps-ltr:dev                                          # Ubuntu + QGIS LTR
-#   make docker-image v=deps-mssql:ltr-mssql                                  # QGIS LTR + MS SQL ODBC driver ⚠️
-#   make docker-image v=oracle:dev QGIS_DEPS_TAG=release-3_22 QGIS_TAG=final-3_22_7
-##
-docker-image:
-	./scripts/makefile/docker-image.sh $(if $(filter command line,$(origin v)),$(v))
-
-##
 # 🗺️  Run QGIS Server with Oracle FCGI
 #
 # make run-oracle QGIS_TAG=final-3_22_7

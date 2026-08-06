@@ -3,16 +3,9 @@
 on:
   push:
   pull_request:
-  workflow_dispatch:
-    inputs:
-      QGIS_DEPS_TAG:
-        description: "qgis3-build-deps image tag (e.g. release-3_22)"
-        default: "release-3_22"
-        required: true
-      QGIS_TAG:
-        description: "QGIS git tag (e.g. final-3_22_7)"
-        default: "final-3_22_7"
-        required: true
+  schedule:
+    # Every night at 02:00 UTC.
+    - cron: '0 2 * * *'
 
 jobs:
 
@@ -22,6 +15,7 @@ jobs:
   validate-makefile:
     name: "Validate Makefile (make help)"
     runs-on: ubuntu-24.04
+    if: github.event_name != 'schedule'
     steps:
       -
         name: Checkout
@@ -36,6 +30,7 @@ jobs:
   validate-compose:
     name: "Validate docker-compose.yml syntax"
     runs-on: ubuntu-24.04
+    if: github.event_name != 'schedule'
     steps:
       -
         name: Checkout
@@ -51,23 +46,12 @@ jobs:
         run: docker compose --env-file .env --env-file .env.dev -f docker-compose.yml config --quiet
 
   ##
-  # Build all docker-image targets via Makefile.
+  # Build image targets via docker buildx bake.
   ##
   build:
-    name: "make ${{ matrix.target }}"
+    name: "docker buildx bake ci"
     runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - target: "docker-image v=deps-ltr:ci"
-            description: "deps (QGIS LTR)"
-          - target: "docker-image v=deps:ci"
-            description: "deps (QGIS latest)"
-          - target: "docker-image v=deps-mssql:ci"
-            description: "deps (QGIS LTR + MS SQL)"
-          - target: "docker-image v=suite:ci"
-            description: "suite (app layer, QGIS LTR)"
+    if: github.event_name != 'schedule'
     steps:
       -
         name: Checkout
@@ -76,17 +60,20 @@ jobs:
         name: "Set up Docker Buildx"
         uses: docker/setup-buildx-action@v3
       -
-        name: "${{ matrix.description }}"
-        run: make ${{ matrix.target }}
+        name: "Build ci matrix"
+        run: docker buildx bake ci
 
   ##
   # Build QGIS Server with Oracle support.
-  # Only runs on manual trigger (workflow_dispatch) — compilation takes ~1-2 hours.
+  # Only runs at night (schedule) — compilation takes ~1-2 hours.
   ##
   build-oracle:
-    name: "make docker-image v=oracle:ci"
+    name: "docker buildx bake oracle"
     runs-on: ubuntu-24.04
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'schedule'
+    concurrency:
+      group: build-oracle
+      cancel-in-progress: false
     steps:
       -
         name: Checkout
@@ -95,9 +82,8 @@ jobs:
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       -
-        name: "Build qgis-oracle (QGIS_TAG=${{ inputs.QGIS_TAG }})"
-        run: >
-          make docker-image
-          v=oracle:ci
-          QGIS_DEPS_TAG=${{ inputs.QGIS_DEPS_TAG }}
-          QGIS_TAG=${{ inputs.QGIS_TAG }}
+        name: "Build qgis-oracle"
+        run: |
+          docker buildx bake oracle \
+            --set *.cache-from=type=gha,scope=qgis-oracle \
+            --set *.cache-to=type=gha,mode=max,scope=qgis-oracle
