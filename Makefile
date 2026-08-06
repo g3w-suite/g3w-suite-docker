@@ -181,21 +181,3 @@ memray:
 stress:
 	@echo "Running stress test with Oha (2 simultaneous connections, 200 total requests)..."
 	docker run --rm -it --network=g3w-suite-docker_internal ghcr.io/hatoo/oha -c 2 -n 200 http://g3w-suite:8000/
-
-##
-# 🗺️  Run QGIS Server with Oracle FCGI
-#
-# make run-oracle QGIS_TAG=final-3_22_7
-# make run-oracle QGIS_TAG=final-3_22_7 QGIS_FCGI_PORT=9334
-##
-run-oracle:
-	docker run -d --init --rm --name qgis-server-oracle \
-		-p ${QGIS_FCGI_PORT:-9333}:9333 \
-		-e QGIS_PREFIX_PATH=/usr \
-		-e QGIS_SERVER_LOG_LEVEL=1 \
-		-e QGIS_SERVER_LOG_STDERR=1 \
-		-e QGIS_SERVER_PARALLEL_RENDERING=1 \
-		-e QGIS_SERVER_MAX_THREADS=2 \
-		-e QGIS_CUSTOM_CONFIG_PATH=/tmp \
-		-e QGIS_AUTH_DB_DIR_PATH=/tmp \
-		g3wsuite/g3w-suite-qgis-oracle:${QGIS_TAG:-final-3_22_7}
