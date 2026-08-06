@@ -30,7 +30,6 @@ target "oracle" {
     INSTALL_ORACLE   = "true"
     INSTALL_MSSQL    = "false"
     QGIS_CHANNEL     = "ubuntu-ltr"
-    QGIS_TAG         = "final-4_2_1"
   }
 }
 

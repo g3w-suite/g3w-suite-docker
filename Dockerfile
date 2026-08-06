@@ -7,7 +7,6 @@
 ARG QGIS_CHANNEL=ubuntu-ltr
 ARG INSTALL_MSSQL=false
 ARG INSTALL_ORACLE=false
-ARG QGIS_TAG=final-4_2_1
 
 # ===========================================================================
 # STAGE: deps
@@ -18,7 +17,6 @@ FROM ubuntu:resolute AS deps
 ARG QGIS_CHANNEL
 ARG INSTALL_MSSQL
 ARG INSTALL_ORACLE
-ARG QGIS_TAG
 
 LABEL maintainer="Gis3w" \
       Description="Image used to prepare build requirements for g3w-suite docker images" \
@@ -162,7 +160,7 @@ RUN if [ "${INSTALL_ORACLE}" = "true" ]; then \
 
 # clone and build QGIS from source (with Qt6 + Oracle support)
 RUN if [ "${INSTALL_ORACLE}" = "true" ]; then \
-        git clone --depth 1 --branch ${QGIS_TAG} https://github.com/qgis/QGIS.git QGIS; \
+        git clone --depth 1 --branch final-4_2_1 https://github.com/qgis/QGIS.git QGIS; \
     fi
 
 # based on: https://github.com/qgis/QGIS/blob/final-4_2_1/.docker/docker-qgis-build.sh
