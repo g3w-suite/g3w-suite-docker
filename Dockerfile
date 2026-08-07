@@ -196,7 +196,7 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -DWITH_CUSTOM_WIDGETS=OFF \
             -DWITH_DESKTOP=OFF \
             -DWITH_GRASS=OFF \
-            -DWITH_GEOGRAPHICLIB=ON \
+            -DWITH_GEOGRAPHICLIB=OFF \
             -DWITH_GUI=OFF \
             -DWITH_HANA=OFF \
             -DWITH_INTERNAL_SPATIALINDEX=ON \
@@ -210,7 +210,7 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -DWITH_QUICK=OFF \
             -DWITH_QTSERIALPORT=OFF \
             -DWITH_SERVER=ON \
-            -DWITH_SERVER_LANDINGPAGE_WEBAPP=ON \
+            -DWITH_SERVER_LANDINGPAGE_WEBAPP=OFF \
             -DWITH_SFCGAL=OFF \
             -DWITH_STAGED_PLUGINS=ON \
         .. \
