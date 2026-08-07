@@ -40,7 +40,7 @@ target "ci" {
       { name = "deps",           suffix = "deps",           channel = "ubuntu",     mssql = "false" },
       { name = "deps-ltr",       suffix = "deps-ltr",       channel = "ubuntu-ltr", mssql = "false" },
       { name = "deps-ltr-mssql", suffix = "deps-ltr-mssql", channel = "ubuntu-ltr", mssql = "true"  },
-      { name = "deps-mssql",     suffix = "deps",           channel = "ubuntu",     mssql = "true"  }
+      { name = "deps-mssql",     suffix = "deps-mssql",     channel = "ubuntu",     mssql = "true"  }
     ]
   }
   name = "ci-${variant.name}"
