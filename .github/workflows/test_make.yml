@@ -3,6 +3,7 @@
 on:
   push:
   pull_request:
+  workflow_dispatch:
   schedule:
     # Every night at 02:00 UTC.
     - cron: '0 2 * * *'
@@ -70,7 +71,7 @@ jobs:
   build-oracle:
     name: "docker buildx bake oracle"
     runs-on: ubuntu-24.04
-    if: github.event_name == 'schedule'
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     concurrency:
       group: build-oracle
       cancel-in-progress: false
@@ -87,4 +88,12 @@ jobs:
           docker buildx bake -f docker-bake.hcl \
             oracle \
             --set *.cache-from=type=gha,scope=qgis-oracle \
-            --set *.cache-to=type=gha,mode=max,scope=qgis-oracle
+            --set *.cache-to=type=gha,mode=max,scope=qgis-oracle \
+            --set *.output=type=docker,dest=/tmp/qgis-oracle.tar
+      -
+        name: "Upload qgis-oracle artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: qgis-oracle-image
+          path: /tmp/qgis-oracle.tar
+          retention-days: 7
