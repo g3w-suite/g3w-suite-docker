@@ -171,6 +171,8 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
     if [ "${INSTALL_ORACLE}" = "true" ]; then \
         cd /QGIS && mkdir build && cd build && \
         cmake \
+            -GNinja \
+            -DAGGRESSIVE_SAFE_MODE=OFF \
             -DBINDINGS_GLOBAL_INSTALL=ON \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_C_COMPILER=clang \
@@ -182,10 +184,10 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -DENABLE_TESTS=OFF \
             -DENABLE_UNITY_BUILDS=ON \
             -DGDAL_LIBRARY=/usr/lib/x86_64-linux-gnu/libgdal.so \
-            -DGNinja \
             -DORACLE_INCLUDEDIR=/instantclient_21_16/sdk/include \
             -DORACLE_LIBDIR=/instantclient_21_16/ \
             -DSUPPRESS_QT_WARNINGS=ON \
+            -DWERROR=FALSE \
             -DWITH_3D=OFF \
             -DWITH_ANALYSIS=ON \
             -DWITH_APIDOC=OFF \
@@ -194,14 +196,22 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -DWITH_CUSTOM_WIDGETS=OFF \
             -DWITH_DESKTOP=OFF \
             -DWITH_GRASS=OFF \
+            -DWITH_GEOGRAPHICLIB=ON \
             -DWITH_GUI=OFF \
+            -DWITH_HANA=OFF \
             -DWITH_INTERNAL_SPATIALINDEX=ON \
+            -DWITH_CLAZY=OFF \
             -DWITH_ORACLE=ON \
             -DWITH_PDAL=OFF \
+            -DWITH_PDF4QT=ON \
+            -DWITH_QGIS_PROCESS=ON \
             -DWITH_QSPATIALITE=ON \
             -DWITH_QT6=ON \
             -DWITH_QUICK=OFF \
+            -DWITH_QTSERIALPORT=OFF \
             -DWITH_SERVER=ON \
+            -DWITH_SERVER_LANDINGPAGE_WEBAPP=ON \
+            -DWITH_SFCGAL=OFF \
             -DWITH_STAGED_PLUGINS=ON \
         .. \
         && ninja install \
