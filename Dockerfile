@@ -171,35 +171,38 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
     if [ "${INSTALL_ORACLE}" = "true" ]; then \
         cd /QGIS && mkdir build && cd build && \
         cmake \
-        -GNinja \
-        -DUSE_CCACHE=ON \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_INSTALL_PREFIX=/usr \
-        -DCMAKE_C_COMPILER=clang \
-        -DCMAKE_CXX_COMPILER=clang++ \
-        -DGDAL_LIBRARY=/usr/lib/x86_64-linux-gnu/libgdal.so \
-        -DOCI_INCLUDE_DIR=/instantclient_21_16/sdk/include \
-        -DOCI_LIBRARY=/instantclient_21_16/libclntsh.so \
-        -DWITH_QT6=ON \
-        -DWITH_DESKTOP=OFF \
-        -DWITH_ANALYSIS=ON \
-        -DWITH_SERVER=ON \
-        -DWITH_PDAL=OFF \
-        -DWITH_3D=OFF \
-        -DWITH_BINDINGS=ON \
-        -DWITH_CUSTOM_WIDGETS=OFF \
-        -DBINDINGS_GLOBAL_INSTALL=ON \
-        -DWITH_STAGED_PLUGINS=ON \
-        -DWITH_GRASS=OFF \
-        -DWITH_ORACLE=ON \
-        -DSUPPRESS_QT_WARNINGS=ON \
-        -DDISABLE_DEPRECATED=ON \
-        -DENABLE_TESTS=OFF \
-        -DWITH_QSPATIALITE=ON \
-        -DWITH_INTERNAL_SPATIALINDEX=ON \
-        -DWITH_APIDOC=OFF \
-        -DWITH_ASTYLE=OFF \
-        -DCMAKE_PREFIX_PATH=.. \
+            -DBINDINGS_GLOBAL_INSTALL=ON \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DCMAKE_PREFIX_PATH=.. \
+            -DDISABLE_DEPRECATED=ON \
+            -DDUSE_CCACHE=ON \
+            -DENABLE_TESTS=OFF \
+            -DENABLE_UNITY_BUILDS=ON \
+            -DGDAL_LIBRARY=/usr/lib/x86_64-linux-gnu/libgdal.so \
+            -DGNinja \
+            -DORACLE_INCLUDEDIR=/instantclient_21_16/sdk/include \
+            -DORACLE_LIBDIR=/instantclient_21_16/ \
+            -DSUPPRESS_QT_WARNINGS=ON \
+            -DWITH_3D=OFF \
+            -DWITH_ANALYSIS=ON \
+            -DWITH_APIDOC=OFF \
+            -DWITH_ASTYLE=OFF \
+            -DWITH_BINDINGS=ON \
+            -DWITH_CUSTOM_WIDGETS=OFF \
+            -DWITH_DESKTOP=OFF \
+            -DWITH_GRASS=OFF \
+            -DWITH_GUI=OFF \
+            -DWITH_INTERNAL_SPATIALINDEX=ON \
+            -DWITH_ORACLE=ON \
+            -DWITH_PDAL=OFF \
+            -DWITH_QSPATIALITE=ON \
+            -DWITH_QT6=ON \
+            -DWITH_QUICK=OFF \
+            -DWITH_SERVER=ON \
+            -DWITH_STAGED_PLUGINS=ON \
         .. \
         && ninja install \
         && cd / \
