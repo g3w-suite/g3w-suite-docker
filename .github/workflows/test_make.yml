@@ -94,5 +94,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: qgis-oracle-image
+          if-no-files-found: error
           path: qgis-oracle.tar
           retention-days: 7
