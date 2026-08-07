@@ -88,11 +88,11 @@ jobs:
             oracle \
             --set *.cache-from=type=gha,scope=qgis-oracle \
             --set *.cache-to=type=gha,mode=max,scope=qgis-oracle \
-            --set *.output=type=docker,dest=/tmp/qgis-oracle.tar
+            --set *.output=type=docker,dest=qgis-oracle.tar
       -
         name: "Upload qgis-oracle artifact"
         uses: actions/upload-artifact@v4
         with:
           name: qgis-oracle-image
-          path: /tmp/qgis-oracle.tar
+          path: qgis-oracle.tar
           retention-days: 7
