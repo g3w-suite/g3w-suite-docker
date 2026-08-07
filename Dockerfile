@@ -251,6 +251,9 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 #        "--", \
 #        "/usr/bin/qgis_mapserv.fcgi"]
 
+# DEBUG: keep container running in background
+CMD ["tail", "-f", "/dev/null"]
+
 RUN mkdir /code
 
 WORKDIR /code
