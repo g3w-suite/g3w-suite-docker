@@ -117,8 +117,11 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
             python3-pip \
             python3-pyqt6 \
             python3-pyqt6.qsci \
-            python3-pyqt6.qtpositioning \
             python3-pyqt6.qtsvg \
+            python3-pyqt6.qtpositioning \
+            python3-pyqt6.qtmultimedia \
+            python3-pyqt6.qtserialport \
+            python3-pyqt6.qtwebengine \
             python3-pyqt6.sip \
             python3-pyqtbuild \
             python3-sipbuild \
