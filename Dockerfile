@@ -128,6 +128,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
             qt6-serialport-dev \
             qt6-tools-dev \
             qt6-tools-dev-tools \
+            qt6-webengine-dev \
             qtkeychain-qt6-dev \
             qmake6 \
             sip-tools \
