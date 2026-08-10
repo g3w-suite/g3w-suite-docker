@@ -190,7 +190,7 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -DWITH_ORACLE=ON \
             -DWITH_PDAL=OFF \
             -DWITH_PDF4QT=OFF \
-            -DWITH_QGIS_PROCESS=ON \
+            -DWITH_QGIS_PROCESS=OFF \
             -DWITH_QSPATIALITE=ON \
             -DWITH_QT6=ON \
             -DWITH_QUICK=OFF \
