@@ -73,7 +73,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     git \
     figlet && \
     if [ "${INSTALL_ORACLE}" = "true" ]; then \
-        apt-get update && && apt-get install -y software-properties-common \
+        apt-get update && apt-get install -y software-properties-common \
         apt-get update && apt-get install -y \
             bison \
             build-essential \
