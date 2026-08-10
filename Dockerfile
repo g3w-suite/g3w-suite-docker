@@ -73,24 +73,20 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     git \
     figlet && \
     if [ "${INSTALL_ORACLE}" = "true" ]; then \
-        apt-get update && apt-get install -y --no-install-recommends \
+        apt-get update && && apt-get install -y software-properties-common \
+        apt-get update && apt-get install -y \
             bison \
             build-essential \
             ca-certificates \
             ccache \
             clang \
             cmake \
-            curl \
             flex \
-            git \
-            libaio1t64 \
             libdraco-dev \
             libexiv2-dev \
             libexpat1-dev \
             libfcgi-dev \
-            libgdal-dev \
             libgeos-dev \
-            libgeographiclib-dev \
             libgsl-dev \
             libpq-dev \
             libproj-dev \
@@ -99,11 +95,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
             libqscintilla2-qt6-dev \
             libqt6opengl6-dev \
             libqt6svg6-dev \
-            libsfcgal-dev \
             libspatialindex-dev \
             libspatialite-dev \
             libsqlite3-dev \
-            libsqlite3-mod-spatialite \
             libzip-dev \
             libzstd-dev \
             mold \
@@ -113,15 +107,10 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
             protobuf-compiler \
             pyqt6.qsci-dev \
             python3-all-dev \
-            python3-gdal \
-            python3-pip \
             python3-pyqt6 \
             python3-pyqt6.qsci \
             python3-pyqt6.qtsvg \
             python3-pyqt6.qtpositioning \
-            python3-pyqt6.qtmultimedia \
-            python3-pyqt6.qtserialport \
-            python3-pyqt6.qtwebengine \
             python3-pyqt6.sip \
             python3-pyqtbuild \
             python3-sipbuild \
@@ -130,20 +119,15 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
             qt6-base-dev \
             qt6-base-private-dev \
             qt6-declarative-dev-tools \
-            qt6-multimedia-dev \
-            qt6-pdf-dev \
             qt6-positioning-dev \
-            qt6-serialport-dev \
             qt6-tools-dev \
             qt6-tools-dev-tools \
-            qt6-webengine-dev \
             qtkeychain-qt6-dev \
             qmake6 \
             sip-tools \
             spawn-fcgi \
             txt2tags \
-            unzip \
-            xvfb; \
+            unzip; \
     fi
 
 # install Oracle Instant Client
@@ -180,7 +164,7 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -DCMAKE_INSTALL_PREFIX=/usr \
             -DCMAKE_PREFIX_PATH=.. \
             -DDISABLE_DEPRECATED=ON \
-            -DDUSE_CCACHE=ON \
+            -DUSE_CCACHE=ON \
             -DENABLE_TESTS=OFF \
             -DENABLE_UNITY_BUILDS=ON \
             -DGDAL_LIBRARY=/usr/lib/x86_64-linux-gnu/libgdal.so \
@@ -189,7 +173,7 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -DSUPPRESS_QT_WARNINGS=ON \
             -DWERROR=FALSE \
             -DWITH_3D=OFF \
-            -DWITH_ANALYSIS=ON \
+            -DWITH_ANALYSIS=OFF \
             -DWITH_APIDOC=OFF \
             -DWITH_ASTYLE=OFF \
             -DWITH_BINDINGS=ON \
@@ -203,7 +187,7 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -DWITH_CLAZY=OFF \
             -DWITH_ORACLE=ON \
             -DWITH_PDAL=OFF \
-            -DWITH_PDF4QT=ON \
+            -DWITH_PDF4QT=OFF \
             -DWITH_QGIS_PROCESS=ON \
             -DWITH_QSPATIALITE=ON \
             -DWITH_QT6=ON \
