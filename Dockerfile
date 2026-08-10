@@ -189,7 +189,7 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -DWITH_DESKTOP=OFF \
             -DWITH_GRASS=OFF \
             -DWITH_GEOGRAPHICLIB=OFF \
-            -DWITH_GUI=OFF \
+            -DWITH_GUI=ON \
             -DWITH_HANA=OFF \
             -DWITH_INTERNAL_SPATIALINDEX=ON \
             -DWITH_CLAZY=OFF \
