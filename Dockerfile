@@ -73,8 +73,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     git \
     figlet && \
     if [ "${INSTALL_ORACLE}" = "true" ]; then \
-        apt-get update && apt-get install -y software-properties-common \
-        apt-get update && apt-get install -y \
+        apt-get install -y software-properties-common && \
+        apt-get install -y \
             bison \
             build-essential \
             ca-certificates \
@@ -150,7 +150,9 @@ RUN if [ "${INSTALL_ORACLE}" = "true" ]; then \
         git clone --depth 1 --branch final-4_2_1 https://github.com/qgis/QGIS.git QGIS; \
     fi
 
-# based on: https://github.com/qgis/QGIS/blob/final-4_2_1/.docker/docker-qgis-build.sh
+# based on:
+# - https://github.com/qgis/QGIS/blob/final-4_2_1/.docker/docker-qgis-build.sh
+# - https://github.com/qgis/QGIS/blob/master/CMakeLists.txt
 RUN --mount=type=cache,target=/root/.cache/ccache \
     if [ "${INSTALL_ORACLE}" = "true" ]; then \
         cd /QGIS && mkdir build && cd build && \
