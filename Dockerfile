@@ -158,8 +158,10 @@ RUN if [ "${INSTALL_ORACLE}" = "true" ]; then \
     fi
 
 # based on:
+# - https://github.com/qgis/QGIS/blob/final-4_2_1/INSTALL.md
+# - https://github.com/qgis/QGIS/blob/final-4_2_1/CMakeLists.txt
 # - https://github.com/qgis/QGIS/blob/final-4_2_1/.docker/docker-qgis-build.sh
-# - https://github.com/qgis/QGIS/blob/master/CMakeLists.txt
+# - https://github.com/qgis/QGIS/blob/final-4_2_1/.docker/qgis3-ubuntu-qt6-build-deps.dockerfile
 RUN --mount=type=cache,target=/root/.cache/ccache \
     if [ "${INSTALL_ORACLE}" = "true" ]; then \
         cd /QGIS && mkdir build && cd build && \
@@ -178,7 +180,6 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -DENABLE_UNITY_BUILDS=ON \
             -DORACLE_INCLUDEDIR=/instantclient_21_16/sdk/include \
             -DORACLE_LIBDIR=/instantclient_21_16/ \
-            -DSUPPRESS_QT_WARNINGS=ON \
             -DWERROR=FALSE \
             -DWITH_3D=OFF \
             -DWITH_ANALYSIS=OFF \
