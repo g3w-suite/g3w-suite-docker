@@ -111,6 +111,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
             python3-pyqt6.qsci \
             python3-pyqt6.qtsvg \
             python3-pyqt6.qtpositioning \
+            python3-pyqt6.qtmultimedia \
+            python3-pyqt6.qtserialport \
+            python3-pyqt6.qtwebengine \
             python3-pyqt6.sip \
             python3-pyqtbuild \
             python3-sipbuild \
@@ -119,7 +122,10 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
             qt6-base-dev \
             qt6-base-private-dev \
             qt6-declarative-dev-tools \
+            qt6-multimedia-dev \
+            qt6-pdf-dev \
             qt6-positioning-dev \
+            qt6-serialport-dev \
             qt6-tools-dev \
             qt6-tools-dev-tools \
             qtkeychain-qt6-dev \
@@ -198,6 +204,7 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -DWITH_SERVER=ON \
             -DWITH_SERVER_LANDINGPAGE_WEBAPP=OFF \
             -DWITH_SFCGAL=OFF \
+            -DSERVER_SKIP_ECW=ON \
             -DWITH_STAGED_PLUGINS=ON \
         .. \
         && ninja install \
