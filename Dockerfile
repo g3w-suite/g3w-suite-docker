@@ -177,7 +177,7 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -DDISABLE_DEPRECATED=ON \
             -DUSE_CCACHE=ON \
             -DENABLE_TESTS=OFF \
-            -DENABLE_UNITY_BUILDS=ON \
+            -DENABLE_UNITY_BUILDS=OFF \
             -DORACLE_INCLUDEDIR=/instantclient_21_16/sdk/include \
             -DORACLE_LIBDIR=/instantclient_21_16/ \
             -DWERROR=FALSE \
@@ -212,9 +212,9 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
     fi
 
 # 4. Final configuration & runtime setup
-RUN if [ "${INSTALL_ORACLE}" = "true" ]; then \
-        pip3 install --break-system-packages jinja2 pygments; \
-    fi
+# RUN if [ "${INSTALL_ORACLE}" = "true" ]; then \
+#         pip3 install --break-system-packages jinja2 pygments; \
+#     fi
 
 # PyQGIS – channel is controlled by QGIS_CHANNEL build arg:
 #   ubuntu-ltr  → https://qgis.org/ubuntu-ltr  (LTR, default)
