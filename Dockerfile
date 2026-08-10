@@ -176,7 +176,6 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -DUSE_CCACHE=ON \
             -DENABLE_TESTS=OFF \
             -DENABLE_UNITY_BUILDS=ON \
-            -DGDAL_LIBRARY=/usr/lib/x86_64-linux-gnu/libgdal.so \
             -DORACLE_INCLUDEDIR=/instantclient_21_16/sdk/include \
             -DORACLE_LIBDIR=/instantclient_21_16/ \
             -DSUPPRESS_QT_WARNINGS=ON \
@@ -184,7 +183,6 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -DWITH_3D=OFF \
             -DWITH_ANALYSIS=OFF \
             -DWITH_APIDOC=OFF \
-            -DWITH_ASTYLE=OFF \
             -DWITH_BINDINGS=ON \
             -DWITH_CUSTOM_WIDGETS=OFF \
             -DWITH_DESKTOP=OFF \
@@ -199,7 +197,6 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -DWITH_PDF4QT=OFF \
             -DWITH_QGIS_PROCESS=OFF \
             -DWITH_QSPATIALITE=ON \
-            -DWITH_QT6=ON \
             -DWITH_QUICK=OFF \
             -DWITH_QTSERIALPORT=OFF \
             -DWITH_SERVER=ON \
