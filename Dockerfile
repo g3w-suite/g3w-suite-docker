@@ -165,7 +165,6 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -D CMAKE_C_COMPILER=clang \
             -D CMAKE_CXX_COMPILER=clang++ \
             -D CMAKE_INSTALL_PREFIX=/usr \
-            -D CMAKE_PREFIX_PATH=.. \
             -D DISABLE_DEPRECATED=ON \
             -D USE_CCACHE=ON \
             -D ENABLE_TESTS=OFF \
@@ -197,7 +196,6 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -D WITH_SFCGAL=OFF \
             -D SERVER_SKIP_ECW=ON \
             -D WITH_STAGED_PLUGINS=ON \
-        .. \
         && ninja -C /QGIS/build install \
         && cd / && rm -rf /QGIS; \
     fi
