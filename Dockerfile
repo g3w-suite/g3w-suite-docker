@@ -137,8 +137,15 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
             unzip; \
     fi
 
-# install Oracle Instant Client
-RUN if [ "${INSTALL_ORACLE}" = "true" ]; then \
+# clone and build QGIS from source (with Qt6 + Oracle support)
+#
+# based on:
+# - https://github.com/qgis/QGIS/blob/final-4_2_1/INSTALL.md
+# - https://github.com/qgis/QGIS/blob/final-4_2_1/CMakeLists.txt
+# - https://github.com/qgis/QGIS/blob/final-4_2_1/.docker/docker-qgis-build.sh
+# - https://github.com/qgis/QGIS/blob/final-4_2_1/.docker/qgis3-ubuntu-qt6-build-deps.dockerfile
+RUN --mount=type=cache,target=/root/.cache/ccache \
+    if [ "${INSTALL_ORACLE}" = "true" ]; then \
         mkdir -p /opt/oracle && \
         cd /opt/oracle && \
         curl -sSL -o instantclient-basic.zip https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-basic-linux.x64-21.16.0.0.0dbru.zip && \
@@ -149,72 +156,55 @@ RUN if [ "${INSTALL_ORACLE}" = "true" ]; then \
         mv instantclient_21_16 /instantclient_21_16 && \
         echo "/instantclient_21_16" > /etc/ld.so.conf.d/oracle-instantclient.conf && \
         ldconfig && \
-        ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1; \
-    fi
-
-# clone and build QGIS from source (with Qt6 + Oracle support)
-RUN if [ "${INSTALL_ORACLE}" = "true" ]; then \
-        git clone --depth 1 --branch final-4_2_1 https://github.com/qgis/QGIS.git QGIS; \
-    fi
-
-# based on:
-# - https://github.com/qgis/QGIS/blob/final-4_2_1/INSTALL.md
-# - https://github.com/qgis/QGIS/blob/final-4_2_1/CMakeLists.txt
-# - https://github.com/qgis/QGIS/blob/final-4_2_1/.docker/docker-qgis-build.sh
-# - https://github.com/qgis/QGIS/blob/final-4_2_1/.docker/qgis3-ubuntu-qt6-build-deps.dockerfile
-RUN --mount=type=cache,target=/root/.cache/ccache \
-    if [ "${INSTALL_ORACLE}" = "true" ]; then \
-        cd /QGIS && mkdir build && cd build && \
+        ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1 && \
+        cd / && \
+        curl -sL https://github.com/qgis/QGIS/archive/refs/tags/final-4_2_1.tar.gz | tar -xz -C /QGIS --strip-components=1 -o && \
         cmake \
-            -GNinja \
-            -DAGGRESSIVE_SAFE_MODE=OFF \
-            -DBINDINGS_GLOBAL_INSTALL=ON \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_C_COMPILER=clang \
-            -DCMAKE_CXX_COMPILER=clang++ \
-            -DCMAKE_INSTALL_PREFIX=/usr \
-            -DCMAKE_PREFIX_PATH=.. \
-            -DDISABLE_DEPRECATED=ON \
-            -DUSE_CCACHE=ON \
-            -DENABLE_TESTS=OFF \
-            -DENABLE_UNITY_BUILDS=OFF \
-            -DORACLE_INCLUDEDIR=/instantclient_21_16/sdk/include \
-            -DORACLE_LIBDIR=/instantclient_21_16/ \
-            -DWERROR=FALSE \
-            -DWITH_3D=OFF \
-            -DWITH_ANALYSIS=OFF \
-            -DWITH_APIDOC=OFF \
-            -DWITH_BINDINGS=ON \
-            -DWITH_CUSTOM_WIDGETS=OFF \
-            -DWITH_DESKTOP=OFF \
-            -DWITH_GRASS=OFF \
-            -DWITH_GEOGRAPHICLIB=OFF \
-            -DWITH_GUI=ON \
-            -DWITH_HANA=OFF \
-            -DWITH_INTERNAL_SPATIALINDEX=ON \
-            -DWITH_CLAZY=OFF \
-            -DWITH_ORACLE=ON \
-            -DWITH_PDAL=OFF \
-            -DWITH_PDF4QT=OFF \
-            -DWITH_QGIS_PROCESS=OFF \
-            -DWITH_QSPATIALITE=ON \
-            -DWITH_QUICK=OFF \
-            -DWITH_QTSERIALPORT=OFF \
-            -DWITH_SERVER=ON \
-            -DWITH_SERVER_LANDINGPAGE_WEBAPP=OFF \
-            -DWITH_SFCGAL=OFF \
-            -DSERVER_SKIP_ECW=ON \
-            -DWITH_STAGED_PLUGINS=ON \
+            -G Ninja \
+            -S /QGIS \
+            -B /QGIS/build \
+            -D AGGRESSIVE_SAFE_MODE=OFF \
+            -D BINDINGS_GLOBAL_INSTALL=ON \
+            -D CMAKE_BUILD_TYPE=Release \
+            -D CMAKE_C_COMPILER=clang \
+            -D CMAKE_CXX_COMPILER=clang++ \
+            -D CMAKE_INSTALL_PREFIX=/usr \
+            -D CMAKE_PREFIX_PATH=.. \
+            -D DISABLE_DEPRECATED=ON \
+            -D USE_CCACHE=ON \
+            -D ENABLE_TESTS=OFF \
+            -D ENABLE_UNITY_BUILDS=OFF \
+            -D ORACLE_INCLUDEDIR=/instantclient_21_16/sdk/include \
+            -D ORACLE_LIBDIR=/instantclient_21_16/ \
+            -D WERROR=FALSE \
+            -D WITH_3D=OFF \
+            -D WITH_ANALYSIS=OFF \
+            -D WITH_APIDOC=OFF \
+            -D WITH_BINDINGS=ON \
+            -D WITH_CUSTOM_WIDGETS=OFF \
+            -D WITH_DESKTOP=OFF \
+            -D WITH_GRASS=OFF \
+            -D WITH_GEOGRAPHICLIB=OFF \
+            -D WITH_GUI=ON \
+            -D WITH_HANA=OFF \
+            -D WITH_INTERNAL_SPATIALINDEX=ON \
+            -D WITH_CLAZY=OFF \
+            -D WITH_ORACLE=ON \
+            -D WITH_PDAL=OFF \
+            -D WITH_PDF4QT=OFF \
+            -D WITH_QGIS_PROCESS=OFF \
+            -D WITH_QSPATIALITE=ON \
+            -D WITH_QUICK=OFF \
+            -D WITH_QTSERIALPORT=OFF \
+            -D WITH_SERVER=ON \
+            -D WITH_SERVER_LANDINGPAGE_WEBAPP=OFF \
+            -D WITH_SFCGAL=OFF \
+            -D SERVER_SKIP_ECW=ON \
+            -D WITH_STAGED_PLUGINS=ON \
         .. \
-        && ninja install \
-        && cd / \
+        && ninja -C /QGIS/build install \
         && rm -rf /QGIS; \
     fi
-
-# 4. Final configuration & runtime setup
-# RUN if [ "${INSTALL_ORACLE}" = "true" ]; then \
-#         pip3 install --break-system-packages jinja2 pygments; \
-#     fi
 
 # PyQGIS – channel is controlled by QGIS_CHANNEL build arg:
 #   ubuntu-ltr  → https://qgis.org/ubuntu-ltr  (LTR, default)
@@ -242,6 +232,11 @@ RUN curl -sSL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor -o /etc/a
 
 # uv (package manager)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+# 4. Final configuration & runtime setup
+# RUN if [ "${INSTALL_ORACLE}" = "true" ]; then \
+#         pip3 install --break-system-packages jinja2 pygments; \
+#     fi
 
 # ENV PYTHONPATH=/usr/share/qgis/python/:/usr/share/qgis/python/plugins:/usr/lib/python3/dist-packages/qgis:/usr/share/qgis/python/qgis
 
