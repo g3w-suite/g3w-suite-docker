@@ -158,7 +158,7 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         ldconfig && \
         ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1 && \
         cd / && \
-        curl -sL https://github.com/qgis/QGIS/archive/refs/tags/final-4_2_1.tar.gz | tar -xz -C /QGIS --strip-components=1 -o && \
+        curl -sL https://github.com/qgis/QGIS/archive/refs/tags/final-4_2_1.tar.gz | tar -xz --one-top-level=/QGIS --strip-components=1 -o && \
         cmake \
             -G Ninja \
             -S /QGIS \
