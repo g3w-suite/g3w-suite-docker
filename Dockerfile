@@ -149,9 +149,10 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         cd / && \
         curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-basic-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - instantclient_21_16 && \
         curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-sdk-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - instantclient_21_16 && \
+        ln -sf /instantclient_21_16/libclntsh.so.21.1 /instantclient_21_16/libclntsh.so && \
+        ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1 && \
         echo "/instantclient_21_16" > /etc/ld.so.conf.d/oracle-instantclient.conf && \
         ldconfig && \
-        ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1 && \
         mkdir -p /QGIS && cd /QGIS && \
         curl -sSL https://github.com/qgis/QGIS/archive/refs/tags/final-4_2_1.tar.gz | tar -xz --strip-components=1 && \
         cmake \
