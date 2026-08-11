@@ -146,10 +146,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 # - https://github.com/qgis/QGIS/blob/final-4_2_1/.docker/qgis3-ubuntu-qt6-build-deps.dockerfile
 RUN --mount=type=cache,target=/root/.cache/ccache \
     if [ "${INSTALL_ORACLE}" = "true" ]; then \
-        mkdir -p /opt/oracle && cd /opt/oracle && \
-        curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-basic-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - && \
-        curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-sdk-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - && \
-        mv instantclient_21_16 /instantclient_21_16 && \
+        cd / \
+        curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-basic-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - instantclient_21_16 && \
+        curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-sdk-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - instantclient_21_16 && \
         echo "/instantclient_21_16" > /etc/ld.so.conf.d/oracle-instantclient.conf && \
         ldconfig && \
         ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1 && \
