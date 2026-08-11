@@ -157,8 +157,8 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         echo "/instantclient_21_16" > /etc/ld.so.conf.d/oracle-instantclient.conf && \
         ldconfig && \
         ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1 && \
-        cd / && \
-        curl -sL https://github.com/qgis/QGIS/archive/refs/tags/final-4_2_1.tar.gz | tar -xz --one-top-level=/QGIS --strip-components=1 -o && \
+        mkdir -p /QGIS && cd /QGIS && \
+        curl -sL https://github.com/qgis/QGIS/archive/refs/tags/final-4_2_1.tar.gz | tar -xz --strip-components=1 -o && \
         cmake \
             -G Ninja \
             -S /QGIS \
@@ -203,7 +203,7 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
             -D WITH_STAGED_PLUGINS=ON \
         .. \
         && ninja -C /QGIS/build install \
-        && rm -rf /QGIS; \
+        && cd / && rm -rf /QGIS; \
     fi
 
 # PyQGIS – channel is controlled by QGIS_CHANNEL build arg:
