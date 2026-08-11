@@ -68,8 +68,7 @@ jobs:
             --set *.cache-to=type=gha,mode=max,scope=ci
 
   ##
-  # Build QGIS Server with Oracle support.
-  # Only runs at night (schedule) — compilation takes ~1-2 hours.
+  # Build QGIS Server from source with Oracle support (compilation takes ~1-2 hours).
   ##
   build-oracle:
     name: "docker buildx bake oracle"
