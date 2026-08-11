@@ -82,6 +82,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
             clang \
             cmake \
             flex \
+            libarchive-tools \
             libdraco-dev \
             libexiv2-dev \
             libexpat1-dev \
@@ -133,8 +134,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
             qmake6 \
             sip-tools \
             spawn-fcgi \
-            txt2tags \
-            unzip; \
+            txt2tags; \
     fi
 
 # clone and build QGIS from source (with Qt6 + Oracle support)
@@ -146,13 +146,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 # - https://github.com/qgis/QGIS/blob/final-4_2_1/.docker/qgis3-ubuntu-qt6-build-deps.dockerfile
 RUN --mount=type=cache,target=/root/.cache/ccache \
     if [ "${INSTALL_ORACLE}" = "true" ]; then \
-        mkdir -p /opt/oracle && \
-        cd /opt/oracle && \
-        curl -sSL -o instantclient-basic.zip https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-basic-linux.x64-21.16.0.0.0dbru.zip && \
-        curl -sSL -o instantclient-sdk.zip https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-sdk-linux.x64-21.16.0.0.0dbru.zip && \
-        unzip -n instantclient-basic.zip && \
-        unzip -n instantclient-sdk.zip && \
-        rm -f *.zip && \
+        mkdir -p /opt/oracle && cd /opt/oracle && \
+        curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-basic-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - && \
+        curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-sdk-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - && \
         mv instantclient_21_16 /instantclient_21_16 && \
         echo "/instantclient_21_16" > /etc/ld.so.conf.d/oracle-instantclient.conf && \
         ldconfig && \
