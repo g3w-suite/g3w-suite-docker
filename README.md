@@ -105,37 +105,20 @@ Run deploy wizard again and enable the LetsEncrypt Certbot when prompted.
 make deploy
 ```
 
-## 📦 Docker images
+## 📦 Installing MSSQL & Oracle drivers
 
-Docker images are built using a **multi-stage** [Dockerfile](./Dockerfile) + [docker-bake.hcl](./docker-bake.hcl).
+⚠️ By using these flags you accept the [Microsoft EULA](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server) and [Oracle OTN](https://www.oracle.com/downloads/licenses/standard-license.html) license.
+
 
 ```bash
-docker buildx bake --list targets # show available targets
-```
-
-### Running with MSSQL
-
-⚠️ By using it you accept the [Microsoft EULA](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server).
-
-```sh
-# build deps image with MSSQL ODBC driver
-docker buildx bake ci-deps-mssql ci-deps-ltr-mssql
+# re-build qgis server from source (~1-2 hours)
+docker buildx bake --set suite.args.INSTALL_MSSQL=true --set suite.args.INSTALL_ORACLE=true
 
 # start server
 make reload
 ```
 
-### Running with Oracle
-
-⚠️ By using it you need to compile QGIS from source, it takes ~1-2 hours.
-
-```sh
-# build deps image with Oracle OIC driver
-docker buildx bake oracle
-
-# start server
-make reload
-```
+Please refer to the **multi-stage** [Dockerfile](./Dockerfile) and [docker-bake.hcl](./docker-bake.hcl) for more info about these flags.
 
 ## 🎨 Style customization
 

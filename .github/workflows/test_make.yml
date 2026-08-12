@@ -66,40 +66,19 @@ jobs:
             ci \
             --set *.cache-from=type=gha,scope=ci \
             --set *.cache-to=type=gha,mode=max,scope=ci
-
-  ##
-  # Build QGIS Server from source with Oracle support (compilation takes ~1-2 hours).
-  ##
-  build-oracle:
-    name: "docker buildx bake oracle"
-    runs-on: ubuntu-24.04
-    steps:
+            --set ci-deps-ltr-oracle.output=type=docker,dest=ci-deps-ltr-oracle.tar
       -
-        name: Checkout
-        uses: actions/checkout@v4
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      -
-        name: "Build qgis-oracle"
-        run: |
-          docker buildx bake -f docker-bake.hcl \
-            oracle \
-            --set *.cache-from=type=gha,scope=qgis-oracle \
-            --set *.cache-to=type=gha,mode=max,scope=qgis-oracle \
-            --set *.output=type=docker,dest=qgis-oracle.tar
-      -
-        name: "Upload qgis-oracle artifact"
+        name: "Upload ci-deps-ltr-oracle artifact"
         uses: actions/upload-artifact@v4
         with:
-          name: qgis-oracle-image
+          name: ci-deps-ltr-oracle
           if-no-files-found: error
-          path: qgis-oracle.tar
+          path: ci-deps-ltr-oracle.tar
           retention-days: 7
-      - 
-        name: "Validate Image"
-        run: |
-          docker load -i qgis-oracle.tar
-          docker tag g3wsuite/g3w-suite-qgis-oracle:dev g3wsuite/g3w-suite:dev
-          cp .env.example .env
-          make prod
+      # - 
+      #   name: "Validate Image"
+      #   run: |
+      #     docker load -i qgis-oracle.tar
+      #     docker tag g3wsuite/g3w-suite-qgis-oracle:dev g3wsuite/g3w-suite:dev
+      #     cp .env.example .env
+      #     make prod

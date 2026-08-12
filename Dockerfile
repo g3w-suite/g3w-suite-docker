@@ -108,6 +108,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
             protobuf-compiler \
             pyqt6.qsci-dev \
             python3-all-dev \
+            python3-pyproj \
             python3-pyqt6 \
             python3-pyqt6.qsci \
             python3-pyqt6.qtsvg \
