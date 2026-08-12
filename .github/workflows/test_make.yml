@@ -61,12 +61,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
       -
         name: "Build ci matrix"
-        run: |
-          docker buildx bake -f docker-bake.hcl \
-            ci \
-            --set *.cache-from=type=gha,scope=ci \
-            --set *.cache-to=type=gha,mode=max,scope=ci
-            --set ci-deps-ltr-oracle.output=type=docker,dest=ci-deps-ltr-oracle.tar
+        uses: docker/bake-action@v3
+        with:
+          files: docker-bake.hcl
+          targets: ci
+          set: |
+            *.cache-from=type=gha,scope=ci
+            *.cache-to=type=gha,mode=max,scope=ci
+            ci-deps-ltr-oracle.output=type=docker,dest=ci-deps-ltr-oracle.tar
       -
         name: "Upload ci-deps-ltr-oracle artifact"
         uses: actions/upload-artifact@v4
