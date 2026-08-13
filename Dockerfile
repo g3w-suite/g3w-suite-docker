@@ -57,7 +57,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         curl \
         dirmngr \
         gdal-bin \
-        figlet && \
+        figlet \
         git \
         libaio1t64 \
         libgdal-dev \
@@ -71,7 +71,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         python3-pip \
         python3-pkg-resources \
         wait-for-it \
-        xvfb \
+        xvfb && \
         if [ "${INSTALL_ORACLE}" = "true" ]; then \
             apt-get install -y software-properties-common && \
             apt-get install -y \
@@ -136,7 +136,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
                 sip-tools \
                 spawn-fcgi \
                 txt2tags; \
-    fi
+        fi
 
 # clone and build QGIS from source (with Qt6 + Oracle support)
 #
