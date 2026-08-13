@@ -9,6 +9,7 @@
 
 gunicorn
 granian[reload]
+
 legacy-cgi                           # HOTFIX: cgi module removed in Python 3.13, needed by TileStache
 meson-python                         # HOTFIX: for numpy==1.26.4 (required by g3w-admin-intercad), not available in Python 3.14
 ninja                                # HOTFIX: for numpy==1.26.4 (required by g3w-admin-intercad), not available in Python 3.14
