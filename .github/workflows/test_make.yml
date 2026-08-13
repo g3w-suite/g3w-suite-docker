@@ -50,7 +50,7 @@ jobs:
   # Build image targets via docker buildx bake.
   ##
   build:
-    name: "docker buildx bake ci"
+    name: "docker buildx bake deps"
     runs-on: ubuntu-24.04
     steps:
       -
@@ -60,22 +60,20 @@ jobs:
         name: "Set up Docker Buildx"
         uses: docker/setup-buildx-action@v4
       -
-        name: "Build ci matrix"
+        name: "Build deps matrix"
         uses: docker/bake-action@v7
         with:
           files: docker-bake.hcl
-          targets: ci
+          targets: deps
           set: |
-            *.cache-from=type=gha,scope=ci
-            *.cache-to=type=gha,mode=max,scope=ci
-            ci-deps-ltr-oracle.output=type=docker,dest=ci-deps-ltr-oracle.tar
+            deps-ltr-oracle.output=type=docker,dest=deps-ltr-oracle.tar
       -
-        name: "Upload ci-deps-ltr-oracle artifact"
+        name: "Upload deps-ltr-oracle artifact"
         uses: actions/upload-artifact@v4
         with:
-          name: ci-deps-ltr-oracle
+          name: deps-ltr-oracle
           if-no-files-found: error
-          path: ci-deps-ltr-oracle.tar
+          path: deps-ltr-oracle.tar
           retention-days: 7
       # - 
       #   name: "Validate Image"

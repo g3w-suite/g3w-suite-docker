@@ -22,7 +22,7 @@ target "suite" {
   }
 }
 
-target "ci" {
+target "deps" {
   target   = "deps"
   matrix = {
     variant = [
@@ -33,7 +33,7 @@ target "ci" {
       { name = "deps-ltr-oracle", channel = "ubuntu-ltr", mssql = "false", oracle="true"  },
     ]
   }
-  name = "ci-${variant.name}"
+  name = "${variant.name}"
   tags = ["g3wsuite/g3w-suite-${variant.name}:${TAG}"]
   args = {
     G3W_SUITE_BRANCH = "dev"
@@ -41,4 +41,6 @@ target "ci" {
     INSTALL_MSSQL    = variant.mssql
     QGIS_CHANNEL     = variant.channel
   }
+  cache-from = ["type=gha,scope=${variant.name}"]
+  cache-to   = ["type=gha,mode=max,scope=${variant.name}"]
 }
