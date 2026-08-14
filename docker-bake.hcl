@@ -26,11 +26,11 @@ target "deps" {
   target   = "deps"
   matrix = {
     variant = [
-      { name = "deps",            channel = "ubuntu",     mssql = "false", oracle="false" },
-      { name = "deps-ltr",        channel = "ubuntu-ltr", mssql = "false", oracle="false" },
-      { name = "deps-ltr-mssql",  channel = "ubuntu-ltr", mssql = "true",  oracle="false" },
-      { name = "deps-mssql",      channel = "ubuntu",     mssql = "true",  oracle="false" },
-      { name = "deps-ltr-oracle", channel = "ubuntu-ltr", mssql = "false", oracle="true"  },
+      { name = "deps",           channel = "ubuntu",     mssql = "false", oracle="false" },
+      { name = "deps-ltr",       channel = "ubuntu-ltr", mssql = "false", oracle="false" },
+      { name = "deps-ltr-mssql", channel = "ubuntu-ltr", mssql = "true",  oracle="false" },
+      { name = "deps-mssql",     channel = "ubuntu",     mssql = "true",  oracle="false" },
+      { name = "deps-oracle",    channel = "ubuntu",     mssql = "false", oracle="true"  },
     ]
   }
   name = "${variant.name}"

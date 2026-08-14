@@ -78,14 +78,14 @@ jobs:
           files: docker-bake.hcl
           targets: deps
           set: |
-            deps-ltr-oracle.output=type=docker,dest=deps-ltr-oracle.tar
+            deps-oracle.output=type=docker,dest=deps-oracle.tar
       -
-        name: "Upload deps-ltr-oracle artifact"
+        name: "Upload deps-oracle artifact"
         uses: actions/upload-artifact@v4
         with:
-          name: deps-ltr-oracle
+          name: deps-oracle
           if-no-files-found: error
-          path: deps-ltr-oracle.tar
+          path: deps-oracle.tar
           retention-days: 7
 
   ##
@@ -161,8 +161,3 @@ jobs:
             TIMEOUT=$((TIMEOUT-SLEEP))
           done
           echo "✅ WSGI server is running"
-      -
-        name: "Dump Logs on Failure"
-        if: failure()
-        run: |
-          docker compose logs
