@@ -249,6 +249,9 @@ ENV QGIS_SERVER_PARALLEL_RENDERING=1
 
 ENV DISPLAY=:99
 
+# expose PyQGIS to Python interpreter
+ENV PYTHONPATH=/usr/share/qgis/python:${PYTHONPATH}
+
 RUN chown root:root /tmp && chmod ugo+rwXt /tmp
 
 # update system packages
@@ -306,9 +309,6 @@ RUN curl -sSL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor -o /etc/a
 
 # uv (package manager)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
-
-# expose PyQGIS to Python interpreter
-ENV PYTHONPATH=/usr/share/qgis/python:${PYTHONPATH}
 
 # DEBUG: keep container running in background
 CMD ["tail", "-f", "/dev/null"]

@@ -13,10 +13,20 @@ concurrency:
 jobs:
 
   ##
+  # Guard condition.
+  ##
+  public_repo:
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.repository.private }}
+    steps:
+      - run: true
+
+  ##
   # Verify the Makefile is parseable and all targets are listed correctly.
   ##
   validate-makefile:
     name: "Validate Makefile (make help)"
+    needs: public_repo
     runs-on: ubuntu-24.04
     steps:
       -
@@ -31,6 +41,7 @@ jobs:
   ##
   validate-compose:
     name: "Validate docker-compose.yml syntax"
+    needs: public_repo
     runs-on: ubuntu-24.04
     steps:
       -
@@ -51,6 +62,7 @@ jobs:
   ##
   build:
     name: "docker buildx bake deps"
+    needs: public_repo
     runs-on: ubuntu-24.04
     steps:
       -
@@ -80,7 +92,8 @@ jobs:
   # Runtime checks.
   ##
   run:
-    name: "Check docker-entrypoint.sh"
+    name: "Check docker-entrypoint.sh ${{ toJSON(matrix) }}"
+    needs: public_repo
     runs-on: ubuntu-24.04
     env:
       G3W_SUITE_BRANCH: ${{ matrix.g3w_suite_branch }}
@@ -95,6 +108,10 @@ jobs:
         install_oracle: [true, false]
         install_mssql: [true, false]
         qgis_channel: [ubuntu, ubuntu-ltr]
+      # Esclude invalid combinations
+        exclude:
+          - install_oracle: true
+            qgis_channel: ubuntu-ltr
 
     steps:
       -
