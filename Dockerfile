@@ -307,28 +307,8 @@ RUN curl -sSL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor -o /etc/a
 # uv (package manager)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-# 4. Final configuration & runtime setup
-# RUN if [ "${INSTALL_ORACLE}" = "true" ]; then \
-#         pip3 install --break-system-packages jinja2 pygments; \
-#     fi
-
-# ENV PYTHONPATH=/usr/share/qgis/python/:/usr/share/qgis/python/plugins:/usr/lib/python3/dist-packages/qgis:/usr/share/qgis/python/qgis
-#PyQGIS: espone i binding Python di QGIS a qualunque interprete Python
-
+# expose PyQGIS to Python interpreter
 ENV PYTHONPATH=/usr/share/qgis/python:${PYTHONPATH}
-# # Fix www-data permissions for runtime requirements
-# RUN mkdir -p /var/www/.local /var/www/.config && chown -R www-data:www-data /var/www
-
-# USER www-data
-
-# CMD ["/usr/bin/xvfb-run", \
-#      "-s", "-ac -screen 0 1280x1024x16 +extension GLX +render -noreset", \
-#      "/usr/bin/spawn-fcgi", \
-#        "-d", "/usr/lib/qgis/", \
-#        "-n", \
-#        "-p", "9333", \
-#        "--", \
-#        "/usr/bin/qgis_mapserv.fcgi"]
 
 # DEBUG: keep container running in background
 CMD ["tail", "-f", "/dev/null"]
