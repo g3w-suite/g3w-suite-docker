@@ -82,15 +82,35 @@ jobs:
   run:
     name: "Check docker-entrypoint.sh"
     runs-on: ubuntu-24.04
+    
+    strategy:
+      fail-fast: true
+      matrix:
+        install_oracle: [true, false]
+        install_mssql: [true, false]
+        qgis_channel: [ubuntu, ubuntu-ltr]
+
     steps:
       -
         name: Checkout
         uses: actions/checkout@v4
+
+      # Enable Buildx cache
+      - 
+        name: "Set up Docker Buildx"
+        uses: docker/setup-buildx-action@v4
+
+      # Spin up the environment
       -
         name: "Prepare Environment"
+        env:
+          G3W_SUITE_BRANCH: dj52
+          INSTALL_ORACLE: ${{ matrix.install_oracle }}
+          INSTALL_MSSQL: ${{ matrix.install_mssql }}
+          QGIS_CHANNEL: ${{ matrix.qgis_channel }}
         run: |
           cp .env.example .env
-          G3W_SUITE_BRANCH=dj52 docker compose --env-file .env --env-file .env.dev -f docker-compose.yml up -d --build
+          docker compose --env-file .env --env-file .env.dev -f docker-compose.yml up -d --build
       -
         name: "Wait for WSGI server"
         run: |
