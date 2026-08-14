@@ -87,7 +87,7 @@ jobs:
       INSTALL_ORACLE: ${{ matrix.install_oracle }}
       INSTALL_MSSQL: ${{ matrix.install_mssql }}
       QGIS_CHANNEL: ${{ matrix.qgis_channel }}
-    
+
     strategy:
       fail-fast: true
       matrix:
@@ -100,25 +100,41 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v4
-
-      # Enable Buildx cache
       - 
         name: "Set up Docker Buildx"
         uses: docker/setup-buildx-action@v4
-
-      # Spin up the environment
+      -
+        name: "Enable Buildx cache"
+        uses: docker/bake-action@v7
+        with:
+          files: docker-bake.hcl
+          targets: suite
+          set: |
+            suite.args.G3W_SUITE_BRANCH=${{ matrix.g3w_suite_branch }}
+            suite.args.INSTALL_ORACLE=${{ matrix.install_oracle }}
+            suite.args.INSTALL_MSSQL=${{ matrix.install_mssql }}
+            suite.args.QGIS_CHANNEL=${{ matrix.qgis_channel }}
+            suite.output=type=docker
       -
         name: "Prepare Environment"
         run: |
           cp .env.example .env
-          docker compose --env-file .env --env-file .env.dev -f docker-compose.yml up -d --build
+          docker compose --env-file .env -f docker-compose.yml up -d --no-build
       -
         name: "Wait for WSGI server"
         run: |
           docker compose logs -f g3w-suite &
-          TIMEOUT=1800
-          SLEEP=60
-          while ! docker compose exec -T g3w-suite curl -s http://localhost:8000 > /dev/null; do
+          LOGS_PID=$!
+          trap 'kill $LOGS_PID >/dev/null 2>&1 || true' EXIT
+          TIMEOUT=900
+          SLEEP=15
+          while ! docker compose exec -T g3w-suite curl --fail --silent --show-error http://localhost:8000/ > /dev/null 2>&1; do
+            if ! docker compose ps --status running --services | grep -q '^g3w-suite$'; then
+              echo "g3w-suite container is not running"
+              docker compose ps
+              docker compose logs g3w-suite
+              exit 1
+            fi
             if [ $TIMEOUT -le 0 ]; then
               echo "❌ WSGI server is not responding."
               docker compose logs g3w-suite
