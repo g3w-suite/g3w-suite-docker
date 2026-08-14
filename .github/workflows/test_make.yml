@@ -82,10 +82,16 @@ jobs:
   run:
     name: "Check docker-entrypoint.sh"
     runs-on: ubuntu-24.04
+    env:
+      G3W_SUITE_BRANCH: ${{ matrix.g3w_suite_branch }}
+      INSTALL_ORACLE: ${{ matrix.install_oracle }}
+      INSTALL_MSSQL: ${{ matrix.install_mssql }}
+      QGIS_CHANNEL: ${{ matrix.qgis_channel }}
     
     strategy:
       fail-fast: true
       matrix:
+        g3w_suite_branch: [dj52]
         install_oracle: [true, false]
         install_mssql: [true, false]
         qgis_channel: [ubuntu, ubuntu-ltr]
@@ -103,17 +109,13 @@ jobs:
       # Spin up the environment
       -
         name: "Prepare Environment"
-        env:
-          G3W_SUITE_BRANCH: dj52
-          INSTALL_ORACLE: ${{ matrix.install_oracle }}
-          INSTALL_MSSQL: ${{ matrix.install_mssql }}
-          QGIS_CHANNEL: ${{ matrix.qgis_channel }}
         run: |
           cp .env.example .env
           docker compose --env-file .env --env-file .env.dev -f docker-compose.yml up -d --build
       -
         name: "Wait for WSGI server"
         run: |
+          docker compose logs -f g3w-suite &
           TIMEOUT=1800
           SLEEP=60
           while ! docker compose exec -T g3w-suite curl -s http://localhost:8000 > /dev/null; do
