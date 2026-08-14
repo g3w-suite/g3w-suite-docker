@@ -234,7 +234,9 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 #     fi
 
 # ENV PYTHONPATH=/usr/share/qgis/python/:/usr/share/qgis/python/plugins:/usr/lib/python3/dist-packages/qgis:/usr/share/qgis/python/qgis
+#PyQGIS: espone i binding Python di QGIS a qualunque interprete Python
 
+ENV PYTHONPATH=/usr/share/qgis/python:${PYTHONPATH}
 # # Fix www-data permissions for runtime requirements
 # RUN mkdir -p /var/www/.local /var/www/.config && chown -R www-data:www-data /var/www
 
