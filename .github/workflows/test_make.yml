@@ -75,10 +75,39 @@ jobs:
           if-no-files-found: error
           path: deps-ltr-oracle.tar
           retention-days: 7
-      # - 
-      #   name: "Validate Image"
-      #   run: |
-      #     docker load -i qgis-oracle.tar
-      #     docker tag g3wsuite/g3w-suite-qgis-oracle:dev g3wsuite/g3w-suite:dev
-      #     cp .env.example .env
-      #     make prod
+
+  ##
+  # Runtime checks.
+  ##
+  run:
+    name: "Check docker-entrypoint.sh"
+    runs-on: ubuntu-24.04
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: "Prepare Environment"
+        run: |
+          cp .env.example .env
+          G3W_SUITE_BRANCH=dj52 docker compose --env-file .env --env-file .env.dev -f docker-compose.yml up -d --build
+      -
+        name: "Wait for WSGI server"
+        run: |
+          TIMEOUT=1800
+          SLEEP=60
+          while ! docker compose exec -T g3w-suite curl -s http://localhost:8000 > /dev/null; do
+            if [ $TIMEOUT -le 0 ]; then
+              echo "❌ WSGI server is not responding."
+              docker compose logs g3w-suite
+              exit 1
+            fi
+            sleep $SLEEP
+            TIMEOUT=$((TIMEOUT-SLEEP))
+          done
+          echo "✅ WSGI server is running"
+      -
+        name: "Dump Logs on Failure"
+        if: failure()
+        run: |
+          docker compose logs
