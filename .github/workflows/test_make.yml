@@ -102,7 +102,7 @@ jobs:
       QGIS_CHANNEL: ${{ matrix.qgis_channel }}
 
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         g3w_suite_branch: [dj52]
         install_oracle: [true, false]
