@@ -96,22 +96,22 @@ jobs:
     needs: public_repo
     runs-on: ubuntu-24.04
     env:
-      G3W_SUITE_BRANCH: ${{ matrix.g3w_suite_branch }}
-      INSTALL_ORACLE: ${{ matrix.install_oracle }}
-      INSTALL_MSSQL: ${{ matrix.install_mssql }}
-      QGIS_CHANNEL: ${{ matrix.qgis_channel }}
+      G3W_SUITE_BRANCH: ${{ matrix.G3W_SUITE_BRANCH }}
+      INSTALL_ORACLE: ${{ matrix.INSTALL_ORACLE }}
+      INSTALL_MSSQL: ${{ matrix.INSTALL_MSSQL }}
+      QGIS_CHANNEL: ${{ matrix.QGIS_CHANNEL }}
 
     strategy:
       fail-fast: false
       matrix:
-        g3w_suite_branch: [dj52]
-        install_oracle: [true, false]
-        install_mssql: [true, false]
-        qgis_channel: [ubuntu, ubuntu-ltr]
+        G3W_SUITE_BRANCH: [dj52]
+        INSTALL_ORACLE: [true, false]
+        INSTALL_MSSQL: [true, false]
+        QGIS_CHANNEL: [ubuntu, ubuntu-ltr]
       # Esclude invalid combinations
         exclude:
-          - install_oracle: true
-            qgis_channel: ubuntu-ltr
+          - INSTALL_ORACLE: true
+            QGIS_CHANNEL: ubuntu-ltr
 
     steps:
       -
@@ -127,10 +127,10 @@ jobs:
           files: docker-bake.hcl
           targets: suite
           set: |
-            suite.args.G3W_SUITE_BRANCH=${{ matrix.g3w_suite_branch }}
-            suite.args.INSTALL_ORACLE=${{ matrix.install_oracle }}
-            suite.args.INSTALL_MSSQL=${{ matrix.install_mssql }}
-            suite.args.QGIS_CHANNEL=${{ matrix.qgis_channel }}
+            suite.args.G3W_SUITE_BRANCH=${{ matrix.G3W_SUITE_BRANCH }}
+            suite.args.INSTALL_ORACLE=${{ matrix.INSTALL_ORACLE }}
+            suite.args.INSTALL_MSSQL=${{ matrix.INSTALL_MSSQL }}
+            suite.args.QGIS_CHANNEL=${{ matrix.QGIS_CHANNEL }}
             suite.output=type=docker
       -
         name: "Prepare Environment"
