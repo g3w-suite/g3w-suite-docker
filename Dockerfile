@@ -296,8 +296,8 @@ RUN if [ "${INSTALL_ORACLE}" = "false" ]; then \
 # ⚠  By enabling this you accept the Microsoft EULA (ACCEPT_EULA=Y)
 RUN if [ "${INSTALL_MSSQL}" = "true" ]; then \
       curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /etc/apt/keyrings/microsoft.gpg && \
-      echo "deb [signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/24.04/prod noble main" >> /etc/apt/sources.list.d/mssql.list && \
-      apt-get update && ACCEPT_EULA=Y apt-get install -y tdsodbc libqt5sql5-tds msodbcsql18 mssql-tools18; \
+      echo "deb [signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/26.04/prod resolute main" >> /etc/apt/sources.list.d/mssql.list && \
+      apt-get update && ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 tdsodbc libqt6sql6-odbc libqt6sql6-tds; \
     fi
 
 # yarn (package manager)
