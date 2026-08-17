@@ -295,10 +295,10 @@ RUN if [ "${INSTALL_ORACLE}" = "false" ]; then \
 # MS SQL ODBC driver (optional – only when INSTALL_MSSQL=true)
 # ⚠  By enabling this you accept the Microsoft EULA (ACCEPT_EULA=Y)
 RUN if [ "${INSTALL_MSSQL}" = "true" ]; then \
-        apt-get install -y tdsodbc libqt6sql6-odbc && \
-        curl -sSL https://packages.microsoft.com/keys/microsoft-2025.asc | gpg --dearmor -o /etc/apt/keyrings/microsoft.gpg && \
-        echo "deb [signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/26.04/prod resolute main" > /etc/apt/sources.list.d/mssql.list && \
-        apt-get update && ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18; \
+      apt-get install -y tdsodbc libqt5sql5-tds && \
+      curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /etc/apt/keyrings/microsoft.gpg && \
+      echo "deb [signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/24.04/prod noble main" >> /etc/apt/sources.list.d/mssql.list && \
+      apt-get update && ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18; \
     fi
 
 # yarn (package manager)
