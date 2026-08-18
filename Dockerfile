@@ -36,6 +36,7 @@ RUN chown root:root /tmp && chmod ugo+rwXt /tmp
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
+    echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/99_norecommends && \
     apt-get update && apt-get install -y \
         bison \
         build-essential \
@@ -250,13 +251,14 @@ ENV QGIS_SERVER_PARALLEL_RENDERING=1
 ENV DISPLAY=:99
 
 # expose PyQGIS to Python interpreter
-ENV PYTHONPATH=/usr/share/qgis/python:${PYTHONPATH}
+ENV PYTHONPATH=/usr/share/qgis/python
 
 RUN chown root:root /tmp && chmod ugo+rwXt /tmp
 
 # update system packages
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
+    echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/99_norecommends && \
     apt-get update && apt-get install -y \
         curl \
         dirmngr \
@@ -286,7 +288,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 # PyQGIS – channel is controlled by QGIS_CHANNEL build arg:
 #   ubuntu-ltr  → https://qgis.org/ubuntu-ltr  (LTR, default)
 #   ubuntu      → https://qgis.org/ubuntu       (latest)
-RUN if [ "${INSTALL_ORACLE}" = "false" ]; then \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
+    if [ "${INSTALL_ORACLE}" = "false" ]; then \
         curl -sSL https://download.qgis.org/downloads/qgis-archive-keyring.gpg > /etc/apt/keyrings/qgis-archive-keyring.gpg && \
         echo "deb [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/${QGIS_CHANNEL} resolute main" > /etc/apt/sources.list.d/qgis.list && \
         apt-get update && apt-get install -y python3-qgis qgis-server; \
@@ -294,7 +298,9 @@ RUN if [ "${INSTALL_ORACLE}" = "false" ]; then \
 
 # MS SQL ODBC driver (optional – only when INSTALL_MSSQL=true)
 # ⚠  By enabling this you accept the Microsoft EULA (ACCEPT_EULA=Y)
-RUN if [ "${INSTALL_MSSQL}" = "true" ]; then \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
+    if [ "${INSTALL_MSSQL}" = "true" ]; then \
       apt-get install -y tdsodbc libqt5sql5-tds && \
       curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /etc/apt/keyrings/microsoft.gpg && \
       echo "deb [signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/24.04/prod noble main" >> /etc/apt/sources.list.d/mssql.list && \
@@ -302,10 +308,11 @@ RUN if [ "${INSTALL_MSSQL}" = "true" ]; then \
     fi
 
 # yarn (package manager)
-RUN curl -sSL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor -o /etc/apt/keyrings/yarn.gpg && \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
+    curl -sSL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor -o /etc/apt/keyrings/yarn.gpg && \
     echo "deb [signed-by=/etc/apt/keyrings/yarn.gpg] https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list && \
-    apt-get update && apt-get install -y yarn && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get update && apt-get install -y yarn
 
 # uv (package manager)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
@@ -313,7 +320,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 # DEBUG: keep container running in background
 CMD ["tail", "-f", "/dev/null"]
 
-RUN mkdir /code
+RUN mkdir /code && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /code
 
@@ -329,7 +336,7 @@ ARG G3W_SUITE_BRANCH=dev
 # update system packages
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
-    apt-get update && apt-get install -y --no-install-recommends \
+    apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
