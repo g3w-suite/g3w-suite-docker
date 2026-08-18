@@ -169,6 +169,9 @@ RUN mkdir -p /tmp/qgis-oracle/instantclient_21_16 && \
     mkdir -p /tmp/qgis-oracle/usr/lib/x86_64-linux-gnu && \
     ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /tmp/qgis-oracle/usr/lib/x86_64-linux-gnu/libaio.so.1 && \
     mkdir -p /tmp/qgis-oracle/DEBIAN && \
+    mkdir -p /tmp/qgis-oracle/debian && touch /tmp/qgis-oracle/debian/control && \
+    AUTO_DEPS=$(dpkg-shlibdeps -O /tmp/qgis-oracle/usr/bin/* /tmp/qgis-oracle/usr/lib/qgis/*.so* /tmp/qgis-oracle/instantclient_21_16/*.so* 2>/dev/null | sed -n 's/^shlibs:Depends=//p') && \
+    rm -rf /tmp/qgis-oracle/debian && \
     printf '%s\n' \
         'Package: qgis-oracle' \
         'Version: 4.2.1-1' \
@@ -176,7 +179,7 @@ RUN mkdir -p /tmp/qgis-oracle/instantclient_21_16 && \
         'Priority: optional' \
         'Architecture: amd64' \
         'Maintainer: Gis3w' \
-        'Depends: ${shlibs:Depends}' \
+        "Depends: $AUTO_DEPS" \
         'Description: Prebuilt QGIS Server runtime with Oracle support for G3W Suite' \
         > /tmp/qgis-oracle/DEBIAN/control && \
     printf '%s\n' '#!/bin/sh' 'set -e' 'ldconfig' > /tmp/qgis-oracle/DEBIAN/postinst && \
