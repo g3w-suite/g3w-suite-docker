@@ -269,8 +269,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         libgdal-dev \
         libgdal38 \
         libmagic1 \
-        libpango-1.0-0t64 \
-        libpangocairo-1.0-0t64 \
+        libpango-1.0-0 \
+        libpangocairo-1.0-0 \
         libsqlite3-mod-spatialite \
         libxml2-dev \
         libxslt-dev \
