@@ -271,6 +271,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         libsqlite3-mod-spatialite \
         libxml2-dev \
         libxslt-dev \
+        nodejs \
+        npm \
         postgresql-client \
         python3-dev \
         python3-gdal \
@@ -308,11 +310,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     fi
 
 # yarn (package manager)
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
-    curl -sSL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor -o /etc/apt/keyrings/yarn.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/yarn.gpg] https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list && \
-    apt-get update && apt-get install -y yarn
+RUN corepack enable
 
 # uv (package manager)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
