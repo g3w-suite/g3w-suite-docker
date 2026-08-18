@@ -176,7 +176,7 @@ RUN mkdir -p /tmp/qgis-oracle/instantclient_21_16 && \
         'Priority: optional' \
         'Architecture: amd64' \
         'Maintainer: Gis3w' \
-        'Depends: libaio1t64' \
+        'Depends: ${shlibs:Depends}' \
         'Description: Prebuilt QGIS Server runtime with Oracle support for G3W Suite' \
         > /tmp/qgis-oracle/DEBIAN/control && \
     printf '%s\n' '#!/bin/sh' 'set -e' 'ldconfig' > /tmp/qgis-oracle/DEBIAN/postinst && \
