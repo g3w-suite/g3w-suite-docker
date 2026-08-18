@@ -268,6 +268,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         libaio1t64 \
         libgdal-dev \
         libgdal38 \
+        libmagic1 \
         libsqlite3-mod-spatialite \
         libxml2-dev \
         libxslt-dev \
