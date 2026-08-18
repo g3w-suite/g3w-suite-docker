@@ -8,6 +8,7 @@ figlet -t "G3W-SUITE" && echo -e "v`git tag --sort=v:refname | tail -1 | sed 's/
 echo -e "----------------------"
 echo -e "DEV_MODE: ${DEV_MODE}"
 echo -e "BATCH_PROCESSING: ${G3WSUITE_RUN_HUEY}"
+echo -e "QGIS_VERSION: $(python3 -c 'from qgis.core import Qgis; print(Qgis.QGIS_VERSION)')"
 echo -e "----------------------\n"
 
 cd /code/g3w-admin
