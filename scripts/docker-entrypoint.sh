@@ -9,6 +9,7 @@ echo -e "----------------------"
 echo -e "DEV_MODE: ${DEV_MODE}"
 echo -e "BATCH_PROCESSING: ${G3WSUITE_RUN_HUEY}"
 echo -e "QGIS_VERSION: $(python3 -c 'from qgis.core import Qgis; print(Qgis.QGIS_VERSION)')"
+echo -e "WSGI_SERVER: ${G3WSUITE_WEBSERVER}"
 echo -e "----------------------\n"
 
 cd /code/g3w-admin
