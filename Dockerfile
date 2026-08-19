@@ -162,19 +162,27 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
 RUN --mount=type=cache,target=/root/.cache/ccache \
     DESTDIR=/tmp/qgis-oracle ninja -C /QGIS/build install
 
-RUN mkdir -p /tmp/qgis-oracle/instantclient_21_16 && \
+# 1. prepare file system (for .deb package)
+RUN mkdir -p /tmp/qgis-oracle/instantclient_21_16 \
+             /tmp/qgis-oracle/etc/ld.so.conf.d \
+             /tmp/qgis-oracle/usr/lib/x86_64-linux-gnu \
+             /tmp/qgis-oracle/DEBIAN && \
     cp -a /instantclient_21_16/. /tmp/qgis-oracle/instantclient_21_16/ && \
     ln -sf /instantclient_21_16/libclntsh.so.21.1 /tmp/qgis-oracle/instantclient_21_16/libclntsh.so && \
-    mkdir -p /tmp/qgis-oracle/etc/ld.so.conf.d && \
-    echo "/instantclient_21_16" > /tmp/qgis-oracle/etc/ld.so.conf.d/oracle-instantclient.conf && \
-    mkdir -p /tmp/qgis-oracle/usr/lib/x86_64-linux-gnu && \
     ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /tmp/qgis-oracle/usr/lib/x86_64-linux-gnu/libaio.so.1 && \
-    mkdir -p /tmp/qgis-oracle/DEBIAN && \
-    mkdir -p /tmp/qgis-oracle/debian && touch /tmp/qgis-oracle/debian/control && \
-    AUTO_DEPS=$(dpkg-shlibdeps -O /tmp/qgis-oracle/usr/bin/* /tmp/qgis-oracle/usr/lib/qgis/*.so* /tmp/qgis-oracle/instantclient_21_16/*.so* 2>/dev/null | sed -n 's/^shlibs:Depends=//p') && \
+    echo "/instantclient_21_16" > /tmp/qgis-oracle/etc/ld.so.conf.d/oracle-instantclient.conf
+
+# 2. dependency resolution (apt and python)
+RUN mkdir -p debian && touch debian/control && \
+    AUTO_DEPS=$(dpkg-shlibdeps -O /tmp/qgis-oracle/usr/bin/* /tmp/qgis-oracle/usr/lib/qgis/*.so* /tmp/qgis-oracle/instantclient_21_16/*.so* | sed -n 's/^shlibs:Depends=//p') && \
     dh_python3 --package=qgis-oracle /tmp/qgis-oracle && \
-    PYTHON_DEPS=$(sed -n 's/^python3:Depends=//p' /tmp/qgis-oracle/debian/qgis-oracle.substvars 2>/dev/null) && \
-    rm -rf /tmp/qgis-oracle/debian && \
+    PYTHON_DEPS=$(sed -n 's/^python3:Depends=//p' debian/qgis-oracle.substvars) && \
+    echo "AUTO_DEPS=$AUTO_DEPS" > /tmp/deps.env && \
+    echo "PYTHON_DEPS=$PYTHON_DEPS" >> /tmp/deps.env && \
+    rm -rf debian
+
+# 3. package metadata and postinst script
+RUN . /tmp/deps.env && \
     printf '%s\n' \
         'Package: qgis-oracle' \
         'Version: 4.2.1-1' \
@@ -187,7 +195,10 @@ RUN mkdir -p /tmp/qgis-oracle/instantclient_21_16 && \
         > /tmp/qgis-oracle/DEBIAN/control && \
     printf '%s\n' '#!/bin/sh' 'set -e' 'ldconfig' > /tmp/qgis-oracle/DEBIAN/postinst && \
     chmod 0755 /tmp/qgis-oracle/DEBIAN/postinst && \
-    dpkg-deb --build /tmp/qgis-oracle /tmp/qgis-oracle.deb && \
+    rm -f /tmp/deps.env
+
+# 4. package compilation (.deb)
+RUN dpkg-deb --build /tmp/qgis-oracle /tmp/qgis-oracle.deb && \
     rm -rf /QGIS /tmp/qgis-oracle
 
 
