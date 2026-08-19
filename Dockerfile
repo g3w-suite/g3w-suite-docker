@@ -172,6 +172,7 @@ RUN mkdir -p /tmp/qgis-oracle/instantclient_21_16 && \
     mkdir -p /tmp/qgis-oracle/DEBIAN && \
     mkdir -p /tmp/qgis-oracle/debian && touch /tmp/qgis-oracle/debian/control && \
     AUTO_DEPS=$(dpkg-shlibdeps -O /tmp/qgis-oracle/usr/bin/* /tmp/qgis-oracle/usr/lib/qgis/*.so* /tmp/qgis-oracle/instantclient_21_16/*.so* 2>/dev/null | sed -n 's/^shlibs:Depends=//p') && \
+    dh_python3 --package=qgis-oracle /tmp/qgis-oracle && \
     PYTHON_DEPS=$(sed -n 's/^python3:Depends=//p' /tmp/qgis-oracle/debian/qgis-oracle.substvars 2>/dev/null) && \
     rm -rf /tmp/qgis-oracle/debian && \
     printf '%s\n' \
@@ -292,7 +293,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
     if [ "${INSTALL_ORACLE}" = "true" ]; then \
-            apt-get update && apt-get install -y /tmp/qgis-oracle.deb && rm -f /tmp/qgis-oracle.deb; \
+        apt-get update && apt-get install -y /tmp/qgis-oracle.deb && rm -f /tmp/qgis-oracle.deb; \
     fi
 
 # PyQGIS – channel is controlled by QGIS_CHANNEL build arg:
