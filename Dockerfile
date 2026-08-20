@@ -105,7 +105,6 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         qmake6 \
         sip-tools \
         spawn-fcgi \
-        tree \
         txt2tags
 
 RUN curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-basic-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - instantclient_21_16 && \
@@ -158,53 +157,41 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         -D WITH_SERVER_LANDINGPAGE_WEBAPP=OFF \
         -D WITH_SFCGAL=OFF \
         -D SERVER_SKIP_ECW=ON \
+        -D CPACK_GENERATOR=DEB \
+        -D CPACK_PACKAGE_NAME=qgis-oracle \
+        -D CPACK_PACKAGE_FILE_NAME=qgis-oracle \
+        -D CPACK_PACKAGE_VERSION=4.2.1 \
+        -D CPACK_PACKAGE_CONTACT=Gis3w \
+        -D CPACK_PACKAGE_DESCRIPTION_SUMMARY="Prebuilt QGIS Server runtime with Oracle support for G3W Suite" \
+        -D CPACK_DEBIAN_PACKAGE_RELEASE=1 \
+        -D CPACK_DEBIAN_PACKAGE_MAINTAINER=Gis3w \
+        -D CPACK_DEBIAN_FILE_NAME=qgis-oracle.deb \
+        -D CPACK_DEBIAN_PACKAGE_ARCHITECTURE=amd64 \
+        -D CPACK_DEBIAN_PACKAGE_SHLIBDEPS=ON \
+        -D CPACK_DEBIAN_PACKAGE_DEPENDS=python3 \
+        -D CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA=/tmp/qgis-oracle-postinst \
+        -D CPACK_INSTALLED_DIRECTORIES="/tmp/qgis-oracle/usr;/usr;/instantclient_21_16;/instantclient_21_16" \
         -D WITH_STAGED_PLUGINS=ON
 
 RUN --mount=type=cache,target=/root/.cache/ccache \
     DESTDIR=/tmp/qgis-oracle ninja -C /QGIS/build install
 
-# 1. prepare file system (for .deb package)
-RUN mkdir -p /tmp/qgis-oracle/instantclient_21_16 \
-             /tmp/qgis-oracle/etc/ld.so.conf.d \
-             /tmp/qgis-oracle/usr/lib/x86_64-linux-gnu \
-             /tmp/qgis-oracle/DEBIAN && \
-    cp -a /instantclient_21_16/. /tmp/qgis-oracle/instantclient_21_16/ && \
-    ln -sf /instantclient_21_16/libclntsh.so.21.1 /tmp/qgis-oracle/instantclient_21_16/libclntsh.so && \
-    ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /tmp/qgis-oracle/usr/lib/x86_64-linux-gnu/libaio.so.1 && \
-    echo "/instantclient_21_16" > /tmp/qgis-oracle/etc/ld.so.conf.d/oracle-instantclient.conf
-
-# DEBUG
-RUN tree /tmp/qgis-oracle >&2
-
-# 2. dependency resolution (apt and python)
-RUN mkdir -p debian && \
-    printf "Source: qgis-oracle\n\nPackage: qgis-oracle\nArchitecture: any\n" > debian/control && \
-    AUTO_DEPS=$(dpkg-shlibdeps -O /tmp/qgis-oracle/usr/bin/* /tmp/qgis-oracle/instantclient_21_16/*.so* | sed -n 's/^shlibs:Depends=//p') && \
-    dh_python3 --package=qgis-oracle /tmp/qgis-oracle && \
-    PYTHON_DEPS=$(sed -n 's/^python3:Depends=//p' debian/qgis-oracle.substvars) && \
-    echo "AUTO_DEPS=$AUTO_DEPS" > /tmp/deps.env && \
-    echo "PYTHON_DEPS=$PYTHON_DEPS" >> /tmp/deps.env && \
-    rm -rf debian
-
-# 3. package metadata and postinst script
-RUN . /tmp/deps.env && \
-    printf '%s\n' \
-        'Package: qgis-oracle' \
-        'Version: 4.2.1-1' \
-        'Section: misc' \
-        'Priority: optional' \
-        'Architecture: amd64' \
-        'Maintainer: Gis3w' \
-        "Depends: $AUTO_DEPS, $PYTHON_DEPS" \
-        'Description: Prebuilt QGIS Server runtime with Oracle support for G3W Suite' \
-        > /tmp/qgis-oracle/DEBIAN/control && \
-    printf '%s\n' '#!/bin/sh' 'set -e' 'ldconfig' > /tmp/qgis-oracle/DEBIAN/postinst && \
-    chmod 0755 /tmp/qgis-oracle/DEBIAN/postinst && \
-    rm -f /tmp/deps.env
-
-# 4. package compilation (.deb)
-RUN dpkg-deb --build /tmp/qgis-oracle /tmp/qgis-oracle.deb && \
-    rm -rf /QGIS /tmp/qgis-oracle
+# 2. package compilation (.deb) with CMake/CPack
+RUN printf '%s\n' \
+        '#!/bin/sh' \
+        'set -e' \
+        'if [ "$1" = "configure" ]; then' \
+        '    ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1' \
+        '    echo "/instantclient_21_16" > /etc/ld.so.conf.d/oracle-instantclient.conf' \
+        '    ldconfig' \
+        'fi' \
+        > /tmp/qgis-oracle-postinst && \
+    chmod 0755 /tmp/qgis-oracle-postinst && \
+    cpack --config /QGIS/build/CPackConfig.cmake -G DEB && \
+    test -f /QGIS/build/qgis-oracle.deb && \
+    mv /QGIS/build/qgis-oracle.deb /tmp/qgis-oracle.deb && \
+    dpkg-deb -c /tmp/qgis-oracle.deb | grep -q 'instantclient_21_16/libclntsh.so.21.1' && \
+    rm -rf /QGIS /tmp/qgis-oracle /tmp/qgis-oracle-postinst
 
 
 # Final configuration & runtime setup
@@ -364,8 +351,13 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     && rm -rf /var/lib/apt/lists/*
 
 # import g3w-admin
-RUN git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --depth 1 --branch ${G3W_SUITE_BRANCH} .
-RUN git submodule add -f https://github.com/g3w-suite/g3w-admin-frontend.git g3w-admin/frontend
+RUN --mount=type=bind,from=code,target=/tmp/g3w-admin \
+    if [ ! -f "/tmp/g3w-admin/.git" ] && [ ! -d "/tmp/g3w-admin/.git" ]; then \
+        git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --depth 1 --branch ${G3W_SUITE_BRANCH} .; \
+    else \
+        cp -a /tmp/g3w-admin/. /code/; \
+    fi && \
+    git submodule add -f https://github.com/g3w-suite/g3w-admin-frontend.git g3w-admin/frontend
 
 # compile static assets (g3w-admin)
 RUN yarn --ignore-engines --ignore-scripts --prod && \
