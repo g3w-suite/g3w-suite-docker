@@ -133,6 +133,20 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         -D ENABLE_UNITY_BUILDS=OFF \
         -D ORACLE_INCLUDEDIR=/instantclient_21_16/sdk/include \
         -D ORACLE_LIBDIR=/instantclient_21_16/ \
+        -D CPACK_GENERATOR=DEB \
+        -D CPACK_PACKAGE_NAME=qgis-oracle \
+        -D CPACK_PACKAGE_FILE_NAME=qgis-oracle \
+        -D CPACK_PACKAGE_VERSION=4.2.1 \
+        -D CPACK_PACKAGE_CONTACT=Gis3w \
+        -D CPACK_PACKAGE_DESCRIPTION_SUMMARY="Prebuilt QGIS Server runtime with Oracle support for G3W Suite" \
+        -D CPACK_DEBIAN_PACKAGE_RELEASE=1 \
+        -D CPACK_DEBIAN_PACKAGE_MAINTAINER=Gis3w \
+        -D CPACK_DEBIAN_FILE_NAME=qgis-oracle.deb \
+        -D CPACK_DEBIAN_PACKAGE_ARCHITECTURE=amd64 \
+        -D CPACK_DEBIAN_PACKAGE_SHLIBDEPS=ON \
+        -D CPACK_DEBIAN_PACKAGE_DEPENDS=python3 \
+        -D CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA=/QGIS/build/qgis-oracle-postinst \
+        -D CPACK_INSTALLED_DIRECTORIES="/instantclient_21_16;/instantclient_21_16" \
         -D WERROR=FALSE \
         -D WITH_3D=OFF \
         -D WITH_ANALYSIS=OFF \
@@ -157,24 +171,9 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         -D WITH_SERVER_LANDINGPAGE_WEBAPP=OFF \
         -D WITH_SFCGAL=OFF \
         -D SERVER_SKIP_ECW=ON \
-        -D CPACK_GENERATOR=DEB \
-        -D CPACK_PACKAGE_NAME=qgis-oracle \
-        -D CPACK_PACKAGE_FILE_NAME=qgis-oracle \
-        -D CPACK_PACKAGE_VERSION=4.2.1 \
-        -D CPACK_PACKAGE_CONTACT=Gis3w \
-        -D CPACK_PACKAGE_DESCRIPTION_SUMMARY="Prebuilt QGIS Server runtime with Oracle support for G3W Suite" \
-        -D CPACK_DEBIAN_PACKAGE_RELEASE=1 \
-        -D CPACK_DEBIAN_PACKAGE_MAINTAINER=Gis3w \
-        -D CPACK_DEBIAN_FILE_NAME=qgis-oracle.deb \
-        -D CPACK_DEBIAN_PACKAGE_ARCHITECTURE=amd64 \
-        -D CPACK_DEBIAN_PACKAGE_SHLIBDEPS=ON \
-        -D CPACK_DEBIAN_PACKAGE_DEPENDS=python3 \
-        -D CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA=/tmp/qgis-oracle-postinst \
-        -D CPACK_INSTALLED_DIRECTORIES="/tmp/qgis-oracle/usr;/usr;/instantclient_21_16;/instantclient_21_16" \
         -D WITH_STAGED_PLUGINS=ON
 
-RUN --mount=type=cache,target=/root/.cache/ccache \
-    DESTDIR=/tmp/qgis-oracle ninja -C /QGIS/build install
+RUN --mount=type=cache,target=/root/.cache/ccache ninja -C /QGIS/build
 
 # 2. package compilation (.deb) with CMake/CPack
 RUN printf '%s\n' \
@@ -185,13 +184,13 @@ RUN printf '%s\n' \
         '    echo "/instantclient_21_16" > /etc/ld.so.conf.d/oracle-instantclient.conf' \
         '    ldconfig' \
         'fi' \
-        > /tmp/qgis-oracle-postinst && \
-    chmod 0755 /tmp/qgis-oracle-postinst && \
+        > /QGIS/build/qgis-oracle-postinst && \
+    chmod 0755 /QGIS/build/qgis-oracle-postinst && \
     cpack --config /QGIS/build/CPackConfig.cmake -G DEB && \
     test -f /QGIS/build/qgis-oracle.deb && \
     mv /QGIS/build/qgis-oracle.deb /tmp/qgis-oracle.deb && \
-    dpkg-deb -c /tmp/qgis-oracle.deb | grep -q 'instantclient_21_16/libclntsh.so.21.1' && \
-    rm -rf /QGIS /tmp/qgis-oracle /tmp/qgis-oracle-postinst
+    dpkg-deb -c /tmp/qgis-oracle.deb | grep -q 'instantclient_21_16/libclntsh.so.21.1'
+
 
 
 # Final configuration & runtime setup
