@@ -178,7 +178,7 @@ RUN tree /tmp/qgis-oracle >&2
 
 # 2. dependency resolution (apt and python)
 RUN mkdir -p debian && \
-    echo -e "Source: qgis-oracle\n\nPackage: qgis-oracle\nArchitecture: any" > debian/control && \
+    printf "Source: qgis-oracle\n\nPackage: qgis-oracle\nArchitecture: any\n" > debian/control && \
     AUTO_DEPS=$(dpkg-shlibdeps -O /tmp/qgis-oracle/usr/bin/* /tmp/qgis-oracle/instantclient_21_16/*.so* | sed -n 's/^shlibs:Depends=//p') && \
     dh_python3 --package=qgis-oracle /tmp/qgis-oracle && \
     PYTHON_DEPS=$(sed -n 's/^python3:Depends=//p' debian/qgis-oracle.substvars) && \
