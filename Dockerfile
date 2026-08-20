@@ -105,6 +105,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         qmake6 \
         sip-tools \
         spawn-fcgi \
+        tree \
         txt2tags
 
 RUN curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-basic-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - instantclient_21_16 && \
@@ -172,9 +173,13 @@ RUN mkdir -p /tmp/qgis-oracle/instantclient_21_16 \
     ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /tmp/qgis-oracle/usr/lib/x86_64-linux-gnu/libaio.so.1 && \
     echo "/instantclient_21_16" > /tmp/qgis-oracle/etc/ld.so.conf.d/oracle-instantclient.conf
 
+# DEBUG
+RUN tree /tmp/qgis-oracle >&2
+
 # 2. dependency resolution (apt and python)
-RUN mkdir -p debian && touch debian/control && \
-    AUTO_DEPS=$(dpkg-shlibdeps -O /tmp/qgis-oracle/usr/bin/* /tmp/qgis-oracle/usr/lib/qgis/*.so* /tmp/qgis-oracle/instantclient_21_16/*.so* | sed -n 's/^shlibs:Depends=//p') && \
+RUN mkdir -p debian && \
+    echo -e "Source: qgis-oracle\n\nPackage: qgis-oracle\nArchitecture: any" > debian/control && \
+    AUTO_DEPS=$(dpkg-shlibdeps -O /tmp/qgis-oracle/usr/bin/* /tmp/qgis-oracle/instantclient_21_16/*.so* | sed -n 's/^shlibs:Depends=//p') && \
     dh_python3 --package=qgis-oracle /tmp/qgis-oracle && \
     PYTHON_DEPS=$(sed -n 's/^python3:Depends=//p' debian/qgis-oracle.substvars) && \
     echo "AUTO_DEPS=$AUTO_DEPS" > /tmp/deps.env && \
