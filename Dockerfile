@@ -351,13 +351,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     && rm -rf /var/lib/apt/lists/*
 
 # import g3w-admin
-RUN --mount=type=bind,from=code,target=/tmp/g3w-admin \
-    if [ ! -f "/tmp/g3w-admin/.git" ] && [ ! -d "/tmp/g3w-admin/.git" ]; then \
-        git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --depth 1 --branch ${G3W_SUITE_BRANCH} .; \
-    else \
-        cp -a /tmp/g3w-admin/. /code/; \
-    fi && \
-    git submodule add -f https://github.com/g3w-suite/g3w-admin-frontend.git g3w-admin/frontend
+RUN git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --depth 1 --branch ${G3W_SUITE_BRANCH} .
+RUN git submodule add -f https://github.com/g3w-suite/g3w-admin-frontend.git g3w-admin/frontend
 
 # compile static assets (g3w-admin)
 RUN yarn --ignore-engines --ignore-scripts --prod && \

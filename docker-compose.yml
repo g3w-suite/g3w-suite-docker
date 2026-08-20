@@ -13,8 +13,6 @@ x-g3w-suite: &g3w-suite
       - INSTALL_ORACLE
       - INSTALL_MSSQL
       - QGIS_CHANNEL
-    additional_contexts:
-      - code=./code
   image: g3wsuite/g3w-suite:${DEV_IMAGE:-dev}
   labels:
     - "com.g3wsuite.env_mode=${ENV_MODE:-prod}"
