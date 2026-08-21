@@ -117,6 +117,16 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
     curl -sSL https://github.com/qgis/QGIS/archive/refs/tags/final-4_2_1.tar.gz | tar -xz --strip-components=1
 
 RUN --mount=type=cache,target=/root/.cache/ccache \
+    printf '%s\n' \
+        '#!/bin/sh' \
+        'set -e' \
+        'if [ "$1" = "configure" ]; then' \
+        '    ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1' \
+        '    echo "/instantclient_21_16" > /etc/ld.so.conf.d/oracle-instantclient.conf' \
+        '    ldconfig' \
+        'fi' \
+        > /tmp/build_qgis_oracle_postinst && \
+    chmod 0755 /tmp/build_qgis_oracle_postinst && \
     cmake \
         -G Ninja \
         -S /QGIS \
@@ -127,6 +137,7 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         -D CMAKE_C_COMPILER=clang \
         -D CMAKE_CXX_COMPILER=clang++ \
         -D CMAKE_INSTALL_PREFIX=/usr \
+        -D CMAKE_LINKER_TYPE=MOLD \
         -D DISABLE_DEPRECATED=ON \
         -D USE_CCACHE=ON \
         -D ENABLE_TESTS=OFF \
@@ -141,11 +152,12 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         -D CPACK_PACKAGE_DESCRIPTION_SUMMARY="Prebuilt QGIS Server runtime with Oracle support for G3W Suite" \
         -D CPACK_DEBIAN_PACKAGE_RELEASE=1 \
         -D CPACK_DEBIAN_PACKAGE_MAINTAINER=Gis3w \
+        -D CPACK_PACKAGE_DIRECTORY=/tmp \
         -D CPACK_DEBIAN_FILE_NAME=qgis-oracle.deb \
         -D CPACK_DEBIAN_PACKAGE_ARCHITECTURE=amd64 \
         -D CPACK_DEBIAN_PACKAGE_SHLIBDEPS=ON \
         -D CPACK_DEBIAN_PACKAGE_DEPENDS=python3 \
-        -D CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA=/QGIS/build/qgis-oracle-postinst \
+        -D CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA=/tmp/build_qgis_oracle_postinst \
         -D CPACK_INSTALLED_DIRECTORIES="/instantclient_21_16;/instantclient_21_16" \
         -D WERROR=FALSE \
         -D WITH_3D=OFF \
@@ -173,25 +185,12 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         -D SERVER_SKIP_ECW=ON \
         -D WITH_STAGED_PLUGINS=ON
 
-RUN --mount=type=cache,target=/root/.cache/ccache ninja -C /QGIS/build
-
 # 2. package compilation (.deb) with CMake/CPack
-RUN printf '%s\n' \
-        '#!/bin/sh' \
-        'set -e' \
-        'if [ "$1" = "configure" ]; then' \
-        '    ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1' \
-        '    echo "/instantclient_21_16" > /etc/ld.so.conf.d/oracle-instantclient.conf' \
-        '    ldconfig' \
-        'fi' \
-        > /QGIS/build/qgis-oracle-postinst && \
-    chmod 0755 /QGIS/build/qgis-oracle-postinst && \
-    cpack --config /QGIS/build/CPackConfig.cmake -G DEB && \
-    test -f /QGIS/build/qgis-oracle.deb && \
-    mv /QGIS/build/qgis-oracle.deb /tmp/qgis-oracle.deb && \
+RUN --mount=type=cache,target=/root/.cache/ccache \
+    cmake --build /QGIS/build && \
+    cmake --build /QGIS/build --target bundle && \
+    cmake -E exists /tmp/qgis-oracle.deb && \
     dpkg-deb -c /tmp/qgis-oracle.deb | grep -q 'instantclient_21_16/libclntsh.so.21.1'
-
-
 
 # Final configuration & runtime setup
 # RUN pip3 install --break-system-packages jinja2 pygments;
