@@ -10,7 +10,7 @@ ARG INSTALL_ORACLE=false
 
 # cmake cache (for github action)
 FROM scratch AS qgis-deb-ccache
-RUN mkdir -p /root/.cache/ccache
+WORKDIR /root/.cache/ccache
 
 # ===========================================================================
 # STAGE: qgis-deb
@@ -337,7 +337,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 # DEBUG: keep container running in background
 CMD ["tail", "-f", "/dev/null"]
 
-RUN mkdir /code && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /code
 
