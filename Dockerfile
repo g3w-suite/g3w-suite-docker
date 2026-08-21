@@ -358,15 +358,18 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# import g3w-admin
-RUN git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --depth 1 --branch ${G3W_SUITE_BRANCH} .
-RUN git submodule add -f https://github.com/g3w-suite/g3w-admin-frontend.git g3w-admin/frontend
-
+# import g3w-admin in case of no local code path provided (G3WSUITE_LOCAL_CODE_PATH is empty)
+RUN --mount=type=bind,from=code,target=/src \
+    if [ ! -d /src/g3w-admin ]; then \
+        git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --depth 1 --branch ${G3W_SUITE_BRANCH} /code; \
+    else \
+        cp -a /src/. /code/; \
+    fi
 # compile static assets (g3w-admin)
 RUN yarn --ignore-engines --ignore-scripts --prod && \
-    mkdir -p /code/g3w-admin/core/static && \
-    rm -rf /code/g3w-admin/core/static/bower_components && \
-    ln -s "../../../node_modules/@bower_components" /code/g3w-admin/core/static/bower_components
+    mkdir -p g3w-admin/core/static && \
+    rm -rf g3w-admin/core/static/bower_components && \
+    ln -s "../../../node_modules/@bower_components" g3w-admin/core/static/bower_components
 
 # update python packages
 COPY requirements_rl.txt /requirements_rl.txt

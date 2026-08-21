@@ -15,6 +15,11 @@ echo -e "----------------------\n"
 
 cd /code/g3w-admin
 
+# Frontend submodule
+if [[ "${FRONTEND,,}" == "true" ]]; then
+  git clone https://github.com/g3w-suite/g3w-admin-frontend.git frontend
+fi
+
 # HUEY CONSUMER
 if [[ "${G3WSUITE_RUN_HUEY,,}" == "true" && "${G3WSUITE_CONSUMER}" == "0" ]]; then
   echo -e "STARTING G3WSUITE_CONSUMER"
