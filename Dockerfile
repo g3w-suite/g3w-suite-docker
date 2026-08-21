@@ -8,10 +8,6 @@ ARG QGIS_CHANNEL=ubuntu-ltr
 ARG INSTALL_MSSQL=false
 ARG INSTALL_ORACLE=false
 
-# cmake cache (for github action)
-FROM scratch AS qgis-deb-ccache
-WORKDIR /root/.cache/ccache
-
 # ===========================================================================
 # STAGE: qgis-deb
 # ===========================================================================
@@ -115,18 +111,13 @@ RUN curl -sSL https://download.oracle.com/otn_software/linux/instantclient/21160
     curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-sdk-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - instantclient_21_16 && \
     ln -sf /instantclient_21_16/libclntsh.so.21.1 /instantclient_21_16/libclntsh.so;
 
-RUN mkdir -p /QGIS && \
+RUN --mount=type=cache,target=/root/.cache/ccache \
+    mkdir -p /QGIS && \
     cd /QGIS && \
     curl -sSL https://github.com/qgis/QGIS/archive/refs/tags/final-4_2_1.tar.gz | tar -xz --strip-components=1
 
-# restore cache (cmake)
-COPY --from=qgis-deb-ccache /root/.cache/ccache /root/.cache/ccache
-
-# check cache (size)
-RUN ccache -s
-
-# compile qgis (cmake)
-RUN printf '%s\n' \
+RUN --mount=type=cache,target=/root/.cache/ccache \
+    printf '%s\n' \
         '#!/bin/sh' \
         'set -e' \
         'if [ "$1" = "configure" ]; then' \
@@ -194,12 +185,12 @@ RUN printf '%s\n' \
         -D SERVER_SKIP_ECW=ON \
         -D WITH_STAGED_PLUGINS=ON
 
-# build package (.deb)
-RUN cmake --build /QGIS/build && \
+# 2. package compilation (.deb) with CMake/CPack
+RUN --mount=type=cache,target=/root/.cache/ccache \
+    cmake --build /QGIS/build && \
     cmake --build /QGIS/build --target bundle && \
     cmake -E exists /tmp/qgis-oracle.deb && \
     dpkg-deb -c /tmp/qgis-oracle.deb | grep -q 'instantclient_21_16/libclntsh.so.21.1'
-    
 
 # Final configuration & runtime setup
 # RUN pip3 install --break-system-packages jinja2 pygments;
