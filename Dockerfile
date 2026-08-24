@@ -39,6 +39,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/99_norecommends && \
     apt-get update && apt-get install -y \
         bison \
+        autoconf \
+        autoconf-archive \
+        automake \
         build-essential \
         ca-certificates \
         ccache \
@@ -49,6 +52,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         git \
         libaio1t64 \
         libarchive-tools \
+        libtool \
         mold \
         ninja-build \
         pkg-config \
