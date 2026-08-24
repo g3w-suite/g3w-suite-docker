@@ -138,12 +138,6 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         -D CMAKE_CXX_COMPILER=clang++ \
         -D CMAKE_INSTALL_PREFIX=/usr \
         -D CMAKE_LINKER_TYPE=MOLD \
-        -D DISABLE_DEPRECATED=ON \
-        -D USE_CCACHE=ON \
-        -D ENABLE_TESTS=OFF \
-        -D ENABLE_UNITY_BUILDS=OFF \
-        -D ORACLE_INCLUDEDIR=/instantclient_21_16/sdk/include \
-        -D ORACLE_LIBDIR=/instantclient_21_16/ \
         -D CPACK_GENERATOR=DEB \
         -D CPACK_PACKAGE_NAME=qgis-oracle \
         -D CPACK_PACKAGE_FILE_NAME=qgis-oracle \
@@ -159,11 +153,19 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         -D CPACK_DEBIAN_PACKAGE_DEPENDS=python3 \
         -D CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA=/tmp/build_qgis_oracle_postinst \
         -D CPACK_INSTALLED_DIRECTORIES="/instantclient_21_16;/instantclient_21_16" \
-        -D WERROR=FALSE \
+        -D DISABLE_DEPRECATED=ON \
+        -D USE_CCACHE=ON \
+        -D ENABLE_TESTS=OFF \
+        -D ENABLE_UNITY_BUILDS=OFF \
+        -D ORACLE_INCLUDEDIR=/instantclient_21_16/sdk/include \
+        -D ORACLE_LIBDIR=/instantclient_21_16/ \
+        -D SERVER_SKIP_ECW=ON \
+        -D WERROR=OFF \
         -D WITH_3D=OFF \
         -D WITH_ANALYSIS=OFF \
         -D WITH_APIDOC=OFF \
         -D WITH_BINDINGS=ON \
+        -D WITH_CORE=ON \
         -D WITH_CUSTOM_WIDGETS=OFF \
         -D WITH_DESKTOP=OFF \
         -D WITH_GRASS=OFF \
@@ -182,15 +184,11 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         -D WITH_SERVER=ON \
         -D WITH_SERVER_LANDINGPAGE_WEBAPP=OFF \
         -D WITH_SFCGAL=OFF \
-        -D SERVER_SKIP_ECW=ON \
         -D WITH_STAGED_PLUGINS=ON
 
 # 2. package compilation (.deb) with CMake/CPack
 RUN --mount=type=cache,target=/root/.cache/ccache \
-    cmake --build /QGIS/build && \
-    cmake --build /QGIS/build --target bundle && \
-    cmake -E exists /tmp/qgis-oracle.deb && \
-    dpkg-deb -c /tmp/qgis-oracle.deb | grep -q 'instantclient_21_16/libclntsh.so.21.1'
+    cmake --build /QGIS/build
 
 # Final configuration & runtime setup
 # RUN pip3 install --break-system-packages jinja2 pygments;
@@ -294,7 +292,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
     if [ "${INSTALL_ORACLE}" = "true" ]; then \
-        apt-get update && apt-get install -y /tmp/qgis-oracle.deb && rm -f /tmp/qgis-oracle.deb; \
+        dpkg-deb -c /tmp/qgis-oracle.deb && \
+        apt-get update && apt-get install -y /tmp/qgis-oracle.deb && \
+        rm -f /tmp/qgis-oracle.deb; \
     fi
 
 # PyQGIS – channel is controlled by QGIS_CHANNEL build arg:
