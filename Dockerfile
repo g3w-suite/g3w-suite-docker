@@ -49,6 +49,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         cmake \
         curl \
         flex \
+        gfortran \
         git \
         libaio1t64 \
         libarchive-tools \
