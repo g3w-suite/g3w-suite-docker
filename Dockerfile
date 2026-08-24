@@ -75,6 +75,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
       "deb [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/ubuntu resolute main" \
       "deb-src [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/ubuntu resolute main" \
       > /etc/apt/sources.list.d/qgis.list && \
+    apt-get update && \
     apt-get build-dep -y qgis
 
 
