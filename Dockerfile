@@ -153,7 +153,8 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
 
 # package compilation (.deb) with CMake/CPack
 RUN --mount=type=cache,target=/root/.cache/ccache \
-    cmake --build /QGIS/build
+    cmake --build /QGIS/build && \
+    cpack --config /QGIS/build/CPackConfig.cmake
 
 # Final configuration & runtime setup
 # RUN pip3 install --break-system-packages jinja2 pygments;
