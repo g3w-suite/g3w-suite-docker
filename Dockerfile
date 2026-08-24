@@ -58,8 +58,10 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         ninja-build \
         pkg-config \
         python3-all-dev \
+        python3-pip \
         zip \
-        unzip
+        unzip && \
+    python3 -m pip install --break-system-packages --no-cache-dir cmake==4.4.0
 
 ENV VCPKG_ROOT=/opt/vcpkg
 ENV PATH=$VCPKG_ROOT:$PATH
