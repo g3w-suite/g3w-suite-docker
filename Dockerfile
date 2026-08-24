@@ -39,9 +39,6 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/99_norecommends && \
     apt-get update && apt-get install -y \
         bison \
-        autoconf \
-        autoconf-archive \
-        automake \
         build-essential \
         ca-certificates \
         ccache \
@@ -49,36 +46,40 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         cmake \
         curl \
         flex \
-        gfortran \
         git \
         libaio1t64 \
         libarchive-tools \
-        libtool \
         mold \
         ninja-build \
         pkg-config \
         python3-all-dev \
-        python3-pip \
         zip \
-        unzip && \
-    python3 -m pip install --break-system-packages --no-cache-dir cmake==4.4.0
+        unzip
 
-ENV VCPKG_ROOT=/opt/vcpkg
-ENV PATH=$VCPKG_ROOT:$PATH
-RUN git clone https://github.com/microsoft/vcpkg.git $VCPKG_ROOT && \
-    $VCPKG_ROOT/bootstrap-vcpkg.sh -disableMetrics
-
+# oracle instant client (driver)
 RUN curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-basic-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - instantclient_21_16 && \
     curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-sdk-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - instantclient_21_16 && \
     ln -sf /instantclient_21_16/libclntsh.so.21.1 /instantclient_21_16/libclntsh.so;
 
+# qgis (source)
 RUN --mount=type=cache,target=/root/.cache/ccache \
     mkdir -p /QGIS && \
     cd /QGIS && \
     curl -sSL https://github.com/qgis/QGIS/archive/refs/tags/final-4_2_1.tar.gz | tar -xz --strip-components=1
 
+# install qgis deps (from source)
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
+    curl -sSL https://download.qgis.org/downloads/qgis-archive-keyring.gpg > /etc/apt/keyrings/qgis-archive-keyring.gpg && \
+    printf '%s\n' \
+      "deb [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/ubuntu resolute main" \
+      "deb-src [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/ubuntu resolute main" \
+      > /etc/apt/sources.list.d/qgis.list && \
+    apt-get build-dep -y qgis
+
+
+# compile qgis (form source)
 RUN --mount=type=cache,target=/root/.cache/ccache \
-    --mount=type=cache,target=/root/.cache/vcpkg \
     printf '%s\n' \
         '#!/bin/sh' \
         'set -e' \
@@ -123,8 +124,6 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         -D ORACLE_INCLUDEDIR=/instantclient_21_16/sdk/include \
         -D ORACLE_LIBDIR=/instantclient_21_16/ \
         -D SERVER_SKIP_ECW=ON \
-        -D VCPKG_TARGET_TRIPLET=x64-linux-dynamic-release \
-        -D VCPKG_HOST_TRIPLET=x64-linux-dynamic-release \
         -D WERROR=OFF \
         -D WITH_3D=OFF \
         -D WITH_ANALYSIS=OFF \
@@ -149,12 +148,10 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         -D WITH_SERVER=ON \
         -D WITH_SERVER_LANDINGPAGE_WEBAPP=OFF \
         -D WITH_SFCGAL=OFF \
-        -D WITH_STAGED_PLUGINS=ON \
-        -D WITH_VCPKG=ON
+        -D WITH_STAGED_PLUGINS=ON
 
-# 2. package compilation (.deb) with CMake/CPack
+# package compilation (.deb) with CMake/CPack
 RUN --mount=type=cache,target=/root/.cache/ccache \
-    --mount=type=cache,target=/root/.cache/vcpkg \
     cmake --build /QGIS/build
 
 # Final configuration & runtime setup
