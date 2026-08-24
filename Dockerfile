@@ -45,67 +45,20 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         clang \
         cmake \
         curl \
-        dh-python \
-        dpkg-dev \
         flex \
+        git \
         libaio1t64 \
         libarchive-tools \
-        libdraco-dev \
-        libexiv2-dev \
-        libexpat1-dev \
-        libfcgi-dev \
-        libgdal-dev \
-        libgeos-dev \
-        libgsl-dev \
-        libpq-dev \
-        libproj-dev \
-        libprotobuf-dev \
-        libqca-qt6-dev \
-        libqscintilla2-qt6-dev \
-        libqt6opengl6-dev \
-        libqt6svg6-dev \
-        libspatialindex-dev \
-        libspatialite-dev \
-        libsqlite3-dev \
-        libxml2-dev \
-        libxslt-dev \
-        libzip-dev \
-        libzstd-dev \
         mold \
         ninja-build \
-        ocl-icd-opencl-dev \
-        opencl-headers \
-        protobuf-compiler \
-        pyqt6.qsci-dev \
+        pkg-config \
         python3-all-dev \
-        python3-pyproj \
-        python3-pyqt6 \
-        python3-pyqt6.qsci \
-        python3-pyqt6.qtsvg \
-        python3-pyqt6.qtpositioning \
-        python3-pyqt6.qtmultimedia \
-        python3-pyqt6.qtserialport \
-        python3-pyqt6.qtwebengine \
-        python3-pyqt6.sip \
-        python3-pyqtbuild \
-        python3-sipbuild \
-        qt6-3d-dev \
-        qt6-5compat-dev \
-        qt6-base-dev \
-        qt6-base-private-dev \
-        qt6-declarative-dev-tools \
-        qt6-multimedia-dev \
-        qt6-pdf-dev \
-        qt6-positioning-dev \
-        qt6-serialport-dev \
-        qt6-tools-dev \
-        qt6-tools-dev-tools \
-        qt6-webengine-dev \
-        qtkeychain-qt6-dev \
-        qmake6 \
-        sip-tools \
-        spawn-fcgi \
-        txt2tags
+        zip \
+        unzip
+
+ENV VCPKG_ROOT=/opt/vcpkg
+ENV PATH=$VCPKG_ROOT:$PATH
+RUN git clone https://github.com/microsoft/vcpkg.git $VCPKG_ROOT \ && $VCPKG_ROOT/bootstrap-vcpkg.sh -disableMetrics
 
 RUN curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-basic-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - instantclient_21_16 && \
     curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-sdk-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - instantclient_21_16 && \
@@ -117,6 +70,7 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
     curl -sSL https://github.com/qgis/QGIS/archive/refs/tags/final-4_2_1.tar.gz | tar -xz --strip-components=1
 
 RUN --mount=type=cache,target=/root/.cache/ccache \
+    --mount=type=cache,target=/root/.cache/vcpkg \
     printf '%s\n' \
         '#!/bin/sh' \
         'set -e' \
@@ -160,6 +114,8 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         -D ORACLE_INCLUDEDIR=/instantclient_21_16/sdk/include \
         -D ORACLE_LIBDIR=/instantclient_21_16/ \
         -D SERVER_SKIP_ECW=ON \
+        -D VCPKG_TARGET_TRIPLET=x64-linux-dynamic-release \
+        -D VCPKG_HOST_TRIPLET=x64-linux-dynamic-release \
         -D WERROR=OFF \
         -D WITH_3D=OFF \
         -D WITH_ANALYSIS=OFF \
@@ -184,10 +140,12 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         -D WITH_SERVER=ON \
         -D WITH_SERVER_LANDINGPAGE_WEBAPP=OFF \
         -D WITH_SFCGAL=OFF \
-        -D WITH_STAGED_PLUGINS=ON
+        -D WITH_STAGED_PLUGINS=ON \
+        -D WITH_VCPKG=ON
 
 # 2. package compilation (.deb) with CMake/CPack
 RUN --mount=type=cache,target=/root/.cache/ccache \
+    --mount=type=cache,target=/root/.cache/vcpkg \
     cmake --build /QGIS/build
 
 # Final configuration & runtime setup
