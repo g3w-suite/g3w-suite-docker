@@ -91,6 +91,7 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         -G Ninja \
         -S /QGIS \
         -B /QGIS/build \
+        -D CMAKE_MAKE_PROGRAM=ninja \
         -D AGGRESSIVE_SAFE_MODE=OFF \
         -D BINDINGS_GLOBAL_INSTALL=ON \
         -D CMAKE_BUILD_TYPE=Release \
