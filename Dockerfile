@@ -111,7 +111,7 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
     cmake --build /QGIS/build && \
     cmake --install /QGIS/build
 
-# TODO: use `COPY --from=qgis-builder /path/to/qgis` instead inheriting all of `FROM qgis-builder`
+# TODO: use a leaner base image (`COPY --from=qgis-builder /path/to/qgis` instead of `FROM qgis-builder`)
 FROM qgis-builder AS qgis-builder-true
 
 FROM ubuntu:resolute AS qgis-builder-false
