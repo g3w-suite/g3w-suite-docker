@@ -109,16 +109,13 @@ make deploy
 
 ⚠️ By using these flags you accept the [Microsoft EULA](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server) and [Oracle OTN](https://www.oracle.com/downloads/licenses/standard-license.html) license.
 
+Run deploy wizard again and set `INSTALL_MSSQL=true` and `INSTALL_ORACLE=true` flags when prompted.
 
 ```bash
-# re-build qgis server from source (~1-2 hours)
-docker buildx bake --set suite.args.INSTALL_MSSQL=true --set suite.args.INSTALL_ORACLE=true
-
-# start server
-make reload
+make deploy
 ```
 
-Please refer to the **multi-stage** [Dockerfile](./Dockerfile) and [docker-bake.hcl](./docker-bake.hcl) for more info about these flags.
+You can refer to the **multi-stage** [Dockerfile](./Dockerfile) and [docker-bake.hcl](./docker-bake.hcl) for more info about these flags / dependencies installed.
 
 ## 🎨 Style customization
 
