@@ -179,7 +179,7 @@ services:
       replicas: ${DEV_SERVER:-0}  # 0 = disable service
     image: alpine/socat
     ports:
-      - "8512:8000"
+      - "8000:8000"
       - "5678:5678"
     entrypoint: >
       /bin/sh -c "
