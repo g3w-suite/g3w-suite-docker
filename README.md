@@ -127,15 +127,16 @@ For more info see: [branding the suite](https://g3w-suite.readthedocs.io/en/late
 
 ## 🚀 Performance optimizations
 
-1. set scale-dependent visibility for the entire layer or for some filtered features (example: show only major roads until at scale 1:1E+6)
-2. when using rule-based/categorized classification or scale-dependent visibility create indexes on the column(s) involved in the rule expression (example: "create index idx_elec_penwell_ious on elec_penwell_ious (owner);" )
-3. start the project with only a few layers turned on by default
-4. do not turn on by default base-layers XYZ such as (Google base maps)
-5. do not use rule-based/categorized rendering on layers with too many categories (example: elec_penwell_public_power), they are unreadable anyway
-6. enable redering simplification for not-point layers, set it to `Distance` `1.2` and check `Enable provider simplification if available`
-7. enable cache on linestring and polygon layers (tile cache can be configured and cleared per-layer through the webgis admin panel and lasts forever until it is disabled or cleared)
-8. set a cron job on host machine that checks edited features that have been locked for more than 4 hours and frees them:
-```
+- Set **scale-dependent visibility** for dense layers.
+- Create **database indexes** on columns used for styling or visibility rules.
+- Keep **just a few layers turned on** by default (when loading the project).
+- Keep **XYZ base maps** (like Google Maps) disabled by default.
+- Avoid **rule-based styling** with too many categories.
+- Enable **rendering simplification** for lines and polygons (eg. set it to `Distance` `1.2` and check `Enable provider simplification if available`).
+- Enable **tile cache** for line and polygon layers (can be configured through the g3w-admin panel and lasts forever until it is disabled or cleared)
+- Run a **cron job** to automatically unlock locked features:
+
+```bash
 0 */1 * * * docker exec g3w-suite-docker_g3w-suite_1 python3 /code/g3w-admin/manage.py check_features_locked
 ```
 
