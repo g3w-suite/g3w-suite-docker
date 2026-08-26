@@ -187,6 +187,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         python3-gdal \
         python3-pip \
         python3-pkg-resources \
+        python3-qgis \
         wait-for-it \
         xvfb
 
@@ -198,7 +199,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     if [ "${INSTALL_ORACLE}" = "false" ]; then \
         curl -sSL https://download.qgis.org/downloads/qgis-archive-keyring.gpg > /etc/apt/keyrings/qgis-archive-keyring.gpg && \
         echo "deb [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/${QGIS_CHANNEL} resolute main" > /etc/apt/sources.list.d/qgis.list && \
-        apt-get update && apt-get install -y python3-qgis qgis-server; \
+        apt-get update && apt-get install -y qgis-server; \
     fi
 
 # MS SQL ODBC driver (optional – only when INSTALL_MSSQL=true)
