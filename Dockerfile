@@ -9,7 +9,7 @@ ARG INSTALL_MSSQL=false
 ARG INSTALL_ORACLE=false
 
 # ===========================================================================
-# STAGE: qgis-deb
+# STAGE: qgis-oracle
 # ===========================================================================
 # clone and build QGIS from source (with Qt6 + Oracle support)
 #
@@ -19,12 +19,7 @@ ARG INSTALL_ORACLE=false
 # - https://github.com/qgis/QGIS/blob/final-4_2_1/.docker/docker-qgis-build.sh
 # - https://github.com/qgis/QGIS/blob/final-4_2_1/.docker/qgis3-ubuntu-qt6-build-deps.dockerfile
 # ===========================================================================
-FROM ubuntu:resolute AS qgis-deb
-
-LABEL maintainer="Gis3w" \
-      Description="Build QGIS+Oracle runtime package (.deb)" \
-      Vendor="Gis3w" \
-      Version="dev"
+FROM ubuntu:resolute AS qgis-builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
@@ -38,95 +33,34 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/99_norecommends && \
     apt-get update && apt-get install -y \
-        bison \
-        build-essential \
-        ca-certificates \
-        ccache \
-        clang \
-        cmake \
-        curl \
-        dh-python \
-        dpkg-dev \
-        flex \
-        libaio1t64 \
-        libarchive-tools \
-        libdraco-dev \
-        libexiv2-dev \
-        libexpat1-dev \
-        libfcgi-dev \
-        libgdal-dev \
-        libgeos-dev \
-        libgsl-dev \
-        libpq-dev \
-        libproj-dev \
-        libprotobuf-dev \
-        libqca-qt6-dev \
-        libqscintilla2-qt6-dev \
-        libqt6opengl6-dev \
-        libqt6svg6-dev \
-        libspatialindex-dev \
-        libspatialite-dev \
-        libsqlite3-dev \
-        libxml2-dev \
-        libxslt-dev \
-        libzip-dev \
-        libzstd-dev \
-        mold \
-        ninja-build \
-        ocl-icd-opencl-dev \
-        opencl-headers \
-        protobuf-compiler \
-        pyqt6.qsci-dev \
-        python3-all-dev \
-        python3-pyproj \
-        python3-pyqt6 \
-        python3-pyqt6.qsci \
-        python3-pyqt6.qtsvg \
-        python3-pyqt6.qtpositioning \
-        python3-pyqt6.qtmultimedia \
-        python3-pyqt6.qtserialport \
-        python3-pyqt6.qtwebengine \
-        python3-pyqt6.sip \
-        python3-pyqtbuild \
-        python3-sipbuild \
-        qt6-3d-dev \
-        qt6-5compat-dev \
-        qt6-base-dev \
-        qt6-base-private-dev \
-        qt6-declarative-dev-tools \
-        qt6-multimedia-dev \
-        qt6-pdf-dev \
-        qt6-positioning-dev \
-        qt6-serialport-dev \
-        qt6-tools-dev \
-        qt6-tools-dev-tools \
-        qt6-webengine-dev \
-        qtkeychain-qt6-dev \
-        qmake6 \
-        sip-tools \
-        spawn-fcgi \
-        txt2tags
+        bison build-essential ca-certificates ccache clang cmake curl \
+        flex git libaio1t64 libarchive-tools mold ninja-build pkg-config \
+        python3-all-dev
 
+# oracle instant client (driver)
 RUN curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-basic-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - instantclient_21_16 && \
     curl -sSL https://download.oracle.com/otn_software/linux/instantclient/2116000/instantclient-sdk-linux.x64-21.16.0.0.0dbru.zip | bsdtar -xf - instantclient_21_16 && \
     ln -sf /instantclient_21_16/libclntsh.so.21.1 /instantclient_21_16/libclntsh.so;
 
+# qgis (source)
 RUN --mount=type=cache,target=/root/.cache/ccache \
     mkdir -p /QGIS && \
     cd /QGIS && \
     curl -sSL https://github.com/qgis/QGIS/archive/refs/tags/final-4_2_1.tar.gz | tar -xz --strip-components=1
 
-RUN --mount=type=cache,target=/root/.cache/ccache \
+# install qgis deps (from source)
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
+    curl -sSL https://download.qgis.org/downloads/qgis-archive-keyring.gpg > /etc/apt/keyrings/qgis-archive-keyring.gpg && \
     printf '%s\n' \
-        '#!/bin/sh' \
-        'set -e' \
-        'if [ "$1" = "configure" ]; then' \
-        '    ln -sf /usr/lib/x86_64-linux-gnu/libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1' \
-        '    echo "/instantclient_21_16" > /etc/ld.so.conf.d/oracle-instantclient.conf' \
-        '    ldconfig' \
-        'fi' \
-        > /tmp/build_qgis_oracle_postinst && \
-    chmod 0755 /tmp/build_qgis_oracle_postinst && \
+      "deb [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/ubuntu resolute main" \
+      "deb-src [signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/ubuntu resolute main" \
+      > /etc/apt/sources.list.d/qgis.list && \
+    apt-get update && \
+    apt-get build-dep -y qgis
+
+# compile qgis (form source)
+RUN --mount=type=cache,target=/root/.cache/ccache \
     cmake \
         -G Ninja \
         -S /QGIS \
@@ -138,32 +72,20 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         -D CMAKE_CXX_COMPILER=clang++ \
         -D CMAKE_INSTALL_PREFIX=/usr \
         -D CMAKE_LINKER_TYPE=MOLD \
+        -D CMAKE_MAKE_PROGRAM=ninja \
         -D DISABLE_DEPRECATED=ON \
         -D USE_CCACHE=ON \
         -D ENABLE_TESTS=OFF \
         -D ENABLE_UNITY_BUILDS=OFF \
         -D ORACLE_INCLUDEDIR=/instantclient_21_16/sdk/include \
         -D ORACLE_LIBDIR=/instantclient_21_16/ \
-        -D CPACK_GENERATOR=DEB \
-        -D CPACK_PACKAGE_NAME=qgis-oracle \
-        -D CPACK_PACKAGE_FILE_NAME=qgis-oracle \
-        -D CPACK_PACKAGE_VERSION=4.2.1 \
-        -D CPACK_PACKAGE_CONTACT=Gis3w \
-        -D CPACK_PACKAGE_DESCRIPTION_SUMMARY="Prebuilt QGIS Server runtime with Oracle support for G3W Suite" \
-        -D CPACK_DEBIAN_PACKAGE_RELEASE=1 \
-        -D CPACK_DEBIAN_PACKAGE_MAINTAINER=Gis3w \
-        -D CPACK_PACKAGE_DIRECTORY=/tmp \
-        -D CPACK_DEBIAN_FILE_NAME=qgis-oracle.deb \
-        -D CPACK_DEBIAN_PACKAGE_ARCHITECTURE=amd64 \
-        -D CPACK_DEBIAN_PACKAGE_SHLIBDEPS=ON \
-        -D CPACK_DEBIAN_PACKAGE_DEPENDS=python3 \
-        -D CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA=/tmp/build_qgis_oracle_postinst \
-        -D CPACK_INSTALLED_DIRECTORIES="/instantclient_21_16;/instantclient_21_16" \
-        -D WERROR=FALSE \
+        -D SERVER_SKIP_ECW=ON \
+        -D WERROR=OFF \
         -D WITH_3D=OFF \
         -D WITH_ANALYSIS=OFF \
         -D WITH_APIDOC=OFF \
         -D WITH_BINDINGS=ON \
+        -D WITH_CORE=ON \
         -D WITH_CUSTOM_WIDGETS=OFF \
         -D WITH_DESKTOP=OFF \
         -D WITH_GRASS=OFF \
@@ -182,46 +104,23 @@ RUN --mount=type=cache,target=/root/.cache/ccache \
         -D WITH_SERVER=ON \
         -D WITH_SERVER_LANDINGPAGE_WEBAPP=OFF \
         -D WITH_SFCGAL=OFF \
-        -D SERVER_SKIP_ECW=ON \
         -D WITH_STAGED_PLUGINS=ON
 
-# 2. package compilation (.deb) with CMake/CPack
+# package compilation
 RUN --mount=type=cache,target=/root/.cache/ccache \
     cmake --build /QGIS/build && \
-    cmake --build /QGIS/build --target bundle && \
-    cmake -E exists /tmp/qgis-oracle.deb && \
-    dpkg-deb -c /tmp/qgis-oracle.deb | grep -q 'instantclient_21_16/libclntsh.so.21.1'
+    cmake --install /QGIS/build
 
-# Final configuration & runtime setup
-# RUN pip3 install --break-system-packages jinja2 pygments;
+# TODO: use a leaner base image (`COPY --from=qgis-builder /path/to/qgis` instead of `FROM qgis-builder`)
+FROM qgis-builder AS qgis-builder-true
 
-# ENV PYTHONPATH=/usr/share/qgis/python/:/usr/share/qgis/python/plugins:/usr/lib/python3/dist-packages/qgis:/usr/share/qgis/python/qgis
-
-# Fix www-data permissions for runtime requirements
-# RUN mkdir -p /var/www/.local /var/www/.config && chown -R www-data:www-data /var/www
-
-# USER www-data
-
-# CMD ["/usr/bin/xvfb-run", \
-#      "-s", "-ac -screen 0 1280x1024x16 +extension GLX +render -noreset", \
-#      "/usr/bin/spawn-fcgi", \
-#        "-d", "/usr/lib/qgis/", \
-#        "-n", \
-#        "-p", "9333", \
-#        "--", \
-#        "/usr/bin/qgis_mapserv.fcgi"]
-
-FROM ubuntu:resolute AS qgis-deb-true
-COPY --from=qgis-deb /tmp/qgis-oracle.deb /tmp/qgis-oracle.deb
-
-FROM ubuntu:resolute AS qgis-deb-false
-RUN touch /tmp/qgis-oracle.deb 
+FROM ubuntu:resolute AS qgis-builder-false
 
 # ===========================================================================
 # STAGE: deps
 # ===========================================================================
 
-FROM qgis-deb-${INSTALL_ORACLE} AS deps
+FROM qgis-builder-${INSTALL_ORACLE} AS deps
 
 ARG QGIS_CHANNEL
 ARG INSTALL_MSSQL
@@ -290,12 +189,6 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         python3-pkg-resources \
         wait-for-it \
         xvfb
-
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
-    if [ "${INSTALL_ORACLE}" = "true" ]; then \
-        apt-get update && apt-get install -y /tmp/qgis-oracle.deb && rm -f /tmp/qgis-oracle.deb; \
-    fi
 
 # PyQGIS – channel is controlled by QGIS_CHANNEL build arg:
 #   ubuntu-ltr  → https://qgis.org/ubuntu-ltr  (LTR, default)
