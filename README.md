@@ -132,7 +132,7 @@ For more info see: [branding the suite](https://g3w-suite.readthedocs.io/en/late
 - Keep just a few layers turned on by default (when loading the project).
 - Keep XYZ base maps (like Google Maps) disabled by default.
 - Avoid rule-based styling with too many categories.
-- Enable rendering simplification for lines and polygons (eg. set it to `Distance` `1.2` and check `Enable provider simplification if available`).
+- Enable rendering simplification for lines and polygons (eg. set `Distance` `1.2` and check `Enable provider simplification if available`).
 - Enable tile cache for line and polygon layers (can be configured through the g3w-admin panel and lasts forever until it is disabled or cleared)
 - Run a cron job to automatically unlock locked features:
 
