@@ -15,7 +15,7 @@ target "suite" {
   target   = "suite"
   tags     = ["g3wsuite/g3w-suite:${TAG}"]
   args = {
-    G3W_SUITE_BRANCH = "dev"
+    G3W_SUITE_BRANCH = "${TAG}"
     INSTALL_MSSQL    = "false"
     INSTALL_ORACLE   = "false"
     QGIS_CHANNEL     = "ubuntu-ltr"
@@ -36,7 +36,7 @@ target "deps" {
   name = "${variant.name}"
   tags = ["g3wsuite/g3w-suite-${variant.name}:${TAG}"]
   args = {
-    G3W_SUITE_BRANCH = "dev"
+    G3W_SUITE_BRANCH = "${TAG}"
     INSTALL_ORACLE   = variant.oracle
     INSTALL_MSSQL    = variant.mssql
     QGIS_CHANNEL     = variant.channel
