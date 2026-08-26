@@ -119,9 +119,11 @@ You can refer to the **multi-stage** [Dockerfile](./Dockerfile) and [docker-bake
 
 ## 🎨 Style customization
 
-- custom templates folder: `config/g3w-suite/overrides/templates` → a Docker service restart is required to make the changes effective.
-- custom logo (see: [docs](https://g3w-suite.readthedocs.io/en/latest/settings.html#general-layout-settings)): `config/g3w-suite/settings_docker.py` → a Docker service restart is required to make the changes effective.
-- custom CSS: `config/g3w-suite/overrides/static/style.css` → changes are effective immediately
+- **Custom Templates**: edit `config/g3w-suite/overrides/templates` → (docker restart required)
+- **Custom Logo**: edit `config/g3w-suite/settings_docker.py` → (docker restart required)
+- **Custom CSS**: edit `config/g3w-suite/overrides/static/style.css` → (changes are effective immediately)
+
+For more info see: [branding the suite](https://g3w-suite.readthedocs.io/en/latest/branding.html) and [general layout settings](https://g3w-suite.readthedocs.io/en/latest/settings.html#general-layout-settings).
 
 ## 🚀 Performance optimizations
 
