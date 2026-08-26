@@ -190,6 +190,13 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         wait-for-it \
         xvfb
 
+# PyQGIS
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
+    if [ "${INSTALL_ORACLE}" = "true" ]; then \
+        apt-get update && apt-get install -y python3-qgis; \
+    fi
+
 # PyQGIS – channel is controlled by QGIS_CHANNEL build arg:
 #   ubuntu-ltr  → https://qgis.org/ubuntu-ltr  (LTR, default)
 #   ubuntu      → https://qgis.org/ubuntu       (latest)
