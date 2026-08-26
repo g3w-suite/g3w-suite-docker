@@ -77,16 +77,6 @@ jobs:
         with:
           files: docker-bake.hcl
           targets: deps
-          set: |
-            deps-oracle.output=type=docker,dest=deps-oracle.tar
-      -
-        name: "Upload deps-oracle artifact"
-        uses: actions/upload-artifact@v4
-        with:
-          name: deps-oracle
-          if-no-files-found: error
-          path: deps-oracle.tar
-          retention-days: 7
 
   ##
   # Runtime checks.
