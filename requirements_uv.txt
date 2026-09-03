@@ -1,0 +1,7 @@
+# Workaround for uv migration; pip handles this "overrides" automatically
+
+tinycss2>=1.5.0                      # HOTFIX: for "g3w-admin" (related to "django-bleach" and "weasyprint")
+djangorestframework-simplejwt==5.5.1 # HOTFIX: for "g3w-admin-authjwt@v0.0.2"
+django-cors-headers==4.9.0           # HOTFIX: for "g3w-admin-authjwt@v0.0.2"
+pydantic>=2.10                       # HOTFIX: pydantic-core<2.27 has no Python 3.14 wheels
+weasyprint==68.0                     # HOTFIX: for "g3w-admin-cadastre" plugin  

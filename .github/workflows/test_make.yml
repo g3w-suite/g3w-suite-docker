@@ -1,0 +1,153 @@
+﻿name: G3W-SUITE-DOCKER Makefile tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - dev
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  ##
+  # Guard condition.
+  ##
+  public_repo:
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.repository.private }}
+    steps:
+      - run: true
+
+  ##
+  # Verify the Makefile is parseable and all targets are listed correctly.
+  ##
+  validate-makefile:
+    name: "Validate Makefile (make help)"
+    needs: public_repo
+    runs-on: ubuntu-24.04
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: make help
+        run: make help
+
+  ##
+  # Verify docker-compose.yml interpolates without errors against .env.example.
+  ##
+  validate-compose:
+    name: "Validate docker-compose.yml syntax"
+    needs: public_repo
+    runs-on: ubuntu-24.04
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Create .env from .env.example
+        run: cp .env.example .env
+      -
+        name: "docker compose config (prod)"
+        run: docker compose --env-file .env -f docker-compose.yml config --quiet
+      -
+        name: "docker compose config (dev)"
+        run: docker compose --env-file .env --env-file .env.dev -f docker-compose.yml config --quiet
+
+  ##
+  # Build image targets via docker buildx bake.
+  ##
+  build:
+    name: "docker buildx bake deps"
+    needs: public_repo
+    runs-on: ubuntu-24.04
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: "Set up Docker Buildx"
+        uses: docker/setup-buildx-action@v4
+      -
+        name: "Build deps matrix"
+        uses: docker/bake-action@v7
+        with:
+          files: docker-bake.hcl
+          targets: deps
+
+  ##
+  # Runtime checks.
+  ##
+  run:
+    name: "Check docker-entrypoint.sh ${{ toJSON(matrix) }}"
+    needs: public_repo
+    runs-on: ubuntu-24.04
+    env:
+      G3W_SUITE_BRANCH: ${{ matrix.G3W_SUITE_BRANCH }}
+      INSTALL_ORACLE: ${{ matrix.INSTALL_ORACLE }}
+      INSTALL_MSSQL: ${{ matrix.INSTALL_MSSQL }}
+      QGIS_CHANNEL: ${{ matrix.QGIS_CHANNEL }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        G3W_SUITE_BRANCH: [dj52]
+        INSTALL_ORACLE: [true, false]
+        INSTALL_MSSQL: [true, false]
+        QGIS_CHANNEL: [ubuntu, ubuntu-ltr]
+      # Esclude invalid combinations
+        exclude:
+          - INSTALL_ORACLE: true
+            QGIS_CHANNEL: ubuntu-ltr
+
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      - 
+        name: "Set up Docker Buildx"
+        uses: docker/setup-buildx-action@v4
+      -
+        name: "Enable Buildx cache"
+        uses: docker/bake-action@v7
+        with:
+          files: docker-bake.hcl
+          targets: suite
+          set: |
+            suite.args.G3W_SUITE_BRANCH=${{ matrix.G3W_SUITE_BRANCH }}
+            suite.args.INSTALL_ORACLE=${{ matrix.INSTALL_ORACLE }}
+            suite.args.INSTALL_MSSQL=${{ matrix.INSTALL_MSSQL }}
+            suite.args.QGIS_CHANNEL=${{ matrix.QGIS_CHANNEL }}
+            suite.output=type=docker
+      -
+        name: "Prepare Environment"
+        run: |
+          cp .env.example .env
+          docker compose --env-file .env -f docker-compose.yml up -d --no-build
+      -
+        name: "Wait for WSGI server"
+        run: |
+          docker compose logs -f g3w-suite &
+          LOGS_PID=$!
+          trap 'kill $LOGS_PID >/dev/null 2>&1 || true' EXIT
+          TIMEOUT=900
+          SLEEP=15
+          while ! docker compose exec -T g3w-suite curl --fail --silent --show-error http://localhost:8000/ > /dev/null 2>&1; do
+            if ! docker compose ps --status running --services | grep -q '^g3w-suite$'; then
+              echo "g3w-suite container is not running"
+              docker compose ps
+              docker compose logs g3w-suite
+              exit 1
+            fi
+            if [ $TIMEOUT -le 0 ]; then
+              echo "❌ WSGI server is not responding."
+              docker compose logs g3w-suite
+              exit 1
+            fi
+            sleep $SLEEP
+            TIMEOUT=$((TIMEOUT-SLEEP))
+          done
+          echo "✅ WSGI server is running"

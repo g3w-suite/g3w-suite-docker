@@ -14,6 +14,11 @@ if [ "${WEBGIS_DOCKER_SHARED_VOLUME}" = "" ]; then
     exit 1
 fi
 
+if [ "${WEBGIS_ADMIN_EMAIL}" = "" ]; then
+    echo "WEBGIS_ADMIN_EMAIL not defined: exiting"
+    exit 1
+fi
+
 certs_folder="${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt"
 acme_folder="${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known"
 default_ssl_conf="https://raw.githubusercontent.com/certbot/certbot/refs/heads/main/certbot/src/certbot/_internal/plugins/nginx/tls_configs/options-ssl-nginx.conf"
@@ -33,6 +38,7 @@ docker run -it --rm --name certbot --pull=missing \
   -v ${acme_folder}:/var/www/.well-known \
   certbot/certbot -t certonly \
   --agree-tos --renew-by-default \
+  --email "${WEBGIS_ADMIN_EMAIL}" \
   --no-eff-email \
   --webroot -w /var/www \
   -d ${domain}

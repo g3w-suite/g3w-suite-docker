@@ -1,7 +1,7 @@
 # Override settings for G3W-SUITE docker
 # Destination: /code/g3w-admin/base/settings/local_settings.py
 # Read connection parameters from environment
-import os
+import os, sys, importlib
 from django.conf import settings
 from base import __version__ as version
 
@@ -96,7 +96,7 @@ HUEY = {
     'huey_class': 'huey.RedisExpireHuey',
     'name': 'g3w-suite',
     'url': 'redis://redis:6379/?db=0',
-    'immediate': os.path.ismount('/code'),  # True = run synchronously.
+    'immediate': False if 'run_huey' in sys.argv else os.path.ismount('/code'),  # True = run synchronously.
     'consumer': {
         'workers': 1,
         'worker_type': 'process',
@@ -203,3 +203,22 @@ if os.getenv('WEBGIS_PUBLIC_HOSTNAME', None):
         f"http://{os.getenv('WEBGIS_PUBLIC_HOSTNAME', None)}",
         f"http://{os.getenv('WEBGIS_PUBLIC_HOSTNAME', None)}:8080"
     ]
+
+
+# Fallback for: FRONTEND_APP
+FRONTEND = locals().get('FRONTEND', os.getenv('FRONTEND', 'False').lower() == 'true')
+FRONTEND_APP = locals().get('FRONTEND_APP', 'frontend')
+
+# DEV MODE: trust "dev-server" port (8000)
+if os.getenv('DEV_MODE', 'False').lower() == 'true':
+    CSRF_TRUSTED_ORIGINS.extend([
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+    ])
+
+# DEV MODE: filter only the installed apps
+if os.getenv('DEV_MODE', 'False').lower() == 'true':
+    G3WADMIN_LOCAL_MORE_APPS = [app for app, is_installed in {
+        app: importlib.util.find_spec(app) is not None
+        for app in G3WADMIN_LOCAL_MORE_APPS
+    }.items() if is_installed]

@@ -1,5 +1,78 @@
+## HOW TO RUN: ##
+#
+# make prod reload     (for production  → `g3wsuite/g3w-suite:<current_branch>`)
+# make dev  reload     (for development → `g3wsuite/g3w-suite:next`)
+#
+
+x-g3w-suite: &g3w-suite
+  build:
+    context: ./
+    # TODO: should we copy local code into actual Dockerfile? (dev mode)
+    # additional_contexts:
+    #   - code=${G3WSUITE_LOCAL_CODE_PATH:-.}
+    target: suite
+    args:
+      - G3W_SUITE_BRANCH
+      - INSTALL_ORACLE
+      - INSTALL_MSSQL
+      - QGIS_CHANNEL
+  image: g3wsuite/g3w-suite:${DEV_IMAGE:-dev}
+  labels:
+    - "com.g3wsuite.env_mode=${ENV_MODE:-prod}"
+  restart: "${RESTART_POLICY:-on-failure}"
+  cap_add:
+    - ${SYS_PTRACE:-NET_BIND_SERVICE} # DEV MODE: allow "sys_ptrace" 
+  environment:
+    - BITBUCKET_TOKEN
+    - DEV_MODE=${DEV_MODE:-False}
+    - FRONTEND
+    - G3WSUITE_ADMIN_USERNAME
+    - G3WSUITE_ADMIN_PASSWORD
+    - G3WSUITE_DEBUG=${G3WSUITE_DEBUG:-False}
+    - G3WSUITE_GUNICORN_MAX_REQUESTS
+    - G3WSUITE_GUNICORN_NUM_WORKERS=${G3WSUITE_GUNICORN_NUM_WORKERS:-1}
+    - G3WSUITE_GUNICORN_TIMEOUT=${G3WSUITE_GUNICORN_TIMEOUT:-3600}
+    - G3WSUITE_POSTGRES_DBNAME
+    - G3WSUITE_POSTGRES_USER
+    - G3WSUITE_POSTGRES_USER_LOCAL
+    - G3WSUITE_POSTGRES_PASS
+    - G3WSUITE_POSTGRES_HOST
+    - G3WSUITE_POSTGRES_PORT
+    - G3WSUITE_RUN_HUEY
+    - G3WSUITE_TILECACHE_PATH
+    - G3WSUITE_WEBSERVER
+    - PGSERVICEFILE
+    - TILESTACHE_CACHE_BUFFER_SIZE
+    - TILESTACHE_CACHE_TOKEN
+    - WEBGIS_PUBLIC_HOSTNAME=${WEBGIS_PUBLIC_HOSTNAME:-localhost}
+    - WEBGIS_ADMIN_EMAIL=${WEBGIS_ADMIN_EMAIL:-info@gis3w.it}
+  volumes:
+    - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
+    - ./config/g3w-suite/overrides/static:/code/static:ro
+    - ./config/g3w-suite/overrides/templates:/code/templates:ro
+    - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
+    - ./config/g3w-suite/wsgi_docker.py:/code/g3w-admin/base/wsgi_docker.py
+    - ./secrets/pg_service.conf:${PGSERVICEFILE}
+    - ./config/qgis/QGIS3.ini:/shared-volume/QGIS/QGIS3.ini
+    - "${SCRIPTS_VOLUME:-void:/void}" # DEV MODE: hot reload for "/scripts" folder
+    - "${CODE_VOLUME:-void:/void}"    # DEV MODE: hot reload for "/code" folder
+    - uv_cache:/root/.cache/uv
+    - node_modules:/code/node_modules
+  logging: &g3w-suite-logging
+    driver: "json-file"
+    options:
+      max-size: "200k"
+      max-file: "10"
+  stdin_open: ${DEV_MODE:-false}
+  tty: ${DEV_MODE:-false}
+  networks:
+    internal:
+
 services:
+
   postgis:
+    deploy:
+      replicas: 1  # 0 = disable service
     image: kartoza/postgis:16-3.4
     ports:
       - "5439:5432"
@@ -10,12 +83,8 @@ services:
       - ALLOW_IP_RANGE=0.0.0.0/0
       - RUN_AS_ROOT=true
       - FORCE_SSL=False
-    restart: on-failure
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
+    restart: "${RESTART_POLICY:-on-failure}"
+    logging: *g3w-suite-logging
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}:/var/lib/postgresql
     healthcheck:
@@ -25,66 +94,47 @@ services:
       test: "PGPASSWORD=${G3WSUITE_POSTGRES_PASS} pg_isready -h 127.0.0.1 -U ${G3WSUITE_POSTGRES_USER_LOCAL} -d ${G3WSUITE_POSTGRES_DBNAME}"
     networks:
       internal:
+        aliases:
+          - ${WEBGIS_PUBLIC_HOSTNAME}
 
   g3w-suite:
-    image: g3wsuite/g3w-suite:dev
-    environment:
-      - DISPLAY=:99
-      - G3WSUITE_ADMIN_USERNAME
-      - G3WSUITE_ADMIN_PASSWORD
-      - G3WSUITE_TILECACHE_PATH
-      - G3WSUITE_POSTGRES_DBNAME
-      - G3WSUITE_POSTGRES_USER
-      - G3WSUITE_POSTGRES_USER_LOCAL
-      - G3WSUITE_POSTGRES_PASS
-      - G3WSUITE_POSTGRES_HOST
-      - G3WSUITE_POSTGRES_PORT
-      - G3WSUITE_ORS_API_ENDPOINT
-      - G3WSUITE_ORS_API_KEY
-      - TILESTACHE_CACHE_BUFFER_SIZE
-      - TILESTACHE_CACHE_TOKEN
-      - G3WSUITE_GUNICORN_NUM_WORKERS
-      - G3WSUITE_GUNICORN_MAX_REQUESTS
-      - G3WSUITE_GUNICORN_TIMEOUT
-      - FRONTEND
-      - PGSERVICEFILE
-      - QGIS_OPTIONS_PATH=/shared-volume/
-      - QGIS_SERVER_LOG_FILE
-      - QGIS_SERVER_LOG_LEVEL
-      - WEBGIS_PUBLIC_HOSTNAME
+    <<: *g3w-suite
+    deploy:
+      replicas: 1  # 0 = disable service
     expose:
-      - "8000"
-    restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-
+      - 8000
+      - 5678
+    entrypoint: /bin/bash -c "export G3WSUITE_CONSUMER=1; exec /scripts/docker-entrypoint.sh"
     depends_on:
       - postgis
-    volumes:
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/node_modules:/code/node_modules
-      - ./config/g3w-suite/overrides/static:/code/static:ro
-      - ./config/g3w-suite/overrides/templates:/code/templates:ro
-      - ./config/g3w-suite/settings_docker.py:/code/g3w-admin/base/settings/local_settings.py
-      - ./secrets/pg_service.conf:${PGSERVICEFILE}
-      - ./config/qgis/QGIS3.ini:/shared-volume/QGIS/QGIS3.ini
 
-    networks:
-      internal:
+  # Asynchronous tasks consumer (run_huey)
+  g3w-suite-consumer:
+    <<: *g3w-suite
+    deploy:
+      replicas: 1  # 0 = disable service
+    entrypoint: /bin/bash -c "export G3WSUITE_CONSUMER=0; exec /scripts/docker-entrypoint.sh"
+    depends_on:
+      - g3w-suite
+      - redis
 
   redis:
+    deploy:
+      replicas: 1  # 0 = disable service
     image: redis:latest
     expose:
-    - 6379
+      - 6379
     networks:
       internal:
-    restart: always
+    restart: "${RESTART_POLICY:-on-failure}"
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.1
+    deploy:
+      replicas: 1  # 0 = disable service
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.19.14
+    user: root
+    command: >
+      bash -c "chown -R 1000:0 /usr/share/elasticsearch/data && exec setpriv --reuid=1000 --regid=0 --init-groups /usr/local/bin/docker-entrypoint.sh elasticsearch"
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
@@ -94,41 +144,61 @@ services:
       - "9300:9300"
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/esdata:/usr/share/elasticsearch/data
-      #- esdata:/usr/share/elasticsearch/data
+    networks:
+      internal:
 
+  # PROD SERVER: expose port 8000 (django) and 443 (django)
   nginx:
+    deploy:
+      replicas: ${PROD_SERVER:-1}  # 0 = disable service
     image: nginx
+    environment:
+      - WEBGIS_PUBLIC_HOSTNAME
+      - WEBGIS_ADMIN_EMAIL
+      - WEBGIS_SSL=${WEBGIS_SSL:+_ssl}
+      - NGINX_ENVSUBST_TEMPLATE_SUFFIX=.template
+      - NGINX_ENVSUBST_TEMPLATE_DIR=/etc/nginx/conf.d
     ports:
       - "8080:8080"
       - "443:443"
-    expose:
-      - "8080"
     volumes:
       - ${WEBGIS_DOCKER_SHARED_VOLUME}:/shared-volume
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/.well-known:/var/www/.well-known
       - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt:ro
       - ./config/g3w-suite/overrides/static:/shared-volume/static/overrides:ro
-      - ./config/nginx:/etc/nginx/conf.d/:ro
+      - ./config/nginx:/etc/nginx/conf.d/
+      - ./config/nginx/conf:/etc/nginx/conf.d/conf/:ro
       - ./config/nginx/html:/var/www/html:ro
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200k"
-        max-file: "10"
-    restart: always
+    logging: *g3w-suite-logging
+    restart: "${RESTART_POLICY:-on-failure}"
     networks:
       internal:
 
-  # Letsencrypt certs
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/var/www/certbot:/var/www/certbot
-      - ${WEBGIS_DOCKER_SHARED_VOLUME}/certs/letsencrypt:/etc/letsencrypt
+  # DEV SERVER: expose port 8000 (django) and 5678 (debug.py)
+  dev-server:
+    deploy:
+      replicas: ${DEV_SERVER:-0}  # 0 = disable service
+    image: alpine/socat
+    ports:
+      - "8000:8000"
+      - "5678:5678"
+    entrypoint: >
+      /bin/sh -c "
+        socat TCP-LISTEN:8000,fork,reuseaddr TCP:g3w-suite:8000 &
+        socat TCP-LISTEN:5678,fork,reuseaddr TCP:g3w-suite:5678 &
+        wait"
+    logging: *g3w-suite-logging
+    restart: "${RESTART_POLICY:-on-failure}"
+    depends_on:
+      - g3w-suite
+    networks:
+      internal:
 
 volumes:
   shared-volume:
-  g3wsuite-pg-data:
+  uv_cache:
+  node_modules:
+  void: # fallback for production (dev mounts)
 
 networks:
   internal:
