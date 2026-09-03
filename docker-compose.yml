@@ -7,11 +7,12 @@
 x-g3w-suite: &g3w-suite
   build:
     context: ./
-    additional_contexts:
-      - code=${G3WSUITE_LOCAL_CODE_PATH:-.}
+    # TODO: should we copy local code into actual Dockerfile? (dev mode)
+    # additional_contexts:
+    #   - code=${G3WSUITE_LOCAL_CODE_PATH:-.}
     target: suite
     args:
-      - G3W_SUITE_BRANCH=dj52
+      - G3W_SUITE_BRANCH
       - INSTALL_ORACLE
       - INSTALL_MSSQL
       - QGIS_CHANNEL
