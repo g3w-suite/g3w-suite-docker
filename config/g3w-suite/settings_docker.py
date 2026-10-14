@@ -22,7 +22,7 @@ G3WADMIN_LOCAL_MORE_APPS = [
     'filemanager',
     'qplotly',
     'qtimeseries',
-    'frontend'
+    'portal'
 ]
 
 DATABASES = {
@@ -203,3 +203,72 @@ if os.getenv('WEBGIS_PUBLIC_HOSTNAME', None):
         f"http://{os.getenv('WEBGIS_PUBLIC_HOSTNAME', None)}",
         f"http://{os.getenv('WEBGIS_PUBLIC_HOSTNAME', None)}:8080"
     ]
+
+# For portal if enabled
+...
+
+# TODO: fix ModuleNotFoundError when app is disabled (g3w-admin v3.5)
+if ('portal' in G3WADMIN_LOCAL_MORE_APPS):
+
+    # CSS OVERRIDES based on Pico.css v1.5.6 (https://picocss.com)
+    PORTAL_CUSTOM_CSS = """
+    /* Navigation Menu colors */
+    nav#top-menu  { --nav-background-color: #c30c26; }
+    nav#main-menu { --nav-background-color: #af0b22; }
+
+    nav#top-menu,
+    nav#main-menu {
+    --nav-color: #fff;
+    --background-color: var(--nav-background-color, --background-color);
+    --nav-border-color: rgba(255, 255, 255, 0.2);
+    --primary: var(--nav-color, --secondary);
+    --secondary: var(--nav-color, --secondary);
+    --h1-color: var(--nav-color, --h1-color);
+    --color: var(--nav-color, --color);
+    --contrast-hover: var(--nav-color, --contrast-hover);
+    --secondary-hover: var(--nav-color, --secondary-hover);
+    --contrast: var(--nav-color, --contrast-hover);
+    --icon-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(255, 255, 255)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    --primary-hover: #1ab3e6;
+    }
+
+    /* Card item: change default aspect ratio for images (16:9) */
+    main#content article figure > img {
+    aspect-ratio: 16/9;
+    object-fit: contain;
+    }
+
+    /* Card item: move figcaption before image (heading) */
+    main#content article figure > figcaption {
+    grid-row-start: 1;
+    background-color: var(--primary);
+    }
+
+    /* Card item: fixed header "top position" independently of other card items heights */
+    main#content article > a {
+    display: flex;
+    }
+
+    /* Card item: fixed header height of 3.5rem */
+    main#content article > a > figure > figcaption {
+    display: grid;
+    grid-template-rows: 3.5rem;
+    align-items: center;
+    }
+
+    /* Typography colors */
+    :root[data-theme="light"] {
+    --primary: #af0b22;
+    --primary-hover: #c30c26;
+    }
+    """
+
+    # Toggle TOP NAV MENU visibility
+    PORTAL_NAVBAR_TOP = False
+
+    # Customize TOP NAV MENU link
+    PORTAL_ORG_NAME   = 'Download'
+    PORTAL_ORG_URL    = 'https://github.com/g3w-suite'
+
+    # Custom favicon url
+    PORTAL_FAVICON  = '/static/img/favicon.ico'

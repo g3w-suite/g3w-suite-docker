@@ -21,7 +21,7 @@ if [[ "${FRONTEND}" =~ [Tt][Rr][Uu][Ee] ]] ; then
   SETTINGS_LOCKFILE=/shared-volume/.settings.lockfile
   if [[ ! -f ${SETTINGS_LOCKFILE} ]]; then
     echo "FRONTEND = True"  >> /code/g3w-admin/base/settings/local_settings.py
-    echo "FRONTEND_APP = 'frontend'" >> /code/g3w-admin/base/settings/local_settings.py
+    echo "FRONTEND_APP = 'portal'" >> /code/g3w-admin/base/settings/local_settings.py
     touch ${SETTINGS_LOCKFILE}
   fi
 fi
