@@ -204,7 +204,7 @@ if os.getenv('WEBGIS_PUBLIC_HOSTNAME', None):
         f"http://{os.getenv('WEBGIS_PUBLIC_HOSTNAME', None)}:8080"
     ]
 
-# For partal if enabled
+# For portal if enabled
 ...
 
 # TODO: fix ModuleNotFoundError when app is disabled (g3w-admin v3.5)
