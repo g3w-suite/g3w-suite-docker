@@ -14,10 +14,6 @@ cp /requirements_rl.txt .
 pip3 install -r requirements_rl.txt
 pip3 install -r requirements_huey.txt
 
-# Front end
-#TODO make this as generic so that we can install as many plugins as possible
-git submodule add -f https://github.com/g3w-suite/g3w-admin-frontend.git  g3w-admin/frontend
-
 
 # Caching
 pip3 install -r /code/g3w-admin/caching/requirements.txt
@@ -28,3 +24,5 @@ pip3 install -r /code/g3w-admin/filemanager/requirements.txt
 # Qplotly
 pip3 install -r /code/g3w-admin/qplotly/requirements.txt
 
+# Portal
+pip3 install git+https://github.com/g3w-suite/g3w-admin-portal.git
