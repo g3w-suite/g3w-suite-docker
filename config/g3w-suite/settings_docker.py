@@ -272,6 +272,3 @@ if ('portal' in G3WADMIN_LOCAL_MORE_APPS):
 
     # Custom favicon url
     PORTAL_FAVICON  = '/static/img/favicon.ico'
-
-FRONTEND = True
-FRONTEND_APP = 'portal'
