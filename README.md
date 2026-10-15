@@ -155,6 +155,11 @@ The image is build on latest Ubuntu and QGIS LTR, following this execution order
 
 ## 🚀 Performance optimizations
 
+Gunicorn uses `G3WSUITE_GUNICORN_NUM_WORKERS` when set to a non-empty integer.
+If unset or empty, it uses `os.cpu_count()` (or one worker if detection fails).
+This default applies to newly generated `/shared-volume/gunicorn.conf.py` files;
+existing files are preserved and must be updated manually.
+
 1. set scale-dependent visibility for the entire layer or for some filtered features (example: show only major roads until at scale 1:1E+6)
 2. when using rule-based/categorized classification or scale-dependent visibility create indexes on the column(s) involved in the rule expression (example: "create index idx_elec_penwell_ious on elec_penwell_ious (owner);" )
 3. start the project with only a few layers turned on by default
