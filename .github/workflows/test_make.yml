@@ -94,7 +94,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        G3W_SUITE_BRANCH: [dj52]
+        G3W_SUITE_BRANCH: [dev]
         INSTALL_ORACLE: [true, false]
         INSTALL_MSSQL: [true, false]
         QGIS_CHANNEL: [ubuntu, ubuntu-ltr]

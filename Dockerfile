@@ -167,6 +167,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/99_norecommends && \
     apt-get update && apt-get install -y \
+        build-essential \
         curl \
         dirmngr \
         gdal-bin \
