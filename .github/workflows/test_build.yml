@@ -20,6 +20,8 @@ jobs:
         name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
+        with:
+          driver: docker
       -
         name: Build deps image
         id: docker_build_deps
@@ -28,7 +30,10 @@ jobs:
           context: ./
           file: ./Dockerfile.g3wsuite-deps.dockerfile
           push: false
-          tags: g3wsuite/g3w-suite-deps:${{ env.BRANCH_NAME }}
+          load: true
+          tags: |
+            g3wsuite/g3w-suite-deps:${{ env.BRANCH_NAME }}
+            g3wsuite/g3w-suite-deps:dev
 
       -
         name: Image digest
