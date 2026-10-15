@@ -17,7 +17,6 @@ if( version >= (3, 5) ):
 G3WADMIN_PROJECT_APPS = []
 
 G3WADMIN_LOCAL_MORE_APPS = [
-    'caching',
     'editing',
     'filemanager',
     'qplotly',
