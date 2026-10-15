@@ -55,14 +55,6 @@ QGIS_AUTH_PASSWORD_FILE = os.getenv('G3WSUITE_QGIS_AUTH_PASSWORD_FILE', '/shared
 # Define QGIS auth DB master password that will be placed into the QGIS_AUTH_PASSWORD_FILE if it does not exist.
 QGIS_AUTH_PASSWORD = os.getenv('G3WSUITE_QGIS_AUTH_PASSWORD', 'wtsgTgds53fshUHH89UJY')
 
-# CACHING SETTINGS
-# =======================================
-TILESTACHE_CACHE_NAME = 'default'
-TILESTACHE_CACHE_TYPE = 'Disk'  # or 'Memcache'
-TILESTACHE_CACHE_DISK_PATH = os.getenv('G3WSUITE_TILECACHE_PATH', '/shared-volume/tile_cache/')
-TILESTACHE_CACHE_BUFFER_SIZE = os.getenv('TILESTACHE_CACHE_BUFFER_SIZE', 256)
-TILESTACHE_CACHE_TOKEN = os.getenv('TILESTACHE_CACHE_TOKEN', '374h5g96831hsgetvmkdel')
-
 # FILEMANAGER SETTINGS
 # =======================================
 FILEMANAGER_ROOT_PATH = os.getenv(
