@@ -4,12 +4,12 @@
 # This image extends G3W-SUITE LTR (UBUNTU + QGIS LTR) for development purposes 
 ##
 
-FROM g3wsuite/g3w-suite-deps-ltr:dev
+# At the moment we use not ltr QGIS version because QGIS4 doesn't have an LTR version yet
+FROM g3wsuite/g3w-suite-deps:dev
 
 LABEL maintainer="Gis3W" \
       Description="Image used to install python requirements and code for g3w-suite deployment" \
-      Vendor="Gis3W" \
-      Version="1.0"
+      Vendor="Gis3W"
 
 ##
 # Based on main CI Docker from  g3w-suite, checkout code + caching,
