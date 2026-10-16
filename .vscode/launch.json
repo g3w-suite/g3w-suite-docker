@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "G3W-SUITE-DOCKER: Debugger",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "host": "localhost",
+        "port": 5678
+      },
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}/code",
+          "remoteRoot": "/code"
+        },
+        {
+          "localRoot": "${workspaceFolder}/shared-volume",
+          "remoteRoot": "/shared-volume"
+        }
+      ],
+      "justMyCode": false,
+      "django": true
+    }
+  ]
+}

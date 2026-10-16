@@ -1,7 +1,7 @@
 # HTTPS reverse proxy server (g3w-suite)
 server {
-  include /etc/nginx/conf.d/locations;
-  include /etc/nginx/conf.d/letsencrypt;
+  include /etc/nginx/conf.d/conf/locations;
+  include /etc/nginx/conf.d/conf/letsencrypt;
 
   location / {
     proxy_read_timeout                  120;
@@ -19,7 +19,7 @@ server {
 
 # HTTP (redirect)
 server {
-  include /etc/nginx/conf.d/locations;
+  include /etc/nginx/conf.d/conf/locations;
 
   location / {
     return 301 https://$host$request_uri;

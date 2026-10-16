@@ -1,4 +1,4 @@
-include /etc/nginx/conf.d/error_pages;
+include /etc/nginx/conf.d/conf/error_pages;
 
 # Block *.php
 location ~\.php$ {
@@ -10,8 +10,11 @@ location /static/projects/ {
   return 403;
 }
 
+# Cache static files but always validate with server (ETags)
 location /static/ {
   root /shared-volume/;
+  add_header Cache-Control "no-cache, must-revalidate, max-age=0";
+  etag on;
 }
 
 location /media/ {
@@ -27,4 +30,4 @@ location /.well-known/acme-challenge/ {
   root /var/www;
 }
 
-server_name $WEBGIS_PUBLIC_HOSTNAME;
+server_name $NGINX_SERVER_NAME;
