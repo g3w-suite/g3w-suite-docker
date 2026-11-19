@@ -139,7 +139,7 @@ services:
       internal:
 
   nginx:
-    image: nginx
+    image: nginx:stable-alpine-slim
     ports:
       - "8080:8080"
       - "443:443"
