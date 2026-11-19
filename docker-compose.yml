@@ -30,7 +30,7 @@ x-g3w-suite: &g3w-suite
     - G3WSUITE_ADMIN_PASSWORD
     - G3WSUITE_DEBUG=${G3WSUITE_DEBUG:-False}
     - G3WSUITE_GUNICORN_MAX_REQUESTS
-    - G3WSUITE_GUNICORN_NUM_WORKERS=${G3WSUITE_GUNICORN_NUM_WORKERS:-1}
+    - G3WSUITE_GUNICORN_NUM_WORKERS
     - G3WSUITE_GUNICORN_TIMEOUT=${G3WSUITE_GUNICORN_TIMEOUT:-3600}
     - G3WSUITE_POSTGRES_DBNAME
     - G3WSUITE_POSTGRES_USER
@@ -151,7 +151,7 @@ services:
   nginx:
     deploy:
       replicas: ${PROD_SERVER:-1}  # 0 = disable service
-    image: nginx
+    image: nginx:stable-alpine-slim
     environment:
       - WEBGIS_PUBLIC_HOSTNAME
       - WEBGIS_ADMIN_EMAIL

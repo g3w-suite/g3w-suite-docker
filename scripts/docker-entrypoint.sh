@@ -63,6 +63,23 @@ if [[ "${DEV_MODE,,}" == "true" ]]; then
   python3 /code/g3w-admin/manage.py delete_unused_files
 fi
 
+if [ ! -f /shared-volume/gunicorn.conf.py ]; then
+  cat > /shared-volume/gunicorn.conf.py << EOF
+import os
+limit_request_fields = 0
+error_logfile        = '-'
+log_level            = 'info'
+timeout              = os.getenv('G3WSUITE_GUNICORN_TIMEOUT', 120)
+workers              = int(os.getenv('G3WSUITE_GUNICORN_NUM_WORKERS') or os.cpu_count() or 1)
+max_requests         = os.getenv('G3WSUITE_GUNICORN_MAX_REQUESTS', 200)
+bind                 = '0.0.0.0:8000'
+reload               = False # os.path.ismount('/code')
+EOF
+fi
+
+# Use the same CPU-based fallback for direct Gunicorn/Granian startup.
+export G3WSUITE_GUNICORN_NUM_WORKERS="${G3WSUITE_GUNICORN_NUM_WORKERS:-$(python3 -c 'import os; print(os.cpu_count() or 1)')}"
+
 # start django app
 if [[ "${G3WSUITE_WEBSERVER,,}" == "granian" ]]; then
   granian base.wsgi_docker:application \

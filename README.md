@@ -127,6 +127,11 @@ For more info see: [branding the suite](https://g3w-suite.readthedocs.io/en/late
 
 ## 🚀 Performance optimizations
 
+Gunicorn uses `G3WSUITE_GUNICORN_NUM_WORKERS` when set to a non-empty integer.
+If unset or empty, it uses `os.cpu_count()` (or one worker if detection fails).
+New `/shared-volume/gunicorn.conf.py` files use this default; existing files are
+preserved and must be updated manually.
+
 - Set scale-dependent visibility for dense layers.
 - Create database indexes on columns used for styling or visibility rules.
 - Keep just a few layers turned on by default (when loading the project).
