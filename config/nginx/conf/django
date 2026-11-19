@@ -1,6 +1,6 @@
 # HTTP reverse proxy server (g3w-suite)
 server {
-  include /etc/nginx/conf.d/locations;
+  include /etc/nginx/conf.d/conf/locations;
 
   location / {
     keepalive_timeout                   500;
@@ -21,7 +21,7 @@ server {
 
 # HTTPS (redirect)
 server {
-  include /etc/nginx/conf.d/locations;
+  include /etc/nginx/conf.d/conf/locations;
 
   location / {
     return 302 http://$host:8080$request_uri;
