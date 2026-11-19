@@ -127,10 +127,9 @@ For more info see: [branding the suite](https://g3w-suite.readthedocs.io/en/late
 
 ## 🚀 Performance optimizations
 
-Gunicorn uses `G3WSUITE_GUNICORN_NUM_WORKERS` when set to a non-empty integer.
-If unset or empty, it uses `os.cpu_count()` (or one worker if detection fails).
-New `/shared-volume/gunicorn.conf.py` files use this default; existing files are
-preserved and must be updated manually.
+In development mode, Gunicorn and Granian always use one worker. Otherwise,
+they use `G3WSUITE_GUNICORN_NUM_WORKERS` when set, or the detected CPU count
+(one worker if detection fails).
 
 - Set scale-dependent visibility for dense layers.
 - Create database indexes on columns used for styling or visibility rules.
