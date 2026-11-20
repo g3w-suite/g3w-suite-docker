@@ -2,7 +2,7 @@
 # DOCKER BUILD: Dockerfile.g3wsuite-deps.ltr.dockerfile
 ##
 
-name: Build G3W-SUITE LTR dependencies
+name: Build G3W-SUITE LTR/LATEST dependencies
 
 on:
   push:
@@ -37,8 +37,8 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       -
-        name: Build and push
-        id: docker_build
+        name: Build and push LATEST
+        id: docker_build_latest
         uses: docker/build-push-action@v2
         with:
           context: ./
@@ -47,5 +47,17 @@ jobs:
           tags: g3wsuite/g3w-suite-deps:${{ env.BRANCH_NAME }}
 
       -
+        name: Build and push LTR
+        id: docker_build_ltr
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./Dockerfile.g3wsuite-deps.ltr.dockerfile
+          push: true
+          tags: g3wsuite/g3w-suite-deps-ltr:${{ env.BRANCH_NAME }}
+
+      -
         name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+        run: |
+          echo ${{ steps.docker_build_latest.outputs.digest }}
+          echo ${{ steps.docker_build_ltr.outputs.digest }}
