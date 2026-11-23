@@ -255,7 +255,7 @@ RUN git clone https://github.com/g3w-suite/g3w-admin.git --single-branch --depth
 
 # compile static assets (g3w-admin)
 RUN yarn --ignore-engines --ignore-scripts --prod && \
-    mkdir -p /code/g3w-admin/core/static && \
+    mkdir -p /code/g3w-admin/core/static /code/node_modules/@bower_components && \
     rm -rf /code/g3w-admin/core/static/bower_components && \
     ln -s "../../../node_modules/@bower_components" /code/g3w-admin/core/static/bower_components
 
