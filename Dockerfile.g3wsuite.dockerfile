@@ -5,7 +5,7 @@
 ##
 
 # At the moment we use not ltr QGIS version because QGIS4 doesn't have an LTR version yet
-FROM g3wsuite/g3w-suite-deps:dev
+FROM g3wsuite/g3w-suite-deps:v4.0.x
 
 LABEL maintainer="Gis3W" \
       Description="Image used to install python requirements and code for g3w-suite deployment" \
