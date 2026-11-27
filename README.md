@@ -167,6 +167,11 @@ make db-restore ID=foo-backup
    * G3W-SUITE is running in development mode on http://127.0.0.1:8000
    * G3W-ADMIN is available at [`./code`](./code)
 
+`make dev` loads the development overrides from `.env.dev` into the Make
+environment, but passes only `.env` to Docker Compose. This keeps the Compose
+project label compatible with VS Code Container Tools, so its **Start** and
+**Restart** actions work without running `make dev` again.
+
 ---
 <sub> \* if necessary, comment out any missing installed modules from [G3WADMIN_LOCAL_MORE_APPS](./config/g3w-suite/settings_docker.py) list and then try again </sub>
 

@@ -52,8 +52,21 @@ export COMPOSE_BAKE=true
 
 ##
 # ENV = { dev | prod }
+# Load the environment-specific overrides into Make's environment so Docker
+# Compose receives only .env as its --env-file. Multiple --env-file paths are
+# stored by Compose as a comma-separated label, which VS Code Container Tools
+# incorrectly treats as one path when starting or restarting a project.
 ##
-DOCKER_COMPOSE := docker compose --env-file .env $(if $(wildcard .env.$(ENV)),--env-file .env.$(ENV)) -f docker-compose.yml
+ifneq ($(wildcard .env.$(ENV)),)
+  # Include the overrides so Make expands them when preparing Docker Compose.
+  include .env.$(ENV)
+  # Export only valid variable names so Compose can resolve substitutions from
+  # the environment without registering .env.dev as a second env-file path.
+  export $(shell sed -n 's/^\([A-Za-z_][A-Za-z0-9_]*\)=.*/\1/p' .env.$(ENV))
+endif
+
+# Keep a single env-file label for compatibility with Container Tools actions.
+DOCKER_COMPOSE := docker compose --env-file .env -f docker-compose.yml
 
 G3W_SUITE:= docker compose exec g3w-suite
 
