@@ -1,7 +1,8 @@
 # Override settings for G3W-SUITE docker
 # Destination: /code/g3w-admin/base/settings/local_settings.py
 # Read connection parameters from environment
-import os
+import os, sys, importlib
+import logging
 from django.conf import settings
 from base import __version__ as version
 
@@ -87,7 +88,7 @@ HUEY = {
     'huey_class': 'huey.RedisExpireHuey',
     'name': 'g3w-suite',
     'url': 'redis://redis:6379/?db=0',
-    'immediate': os.path.ismount('/code'),  # True = run synchronously.
+    'immediate': False if 'run_huey' in sys.argv else os.path.ismount('/code'),  # True = run synchronously.
     'consumer': {
         'workers': 1,
         'worker_type': 'process',
@@ -196,63 +197,7 @@ if os.getenv('WEBGIS_PUBLIC_HOSTNAME', None):
     ]
 
 # For portal if enabled
-...
-
-# TODO: fix ModuleNotFoundError when app is disabled (g3w-admin v3.5)
 if ('portal' in G3WADMIN_LOCAL_MORE_APPS):
-
-    # CSS OVERRIDES based on Pico.css v1.5.6 (https://picocss.com)
-    PORTAL_CUSTOM_CSS = """
-    /* Navigation Menu colors */
-    nav#top-menu  { --nav-background-color: #c30c26; }
-    nav#main-menu { --nav-background-color: #af0b22; }
-
-    nav#top-menu,
-    nav#main-menu {
-    --nav-color: #fff;
-    --background-color: var(--nav-background-color, --background-color);
-    --nav-border-color: rgba(255, 255, 255, 0.2);
-    --primary: var(--nav-color, --secondary);
-    --secondary: var(--nav-color, --secondary);
-    --h1-color: var(--nav-color, --h1-color);
-    --color: var(--nav-color, --color);
-    --contrast-hover: var(--nav-color, --contrast-hover);
-    --secondary-hover: var(--nav-color, --secondary-hover);
-    --contrast: var(--nav-color, --contrast-hover);
-    --icon-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(255, 255, 255)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    --primary-hover: #1ab3e6;
-    }
-
-    /* Card item: change default aspect ratio for images (16:9) */
-    main#content article figure > img {
-    aspect-ratio: 16/9;
-    object-fit: contain;
-    }
-
-    /* Card item: move figcaption before image (heading) */
-    main#content article figure > figcaption {
-    grid-row-start: 1;
-    background-color: var(--primary);
-    }
-
-    /* Card item: fixed header "top position" independently of other card items heights */
-    main#content article > a {
-    display: flex;
-    }
-
-    /* Card item: fixed header height of 3.5rem */
-    main#content article > a > figure > figcaption {
-    display: grid;
-    grid-template-rows: 3.5rem;
-    align-items: center;
-    }
-
-    /* Typography colors */
-    :root[data-theme="light"] {
-    --primary: #af0b22;
-    --primary-hover: #c30c26;
-    }
-    """
 
     # Toggle TOP NAV MENU visibility
     PORTAL_NAVBAR_TOP = False
@@ -263,3 +208,29 @@ if ('portal' in G3WADMIN_LOCAL_MORE_APPS):
 
     # Custom favicon url
     PORTAL_FAVICON  = '/static/img/favicon.ico'
+
+
+# Fallback for: FRONTEND_APP
+FRONTEND = locals().get('FRONTEND', os.getenv('FRONTEND', 'False').lower() == 'true')
+FRONTEND_APP = locals().get('FRONTEND_APP', 'portal')
+
+if FRONTEND and FRONTEND_APP not in G3WADMIN_LOCAL_MORE_APPS:
+    logging.getLogger(__name__).warning(
+        "Frontend %s is disabled because its plugin is not enabled; using G3W administration",
+        FRONTEND_APP,
+    )
+    FRONTEND = False
+
+# DEV MODE: trust "dev-server" port (8000)
+if os.getenv('DEV_MODE', 'False').lower() == 'true':
+    CSRF_TRUSTED_ORIGINS.extend([
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+    ])
+
+# DEV MODE: filter only the installed apps
+if os.getenv('DEV_MODE', 'False').lower() == 'true':
+    G3WADMIN_LOCAL_MORE_APPS = [app for app, is_installed in {
+        app: importlib.util.find_spec(app) is not None
+        for app in G3WADMIN_LOCAL_MORE_APPS
+    }.items() if is_installed]
