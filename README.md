@@ -127,6 +127,10 @@ For more info see: [branding the suite](https://g3w-suite.readthedocs.io/en/late
 
 ## 🚀 Performance optimizations
 
+In development mode, Gunicorn and Granian always use one worker. Otherwise,
+they use `G3WSUITE_GUNICORN_NUM_WORKERS` when set, or the detected CPU count
+(one worker if detection fails).
+
 - Set scale-dependent visibility for dense layers.
 - Create database indexes on columns used for styling or visibility rules.
 - Keep just a few layers turned on by default (when loading the project).
